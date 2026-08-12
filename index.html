@@ -49,10 +49,22 @@
   <main class="main">
     <div class="stage-header">
       <div class="stage-eyebrow" id="stageEyebrow"></div>
-      <button class="fullscreen-btn" id="fullscreenBtn">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 6V2H6M10 2H14V6M14 10V14H10M6 14H2V10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        발표 모드
-      </button>
+      <div class="stage-tools">
+        <button class="tool-btn" id="addBlankBtn" type="button" aria-pressed="false">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          빈칸 추가
+        </button>
+        <div class="zoom-group">
+          <button class="zoom-btn" id="zoomOutBtn" type="button" aria-label="축소">&#8722;</button>
+          <input class="zoom-input" id="zoomInput" type="number" min="25" max="300" step="5" value="100" aria-label="확대/축소 비율" />
+          <span class="zoom-unit">%</span>
+          <button class="zoom-btn" id="zoomInBtn" type="button" aria-label="확대">&#43;</button>
+        </div>
+        <button class="fullscreen-btn" id="fullscreenBtn">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 6V2H6M10 2H14V6M14 10V14H10M6 14H2V10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          발표 모드
+        </button>
+      </div>
     </div>
 
     <div class="stage" id="stage"></div>
