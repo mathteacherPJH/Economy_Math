@@ -12,8 +12,6 @@
   let currentUnitIndex = null;
   let currentSlideIndex = 0;
 
-  const INDEX_LINE_PATH = 'M0,20 L20,14 L38,22 L56,8 L74,17 L92,5 L110,12 L130,3';
-
   /* ---------------- 사이드바(목차) 렌더링 ---------------- */
   function renderTOC() {
     tocEl.innerHTML = '';
@@ -116,12 +114,7 @@
     title.className = 'slide-title';
     title.textContent = slide.title;
 
-    const titleIndex = document.createElement('div');
-    titleIndex.className = 'title-index';
-    titleIndex.innerHTML = `<svg viewBox="0 0 130 24" preserveAspectRatio="none"><defs><linearGradient id="titleIndexGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6E5BFA"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs><path d="${randomIndexPath()}"/></svg>`;
-
     inner.appendChild(title);
-    inner.appendChild(titleIndex);
 
     if (slide.type === 'text') {
       const body = document.createElement('div');
@@ -153,16 +146,6 @@
     stage.appendChild(card);
 
     renderFooter(unit);
-  }
-
-  function randomIndexPath() {
-    let d = 'M0,18';
-    let y = 18;
-    for (let x = 15; x <= 130; x += 15) {
-      y = Math.max(2, Math.min(22, y + (Math.random() - 0.55) * 14));
-      d += ` L${x},${y.toFixed(1)}`;
-    }
-    return d;
   }
 
   function renderFooter(unit) {
@@ -253,7 +236,6 @@
   });
 
   /* ---------------- 초기화 ---------------- */
-  document.querySelectorAll('.index-line svg path').forEach((p) => p.setAttribute('d', INDEX_LINE_PATH));
   renderTOC();
   renderStage();
 
