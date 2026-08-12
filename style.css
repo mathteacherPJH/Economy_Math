@@ -511,7 +511,9 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   touch-action:none;
   cursor:default;
 }
-.pdf-draw-canvas.is-active{ cursor:crosshair; }
+.pdf-draw-canvas.is-active{
+  cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke-linecap="round"><line x1="15" y1="1" x2="15" y2="29" stroke="white" stroke-width="4"/><line x1="1" y1="15" x2="29" y2="15" stroke="white" stroke-width="4"/><line x1="15" y1="1" x2="15" y2="29" stroke="%236E5BFA" stroke-width="1.6"/><line x1="1" y1="15" x2="29" y2="15" stroke="%236E5BFA" stroke-width="1.6"/><circle cx="15" cy="15" r="6" fill="none" stroke="white" stroke-width="3.5"/><circle cx="15" cy="15" r="6" fill="none" stroke="%236E5BFA" stroke-width="1.6"/></g></svg>') 15 15, crosshair;
+}
 
 /* 빈칸(수동 입력칸) 레이어 — 편집 모드가 아닐 때는 배경 클릭을 그냥
    통과시켜서(pointer-events:none) 아래 캔버스 드로잉을 방해하지 않고,
@@ -523,7 +525,7 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 }
 .blank-layer.is-edit-mode{
   pointer-events:auto;
-  cursor:crosshair;
+  cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke-linecap="round"><line x1="15" y1="1" x2="15" y2="29" stroke="white" stroke-width="4"/><line x1="1" y1="15" x2="29" y2="15" stroke="white" stroke-width="4"/><line x1="15" y1="1" x2="15" y2="29" stroke="%236E5BFA" stroke-width="1.6"/><line x1="1" y1="15" x2="29" y2="15" stroke="%236E5BFA" stroke-width="1.6"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="white" stroke-width="3.5"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="%236E5BFA" stroke-width="1.6"/></g></svg>') 15 15, crosshair;
 }
 
 .blank-box{
@@ -548,10 +550,12 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .blank-box-text{
   width:100%;
   height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:.1em .3em;
+  /* display:flex를 쓰면 크롬 등에서 contenteditable 커서/선택 영역이
+     깨져서 Ctrl+C·Ctrl+V가 잘 안 먹는 경우가 있어, 일반 블록 + 패딩으로
+     가운데 정렬을 흉내낸다 (완벽한 수직 중앙은 아니지만 복사/붙여넣기가
+     안정적으로 동작하는 쪽을 우선한다) */
+  display:block;
+  padding:.3em .3em;
   box-sizing:border-box;
   font-family:var(--font-gothic);
   font-weight:700;
@@ -562,6 +566,8 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   outline:none;
   text-align:center;
   cursor:text;
+  user-select:text;
+  -webkit-user-select:text;
 }
 
 .blank-box-handle{
