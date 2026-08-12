@@ -8,73 +8,80 @@
   const footer = document.getElementById('stageFooter');
   const collapseBtn = document.getElementById('collapseBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
-  const addBlankBtn = document.getElementById('addBlankBtn');
   const zoomInput = document.getElementById('zoomInput');
   const zoomInBtn = document.getElementById('zoomInBtn');
   const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const penBtn = document.getElementById('penBtn');
+  const eraserBtn = document.getElementById('eraserBtn');
+  const penColorInput = document.getElementById('penColor');
+  const penWidthInput = document.getElementById('penWidth');
+  const undoBtn = document.getElementById('undoBtn');
+  const redoBtn = document.getElementById('redoBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const drawToolbar = document.getElementById('drawToolbar');
+  const videoRail = document.getElementById('videoRail');
+  const videoRailToggle = document.getElementById('videoRailToggle');
+  const videoRailList = document.getElementById('videoRailList');
+  const videoModal = document.getElementById('videoModal');
+  const videoModalFrame = document.getElementById('videoModalFrame');
+  const videoModalClose = document.getElementById('videoModalClose');
+  const videoModalBackdrop = document.getElementById('videoModalBackdrop');
 
   // 현재 선택된 위치: 단원 -> 소단원(목차 한 줄) -> 그 안의 PPT 슬라이드 페이지
   let currentUnitIndex = null;
   let currentTopicIndex = null;
   let currentPageIndex = 0;
 
-  // 확대/축소 비율 (모든 컨트롤이 이 값 하나로 서로 연동된다)
+  // 확대/축소 비율 (모든 컨트롤이 이 값 하나로 서로 연동된다). 학습지
+  // 이미지(.pdf-page-wrap)의 실제 가로폭(px)을 바꿔서, 이미지 위의
+  // 글자·그림·손글씨가 레이아웃 차원에서 실제로 커지고 작아지도록 한다.
   let zoomLevel = 100;
 
-  // 학습지 이미지 위에 직접 만든 빈칸(수동 입력칸)들을 슬라이드별로 기억해둔다.
-  // 브라우저를 새로고침하면 사라지는 "현재 수업 세션 동안만" 유지되는 메모리다.
-  let addBlankMode = false;
-  const manualBlanks = new Map(); // key: "uIdx-tIdx-pIdx" -> [{ left, top, text }]
+  // 드로잉 도구 상태 — 펜/지우개 중 하나만 켜지고, 색깔·굵기는 공용이다.
+  let drawTool = null; // 'pen' | 'eraser' | null(꺼짐)
+  let penColor = penColorInput.value;
+  let penWidth = parseInt(penWidthInput.value, 10);
 
-  // 학습지 이미지 위에 놓는 수동 입력칸(빈칸) 하나를 만든다.
-  // 클릭하면 바로 타이핑할 수 있고(contenteditable), 초록색 볼드로 보이며,
-  // 마우스를 올리면 우측 상단에 삭제(×) 버튼이 뜬다.
-  function createBlankEl(ann) {
-    const wrap = document.createElement('div');
-    wrap.className = 'answer-blank';
-    wrap.style.left = ann.left + '%';
-    wrap.style.top = ann.top + '%';
-
-    const text = document.createElement('span');
-    text.className = 'answer-blank-text';
-    text.contentEditable = 'true';
-    text.spellcheck = false;
-    text.textContent = ann.text || '';
-    text.addEventListener('input', () => { ann.text = text.textContent; });
-    wrap.appendChild(text);
-
-    const del = document.createElement('button');
-    del.type = 'button';
-    del.className = 'answer-blank-delete';
-    del.contentEditable = 'false';
-    del.setAttribute('aria-label', '빈칸 삭제');
-    del.textContent = '×';
-    del.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const key = currentSlideKey();
-      const list = manualBlanks.get(key) || [];
-      const idx = list.indexOf(ann);
-      if (idx > -1) list.splice(idx, 1);
-      wrap.remove();
-    });
-    wrap.appendChild(del);
-
-    wrap.addEventListener('click', (e) => e.stopPropagation());
-
-    return wrap;
-  }
-
-  // 확대/축소 비율을 하나의 값으로 관리 — 버튼, 숫자 입력, Ctrl+스크롤이
-  // 모두 이 함수를 거쳐 서로 연동된다.
-  function setZoom(value) {
-    zoomLevel = Math.max(25, Math.min(300, Math.round(value)));
-    zoomInput.value = zoomLevel;
-    const card = stage.querySelector('.slide-card');
-    if (card) card.style.zoom = zoomLevel + '%';
-  }
+  // 슬라이드별 캔버스 undo/redo 기록. 브라우저를 새로고침하면 사라지는
+  // "현재 수업 세션 동안만" 유지되는 메모리다.
+  // key: "uIdx-tIdx-pIdx" -> { history: [dataURL, ...], index }
+  const drawHistories = new Map();
 
   function currentSlideKey() {
     return `${currentUnitIndex}-${currentTopicIndex}-${currentPageIndex}`;
+  }
+
+  // 확대/축소 비율을 하나의 값으로 관리 — 버튼, 숫자 입력, Ctrl+스크롤이
+  // 모두 이 함수를 거쳐 서로 연동된다. transform: scale()이 아니라
+  // 학습지 이미지(.pdf-page-wrap)의 실제 가로폭(px)을 바꾸는 방식이라,
+  // 이미지 위의 글자·그림·손글씨가 레이아웃 차원에서 진짜로 커지고
+  // 작아지며, 화면보다 커지면 자연스럽게 가로/세로 스크롤이 생긴다.
+  function setZoom(value) {
+    zoomLevel = Math.max(25, Math.min(300, Math.round(value)));
+    zoomInput.value = zoomLevel;
+
+    const wrap = stage.querySelector('.pdf-page-wrap');
+    if (!wrap) return;
+
+    if (zoomLevel === 100) {
+      wrap.style.width = ''; // CSS 기본값(100%, 화면 가로 꽉 채움)으로 복귀
+    } else {
+      const parent = wrap.parentElement;
+      const cs = getComputedStyle(parent);
+      const base = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      wrap.style.width = (base * zoomLevel / 100) + 'px';
+    }
+  }
+
+  // 영상(type: 'video') 슬라이드는 더 이상 PPT 페이지 순서에 끼워 넣지 않고
+  // 우측 "관련 영상" 레일로 따로 빼서 보여준다. 나머지 슬라이드만 정상적인
+  // 좌우 넘기기 대상이 된다.
+  function getPages(topic) {
+    return topic.slides.filter((s) => s.type !== 'video');
+  }
+
+  function getTopicVideos(topic) {
+    return topic.slides.filter((s) => s.type === 'video');
   }
 
   /* ---------------- 사이드바(목차) 렌더링 ---------------- */
@@ -173,13 +180,26 @@
 
     const unit = CURRICULUM[currentUnitIndex];
     const topic = unit.topics[currentTopicIndex];
-    const page = topic.slides[currentPageIndex];
+    const pages = getPages(topic);
+    const page = pages[currentPageIndex];
 
     stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title} : ${topic.title}`;
+
+    // 이 소단원의 관련 영상을 우측 레일에 채우고, 소단원이 바뀔 때마다
+    // 레일은 항상 접힌 상태로 되돌린다.
+    renderVideoRail(topic);
 
     // 학습지 페이지 이미지를 그대로 넣은 슬라이드는 카드 안에 갇히지 않고
     // 페이지 전체가 세로로 늘어나며, 브라우저 스크롤로 이어서 본다.
     document.body.classList.toggle('is-scroll-mode', page.type === 'pdfpage');
+
+    // 그림 도구는 학습지 이미지 슬라이드에서만 의미가 있으므로, 그 외
+    // 슬라이드에서는 숨기고 펜/지우개도 꺼둔다.
+    drawToolbar.classList.toggle('is-hidden', page.type !== 'pdfpage');
+    if (page.type !== 'pdfpage' && drawTool) {
+      drawTool = null;
+      updateToolButtons();
+    }
 
     const card = document.createElement('div');
     card.className = 'slide-card';
@@ -252,29 +272,14 @@
         img.alt = page.section || '학습지 페이지';
         wrap.appendChild(img);
 
-        // 이 슬라이드에서 이전에 직접 만들어둔 빈칸(수동 입력칸)을 그대로 복원
-        const key = currentSlideKey();
-        (manualBlanks.get(key) || []).forEach((ann) => {
-          wrap.appendChild(createBlankEl(ann));
-        });
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-draw-canvas';
+        wrap.appendChild(canvas);
 
-        wrap.addEventListener('click', (e) => {
-          if (!addBlankMode) return;
-          if (e.target.closest('.answer-blank')) return; // 기존 칸 클릭은 새로 만들지 않음
-
-          const rect = wrap.getBoundingClientRect();
-          const leftPct = ((e.clientX - rect.left) / rect.width) * 100;
-          const topPct = ((e.clientY - rect.top) / rect.height) * 100;
-          const ann = { left: leftPct, top: topPct, text: '' };
-
-          const list = manualBlanks.get(key) || [];
-          list.push(ann);
-          manualBlanks.set(key, list);
-
-          const el = createBlankEl(ann);
-          wrap.appendChild(el);
-          el.querySelector('.answer-blank-text')?.focus();
-        });
+        // 이미지가 실제로 로드된 뒤에 캔버스 해상도를 이미지 비율에 맞추고,
+        // 이 슬라이드에 남아있던 그림(undo/redo 기록)을 복원한다.
+        img.addEventListener('load', () => setupCanvas(canvas), { once: true });
+        if (img.complete) setupCanvas(canvas);
 
         inner.appendChild(wrap);
       }
@@ -286,7 +291,7 @@
 
     setZoom(100);
     typesetMath(card);
-    renderFooter(topic);
+    renderFooter(pages);
   }
 
   // 새로 그려진 슬라이드 안의 수식($...$, $$...$$)을 MathJax로 렌더링한다.
@@ -299,8 +304,8 @@
     }
   }
 
-  function renderFooter(topic) {
-    const total = topic.slides.length;
+  function renderFooter(pages) {
+    const total = pages.length;
     footer.innerHTML = '';
 
     const prev = document.createElement('button');
@@ -334,14 +339,146 @@
     footer.appendChild(next);
   }
 
-  // 현재 소단원 "안"의 PPT 페이지만 넘긴다 (다른 소단원으로 넘어가지 않음)
+  // 현재 소단원 "안"의 PPT 페이지만 넘긴다 (다른 소단원으로 넘어가지 않음, 영상 제외)
   function step(dir) {
     if (currentUnitIndex === null) return;
     const topic = CURRICULUM[currentUnitIndex].topics[currentTopicIndex];
+    const total = getPages(topic).length;
     const next = currentPageIndex + dir;
-    if (next < 0 || next >= topic.slides.length) return;
+    if (next < 0 || next >= total) return;
     currentPageIndex = next;
     renderStage();
+  }
+
+  /* ---------------- 학습지 이미지 위 드로잉(펜/지우개) ----------------
+     각 pdfpage 슬라이드마다 이미지와 같은 크기의 캔버스를 겹쳐두고,
+     펜/지우개로 그린 내용을 dataURL 스냅샷으로 undo/redo 기록에 쌓는다.
+  ------------------------------------------------------------- */
+  function setupCanvas(canvas) {
+    const img = canvas.parentElement.querySelector('.pdf-page-img');
+    const baseW = 1400;
+    canvas.width = baseW;
+    canvas.height = Math.round(baseW * (img.naturalHeight / img.naturalWidth || 1.41));
+
+    const ctx = canvas.getContext('2d');
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    const key = currentSlideKey();
+    let rec = drawHistories.get(key);
+    if (!rec) {
+      rec = { history: [null], index: 0 };
+      drawHistories.set(key, rec);
+    }
+    restoreCanvas(canvas, ctx, rec);
+    updateDrawButtons();
+    updateToolButtons();
+
+    let drawing = false;
+
+    function toCanvasXY(e) {
+      const rect = canvas.getBoundingClientRect();
+      return [
+        ((e.clientX - rect.left) / rect.width) * canvas.width,
+        ((e.clientY - rect.top) / rect.height) * canvas.height
+      ];
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (!drawTool) return;
+      e.preventDefault();
+      drawing = true;
+      canvas.setPointerCapture(e.pointerId);
+      const [x, y] = toCanvasXY(e);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const baselineWidth = rect.width / (zoomLevel / 100);
+      const scaleFactor = canvas.width / baselineWidth;
+      ctx.lineWidth = penWidth * scaleFactor;
+      ctx.strokeStyle = penColor;
+      ctx.globalCompositeOperation = drawTool === 'eraser' ? 'destination-out' : 'source-over';
+      const [x, y] = toCanvasXY(e);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    });
+
+    const endStroke = () => {
+      if (!drawing) return;
+      drawing = false;
+      pushHistory(canvas);
+    };
+    canvas.addEventListener('pointerup', endStroke);
+    canvas.addEventListener('pointerleave', endStroke);
+  }
+
+  function restoreCanvas(canvas, ctx, rec) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const data = rec.history[rec.index];
+    if (!data) return;
+    const imgEl = new Image();
+    imgEl.onload = () => ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+    imgEl.src = data;
+  }
+
+  function pushHistory(canvas) {
+    const key = currentSlideKey();
+    const rec = drawHistories.get(key);
+    if (!rec) return;
+    rec.history = rec.history.slice(0, rec.index + 1);
+    rec.history.push(canvas.toDataURL());
+    rec.index = rec.history.length - 1;
+    updateDrawButtons();
+  }
+
+  function updateDrawButtons() {
+    const rec = drawHistories.get(currentSlideKey());
+    undoBtn.disabled = !rec || rec.index <= 0;
+    redoBtn.disabled = !rec || rec.index >= rec.history.length - 1;
+  }
+
+  function updateToolButtons() {
+    penBtn.classList.toggle('is-active', drawTool === 'pen');
+    penBtn.setAttribute('aria-pressed', String(drawTool === 'pen'));
+    eraserBtn.classList.toggle('is-active', drawTool === 'eraser');
+    eraserBtn.setAttribute('aria-pressed', String(drawTool === 'eraser'));
+    const canvas = stage.querySelector('.pdf-draw-canvas');
+    if (canvas) canvas.classList.toggle('is-active', !!drawTool);
+  }
+
+  // 우측 "관련 영상" 레일을 현재 소단원의 영상 목록으로 채운다.
+  // 소단원이 바뀔 때마다 항상 접힌 상태로 되돌아간다. 영상이 하나도
+  // 없는 소단원이면 레일 자체를 숨긴다.
+  function renderVideoRail(topic) {
+    const videos = getTopicVideos(topic);
+
+    videoRail.classList.remove('is-open');
+    videoRailToggle.setAttribute('aria-expanded', 'false');
+    videoRail.classList.toggle('is-hidden', videos.length === 0);
+
+    videoRailList.innerHTML = '';
+    videos.forEach((v, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'video-rail-item';
+      btn.textContent = `관련 영상 ${i + 1}`;
+      btn.addEventListener('click', () => openVideoModal(v.url));
+      videoRailList.appendChild(btn);
+    });
+  }
+
+  function openVideoModal(url) {
+    videoModalFrame.innerHTML = `<iframe src="${url}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    videoModal.classList.add('is-open');
+  }
+
+  function closeVideoModal() {
+    videoModal.classList.remove('is-open');
+    videoModalFrame.innerHTML = ''; // iframe을 비워서 재생을 멈춘다
   }
 
   function emptyStateHTML() {
@@ -364,15 +501,44 @@
     if (blank) blank.classList.toggle('is-revealed');
   });
 
-  /* ---------------- 빈칸 추가 모드 ----------------
-     버튼을 누르면 켜짐/꺼짐이 토글되고, 켜진 동안 학습지 이미지를
-     클릭할 때마다 그 위치에 직접 타이핑할 수 있는 빈칸이 생긴다.
-  ------------------------------------------------------------- */
-  addBlankBtn.addEventListener('click', () => {
-    addBlankMode = !addBlankMode;
-    addBlankBtn.classList.toggle('is-active', addBlankMode);
-    addBlankBtn.setAttribute('aria-pressed', String(addBlankMode));
-    stage.classList.toggle('is-add-blank-mode', addBlankMode);
+  /* ---------------- 드로잉 도구 (펜/지우개/색깔/굵기/undo/redo/초기화) ---------------- */
+  penBtn.addEventListener('click', () => {
+    drawTool = drawTool === 'pen' ? null : 'pen';
+    updateToolButtons();
+  });
+  eraserBtn.addEventListener('click', () => {
+    drawTool = drawTool === 'eraser' ? null : 'eraser';
+    updateToolButtons();
+  });
+  penColorInput.addEventListener('input', () => { penColor = penColorInput.value; });
+  penWidthInput.addEventListener('input', () => { penWidth = parseInt(penWidthInput.value, 10) || 1; });
+
+  undoBtn.addEventListener('click', () => {
+    const rec = drawHistories.get(currentSlideKey());
+    const canvas = stage.querySelector('.pdf-draw-canvas');
+    if (!rec || !canvas || rec.index <= 0) return;
+    rec.index -= 1;
+    restoreCanvas(canvas, canvas.getContext('2d'), rec);
+    updateDrawButtons();
+  });
+
+  redoBtn.addEventListener('click', () => {
+    const rec = drawHistories.get(currentSlideKey());
+    const canvas = stage.querySelector('.pdf-draw-canvas');
+    if (!rec || !canvas || rec.index >= rec.history.length - 1) return;
+    rec.index += 1;
+    restoreCanvas(canvas, canvas.getContext('2d'), rec);
+    updateDrawButtons();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    const canvas = stage.querySelector('.pdf-draw-canvas');
+    if (!canvas) return;
+    const key = currentSlideKey();
+    const rec = { history: [null], index: 0 };
+    drawHistories.set(key, rec);
+    restoreCanvas(canvas, canvas.getContext('2d'), rec);
+    updateDrawButtons();
   });
 
   /* ---------------- 확대/축소 ----------------
@@ -392,6 +558,15 @@
     e.preventDefault();
     setZoom(zoomLevel + (e.deltaY < 0 ? 5 : -5));
   }, { passive: false });
+
+  /* ---------------- 우측 관련 영상 레일 / 영상 모달 ---------------- */
+  videoRailToggle.addEventListener('click', () => {
+    const willOpen = !videoRail.classList.contains('is-open');
+    videoRail.classList.toggle('is-open', willOpen);
+    videoRailToggle.setAttribute('aria-expanded', String(willOpen));
+  });
+  videoModalClose.addEventListener('click', closeVideoModal);
+  videoModalBackdrop.addEventListener('click', closeVideoModal);
 
   /* ---------------- 사이드바 접기/펼치기 ---------------- */
   collapseBtn.addEventListener('click', () => {
@@ -416,6 +591,7 @@
   document.addEventListener('keydown', (e) => {
     const tag = document.activeElement?.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
+    if (videoModal.classList.contains('is-open') && e.key !== 'Escape') return;
 
     if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
       e.preventDefault();
@@ -423,8 +599,12 @@
     } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
       e.preventDefault();
       step(-1);
-    } else if (e.key === 'Escape' && document.fullscreenElement) {
-      document.exitFullscreen?.();
+    } else if (e.key === 'Escape') {
+      if (videoModal.classList.contains('is-open')) {
+        closeVideoModal();
+      } else if (document.fullscreenElement) {
+        document.exitFullscreen?.();
+      }
     }
   });
 
