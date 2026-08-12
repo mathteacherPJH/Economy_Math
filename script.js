@@ -58,12 +58,16 @@
   // 지금 글자 크기 조절 대상인 빈칸(마지막으로 포커스된 텍스트 칸)
   let activeBlankBox = null;
   let activeBlankBoxTextEl = null;
+  // 새로 만드는 빈칸에 기본으로 적용할 글자 크기(px). 폰트 크기 입력칸에
+  // 숫자를 넣으면(포커스된 빈칸이 없어도) 이 값이 바뀌어서, 매번 새
+  // 빈칸을 만들 때마다 다시 크기를 조절할 필요가 없다.
+  let defaultBlankFontSize = parseInt(blankFontSizeInput.value, 10) || 35;
 
   function currentSlideKey() {
     return `${currentUnitIndex}-${currentTopicIndex}-${currentPageIndex}`;
   }
 
-  // 확대/축소 비율을 하나의 값으로 관리 — 버튼, 숫자 입력, Ctrl+스크롤이
+  // 확대/축소 비율을 하나의 값으로 관리 — -버튼/+버튼/숫자 입력이
   // 모두 이 함수를 거쳐 서로 연동된다. transform: scale()이 아니라
   // 학습지 이미지(.pdf-page-wrap)의 실제 가로폭(px)을 바꾸는 방식이라,
   // 이미지 위의 글자·그림·손글씨가 레이아웃 차원에서 진짜로 커지고
@@ -517,7 +521,7 @@
 
   // 빈칸 하나(DOM)를 만든다. box = { left, top, width, height(모두 %), text, hidden, fontSize(px) }
   function createBlankBoxEl(layer, imgSrc, box) {
-    if (!box.fontSize) box.fontSize = 16;
+    if (!box.fontSize) box.fontSize = defaultBlankFontSize;
 
     const el = document.createElement('div');
     el.className = 'blank-box' + (box.hidden ? ' is-hidden' : ' is-revealed');
@@ -786,13 +790,16 @@
   });
 
   blankFontSizeInput.addEventListener('input', () => {
-    if (!activeBlankBox || !activeBlankBoxTextEl) return;
     const px = parseInt(blankFontSizeInput.value, 10);
     if (Number.isNaN(px)) return;
-    activeBlankBox.fontSize = px;
-    activeBlankBoxTextEl.style.fontSize = px + 'px';
-    const layer = stage.querySelector('.blank-layer');
-    if (layer) persistLayerBlanks(layer, layer.dataset.imgSrc);
+    // 포커스된 빈칸이 있든 없든, 앞으로 새로 만들 빈칸의 기본 크기를 갱신한다
+    defaultBlankFontSize = px;
+    if (activeBlankBox && activeBlankBoxTextEl) {
+      activeBlankBox.fontSize = px;
+      activeBlankBoxTextEl.style.fontSize = px + 'px';
+      const layer = stage.querySelector('.blank-layer');
+      if (layer) persistLayerBlanks(layer, layer.dataset.imgSrc);
+    }
   });
 
   /* ---------------- 드로잉 도구 (펜/지우개/색깔/굵기/undo/redo/초기화) ---------------- */
@@ -836,8 +843,8 @@
   });
 
   /* ---------------- 확대/축소 ----------------
-     -버튼/+버튼(클릭당 5%), 숫자 직접 입력, Ctrl+스크롤 휠이 모두
-     setZoom() 하나로 연동된다.
+     -버튼/+버튼(클릭당 5%), 숫자 직접 입력이 모두 setZoom() 하나로
+     연동된다. (Ctrl+휠은 브라우저 자체 확대와 충돌해서 지원하지 않는다)
   ------------------------------------------------------------- */
   zoomOutBtn.addEventListener('click', () => setZoom(zoomLevel - 5));
   zoomInBtn.addEventListener('click', () => setZoom(zoomLevel + 5));
@@ -846,34 +853,13 @@
     setZoom(Number.isNaN(val) ? 100 : val);
   });
 
-  // 트랙패드에서는 Ctrl+휠 한 번에도 방향이 잠깐씩 흔들리는 미세한
-  // deltaY가 섞여 들어와서, 분명 축소 방향인데 확대되는 것처럼 보이는
-  // 경우가 드물게 있었다. 매 이벤트마다 바로 반응하지 않고 누적값이
-  // 일정 크기를 넘을 때만 그 누적값의 부호로 방향을 정하도록 해서
-  // 이런 흔들림에 덜 민감하게 만든다.
-  //
-  // 또한 마우스가 이미지 영역이 아니라 툴바 등 다른 곳 위에 있을 때
-  // Ctrl+휠을 하면, 우리 코드가 아무것도 안 하고 그냥 지나쳐서 브라우저
-  // 자체의 "페이지 전체 확대"가 대신 걸려버리는 문제가 있었다 (이러면
-  // 툴바까지 함께 커져 보인다). 그래서 Ctrl+휠 자체는 화면 어디서
-  // 하든 항상 preventDefault로 브라우저 확대를 막고, 우리 확대 값을
-  // 실제로 바꾸는 건 이미지 영역(.pdf-page-wrap) 위에서 했을 때만
-  // 적용한다 — 툴바는 이 "확대되는 화면"에 포함되지 않는다.
-  let wheelAccum = 0;
-  document.addEventListener('wheel', (e) => {
-    if (!e.ctrlKey) return;
-    e.preventDefault();
-
-    const wrap = stage.querySelector('.pdf-page-wrap');
-    if (!wrap || !wrap.contains(e.target)) return;
-
-    wheelAccum += e.deltaY;
-    const threshold = 35;
-    if (Math.abs(wheelAccum) >= threshold) {
-      setZoom(zoomLevel + (wheelAccum < 0 ? 5 : -5));
-      wheelAccum = 0;
-    }
-  }, { passive: false });
+  // Ctrl+휠로 확대/축소하는 기능은 브라우저마다(특히 최신 크롬) 자체
+  // 페이지 확대와 충돌해서 -버튼/+버튼/숫자 입력을 써도 화면 전체가
+  // 같이 확대되는 문제가 있었다. 이 문제를 근본적으로 없애기 위해
+  // Ctrl+휠 확대는 지원하지 않기로 하고, 위 -/+ 버튼과 숫자 입력
+  // 세 가지 방법만 남긴다 — 이 방법들은 브라우저 확대와 전혀 무관하게
+  // 학습지 이미지의 실제 크기(px)만 바꾸므로 툴바가 함께 커질 일이
+  // 없다.
 
   /* ---------------- 우측 관련 영상 레일 / 영상 모달 ---------------- */
   videoRailToggle.addEventListener('click', () => {
