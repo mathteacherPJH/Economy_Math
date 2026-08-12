@@ -8,11 +8,74 @@
   const footer = document.getElementById('stageFooter');
   const collapseBtn = document.getElementById('collapseBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const addBlankBtn = document.getElementById('addBlankBtn');
+  const zoomInput = document.getElementById('zoomInput');
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
 
   // 현재 선택된 위치: 단원 -> 소단원(목차 한 줄) -> 그 안의 PPT 슬라이드 페이지
   let currentUnitIndex = null;
   let currentTopicIndex = null;
   let currentPageIndex = 0;
+
+  // 확대/축소 비율 (모든 컨트롤이 이 값 하나로 서로 연동된다)
+  let zoomLevel = 100;
+
+  // 학습지 이미지 위에 직접 만든 빈칸(수동 입력칸)들을 슬라이드별로 기억해둔다.
+  // 브라우저를 새로고침하면 사라지는 "현재 수업 세션 동안만" 유지되는 메모리다.
+  let addBlankMode = false;
+  const manualBlanks = new Map(); // key: "uIdx-tIdx-pIdx" -> [{ left, top, text }]
+
+  // 학습지 이미지 위에 놓는 수동 입력칸(빈칸) 하나를 만든다.
+  // 클릭하면 바로 타이핑할 수 있고(contenteditable), 초록색 볼드로 보이며,
+  // 마우스를 올리면 우측 상단에 삭제(×) 버튼이 뜬다.
+  function createBlankEl(ann) {
+    const wrap = document.createElement('div');
+    wrap.className = 'answer-blank';
+    wrap.style.left = ann.left + '%';
+    wrap.style.top = ann.top + '%';
+
+    const text = document.createElement('span');
+    text.className = 'answer-blank-text';
+    text.contentEditable = 'true';
+    text.spellcheck = false;
+    text.textContent = ann.text || '';
+    text.addEventListener('input', () => { ann.text = text.textContent; });
+    wrap.appendChild(text);
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'answer-blank-delete';
+    del.contentEditable = 'false';
+    del.setAttribute('aria-label', '빈칸 삭제');
+    del.textContent = '×';
+    del.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = currentSlideKey();
+      const list = manualBlanks.get(key) || [];
+      const idx = list.indexOf(ann);
+      if (idx > -1) list.splice(idx, 1);
+      wrap.remove();
+    });
+    wrap.appendChild(del);
+
+    wrap.addEventListener('click', (e) => e.stopPropagation());
+
+    return wrap;
+  }
+
+  // 확대/축소 비율을 하나의 값으로 관리 — 버튼, 숫자 입력, Ctrl+스크롤이
+  // 모두 이 함수를 거쳐 서로 연동된다.
+  function setZoom(value) {
+    zoomLevel = Math.max(25, Math.min(300, Math.round(value)));
+    zoomInput.value = zoomLevel;
+    const card = stage.querySelector('.slide-card');
+    if (card) card.style.zoom = zoomLevel + '%';
+  }
+
+  function currentSlideKey() {
+    return `${currentUnitIndex}-${currentTopicIndex}-${currentPageIndex}`;
+  }
 
   /* ---------------- 사이드바(목차) 렌더링 ---------------- */
   function renderTOC() {
@@ -189,17 +252,28 @@
         img.alt = page.section || '학습지 페이지';
         wrap.appendChild(img);
 
-        (page.hotspots || []).forEach((h) => {
-          const spot = document.createElement('button');
-          spot.type = 'button';
-          spot.className = 'pdf-hotspot';
-          spot.style.left = (h.left / page.refWidth * 100) + '%';
-          spot.style.top = (h.top / page.refHeight * 100) + '%';
-          spot.style.width = (h.width / page.refWidth * 100) + '%';
-          spot.style.height = (h.height / page.refHeight * 100) + '%';
-          spot.dataset.answer = h.answer;
-          spot.setAttribute('aria-label', '빈칸 정답 보기');
-          wrap.appendChild(spot);
+        // 이 슬라이드에서 이전에 직접 만들어둔 빈칸(수동 입력칸)을 그대로 복원
+        const key = currentSlideKey();
+        (manualBlanks.get(key) || []).forEach((ann) => {
+          wrap.appendChild(createBlankEl(ann));
+        });
+
+        wrap.addEventListener('click', (e) => {
+          if (!addBlankMode) return;
+          if (e.target.closest('.answer-blank')) return; // 기존 칸 클릭은 새로 만들지 않음
+
+          const rect = wrap.getBoundingClientRect();
+          const leftPct = ((e.clientX - rect.left) / rect.width) * 100;
+          const topPct = ((e.clientY - rect.top) / rect.height) * 100;
+          const ann = { left: leftPct, top: topPct, text: '' };
+
+          const list = manualBlanks.get(key) || [];
+          list.push(ann);
+          manualBlanks.set(key, list);
+
+          const el = createBlankEl(ann);
+          wrap.appendChild(el);
+          el.querySelector('.answer-blank-text')?.focus();
         });
 
         inner.appendChild(wrap);
@@ -210,6 +284,7 @@
     stage.innerHTML = '';
     stage.appendChild(card);
 
+    setZoom(100);
     typesetMath(card);
     renderFooter(topic);
   }
@@ -282,23 +357,41 @@
   /* ---------------- 빈칸 클릭 시 정답 표시 ----------------
      data.js에서 <span class="blank-answer">정답</span> 형태로 적어두면
      평소에는 빈칸으로 보이다가, 클릭하면 정답이 초록색으로 나타난다.
-     이미지로 넣은 학습지 페이지(.pdf-hotspot)는 빈칸 위치에 투명 버튼을
-     겹쳐두고, 클릭하면 그 자리에 정답을 흰 배경 위에 초록색으로 채운다.
      슬라이드가 다시 그려져도 계속 동작하도록 stage에 위임(delegation)한다.
   ------------------------------------------------------------- */
   stage.addEventListener('click', (e) => {
     const blank = e.target.closest('.blank-answer');
-    if (blank) {
-      blank.classList.toggle('is-revealed');
-      return;
-    }
-
-    const spot = e.target.closest('.pdf-hotspot');
-    if (spot) {
-      const revealed = spot.classList.toggle('is-revealed');
-      spot.textContent = revealed ? spot.dataset.answer : '';
-    }
+    if (blank) blank.classList.toggle('is-revealed');
   });
+
+  /* ---------------- 빈칸 추가 모드 ----------------
+     버튼을 누르면 켜짐/꺼짐이 토글되고, 켜진 동안 학습지 이미지를
+     클릭할 때마다 그 위치에 직접 타이핑할 수 있는 빈칸이 생긴다.
+  ------------------------------------------------------------- */
+  addBlankBtn.addEventListener('click', () => {
+    addBlankMode = !addBlankMode;
+    addBlankBtn.classList.toggle('is-active', addBlankMode);
+    addBlankBtn.setAttribute('aria-pressed', String(addBlankMode));
+    stage.classList.toggle('is-add-blank-mode', addBlankMode);
+  });
+
+  /* ---------------- 확대/축소 ----------------
+     -버튼/+버튼(클릭당 5%), 숫자 직접 입력, Ctrl+스크롤 휠이 모두
+     setZoom() 하나로 연동된다.
+  ------------------------------------------------------------- */
+  zoomOutBtn.addEventListener('click', () => setZoom(zoomLevel - 5));
+  zoomInBtn.addEventListener('click', () => setZoom(zoomLevel + 5));
+  zoomInput.addEventListener('change', () => {
+    const val = parseInt(zoomInput.value, 10);
+    setZoom(Number.isNaN(val) ? 100 : val);
+  });
+
+  document.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    if (!stage.contains(e.target)) return;
+    e.preventDefault();
+    setZoom(zoomLevel + (e.deltaY < 0 ? 5 : -5));
+  }, { passive: false });
 
   /* ---------------- 사이드바 접기/펼치기 ---------------- */
   collapseBtn.addEventListener('click', () => {
@@ -322,7 +415,7 @@
   ------------------------------------------------------------- */
   document.addEventListener('keydown', (e) => {
     const tag = document.activeElement?.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA') return; // 게임 슬라이더 조작 방해 금지
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
 
     if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
       e.preventDefault();
