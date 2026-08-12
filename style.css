@@ -538,6 +538,12 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   border:1.5px dashed rgba(16,185,129,.55);
   border-radius:4px;
   background:rgba(255,255,255,.45);
+  /* display:table으로 만들어서 안의 .blank-box-text를 table-cell로
+     세로 중앙정렬한다. (display:flex는 크롬에서 contenteditable
+     커서/선택이 깨지는 문제가 있어서 피한다.) 이동/삭제/크기조절
+     손잡이는 전부 position:absolute라 이 table 레이아웃과 무관하다. */
+  display:table;
+  width:0; height:0; /* 인라인 style로 실제 %가 매번 덮어써진다 */
 }
 .blank-box.is-edit-mode{
   cursor:default;
@@ -550,11 +556,8 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .blank-box-text{
   width:100%;
   height:100%;
-  /* display:flex를 쓰면 크롬 등에서 contenteditable 커서/선택 영역이
-     깨져서 Ctrl+C·Ctrl+V가 잘 안 먹는 경우가 있어, 일반 블록 + 패딩으로
-     가운데 정렬을 흉내낸다 (완벽한 수직 중앙은 아니지만 복사/붙여넣기가
-     안정적으로 동작하는 쪽을 우선한다) */
-  display:block;
+  display:table-cell;
+  vertical-align:middle;
   padding:.3em .3em;
   box-sizing:border-box;
   font-family:var(--font-gothic);
