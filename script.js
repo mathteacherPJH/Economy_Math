@@ -22,6 +22,7 @@
   const blankToolbar = document.getElementById('blankToolbar');
   const blankAddBtn = document.getElementById('blankAddBtn');
   const blankClearBtn = document.getElementById('blankClearBtn');
+  const blankFontSizeInput = document.getElementById('blankFontSize');
   const videoRail = document.getElementById('videoRail');
   const videoRailToggle = document.getElementById('videoRailToggle');
   const videoRailList = document.getElementById('videoRailList');
@@ -54,6 +55,9 @@
   // 만들 수 있고, 기존 빈칸에 이동/크기조절 손잡이와 삭제 버튼이 보인다.
   // 꺼져 있으면(수업 중 보기 모드) 빈칸을 클릭해서 숨김/표시만 토글한다.
   let blankEditMode = false;
+  // 지금 글자 크기 조절 대상인 빈칸(마지막으로 포커스된 텍스트 칸)
+  let activeBlankBox = null;
+  let activeBlankBoxTextEl = null;
 
   function currentSlideKey() {
     return `${currentUnitIndex}-${currentTopicIndex}-${currentPageIndex}`;
@@ -511,8 +515,10 @@
     });
   }
 
-  // 빈칸 하나(DOM)를 만든다. box = { left, top, width, height(모두 %), text, hidden }
+  // 빈칸 하나(DOM)를 만든다. box = { left, top, width, height(모두 %), text, hidden, fontSize(px) }
   function createBlankBoxEl(layer, imgSrc, box) {
+    if (!box.fontSize) box.fontSize = 16;
+
     const el = document.createElement('div');
     el.className = 'blank-box' + (box.hidden ? ' is-hidden' : ' is-revealed');
     el.classList.toggle('is-edit-mode', blankEditMode);
@@ -532,11 +538,32 @@
     text.contentEditable = blankEditMode ? 'true' : 'false';
     text.spellcheck = false;
     text.textContent = box.text || '';
+    text.style.fontSize = box.fontSize + 'px';
     text.addEventListener('input', () => {
       box.text = text.textContent;
       persistLayerBlanks(layer, imgSrc);
     });
+    text.addEventListener('focus', () => {
+      activeBlankBox = box;
+      activeBlankBoxTextEl = text;
+      blankFontSizeInput.value = box.fontSize;
+    });
     el.appendChild(text);
+
+    const hideBtn = document.createElement('button');
+    hideBtn.type = 'button';
+    hideBtn.className = 'blank-box-hide';
+    hideBtn.contentEditable = 'false';
+    hideBtn.setAttribute('aria-label', '빈칸 가리기');
+    hideBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M2 8s2.5-4.5 6-4.5S14 8 14 8s-2.5 4.5-6 4.5S2 8 2 8z" stroke="currentColor" stroke-width="1.3"/><path d="M2 2l12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+    hideBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      box.hidden = true;
+      el.classList.add('is-hidden');
+      el.classList.remove('is-revealed');
+      persistLayerBlanks(layer, imgSrc);
+    });
+    el.appendChild(hideBtn);
 
     const del = document.createElement('button');
     del.type = 'button';
@@ -548,6 +575,7 @@
       e.stopPropagation();
       const idx = (layer._boxes || []).indexOf(box);
       if (idx > -1) layer._boxes.splice(idx, 1);
+      if (activeBlankBox === box) { activeBlankBox = null; activeBlankBoxTextEl = null; }
       el.remove();
       persistLayerBlanks(layer, imgSrc);
     });
@@ -752,7 +780,19 @@
     const imgSrc = layer.dataset.imgSrc;
     layer.querySelectorAll('.blank-box').forEach((el) => el.remove());
     layer._boxes = [];
+    activeBlankBox = null;
+    activeBlankBoxTextEl = null;
     saveBlanks(imgSrc, []);
+  });
+
+  blankFontSizeInput.addEventListener('input', () => {
+    if (!activeBlankBox || !activeBlankBoxTextEl) return;
+    const px = parseInt(blankFontSizeInput.value, 10);
+    if (Number.isNaN(px)) return;
+    activeBlankBox.fontSize = px;
+    activeBlankBoxTextEl.style.fontSize = px + 'px';
+    const layer = stage.querySelector('.blank-layer');
+    if (layer) persistLayerBlanks(layer, layer.dataset.imgSrc);
   });
 
   /* ---------------- 드로잉 도구 (펜/지우개/색깔/굵기/undo/redo/초기화) ---------------- */
@@ -811,11 +851,22 @@
   // 경우가 드물게 있었다. 매 이벤트마다 바로 반응하지 않고 누적값이
   // 일정 크기를 넘을 때만 그 누적값의 부호로 방향을 정하도록 해서
   // 이런 흔들림에 덜 민감하게 만든다.
+  //
+  // 또한 마우스가 이미지 영역이 아니라 툴바 등 다른 곳 위에 있을 때
+  // Ctrl+휠을 하면, 우리 코드가 아무것도 안 하고 그냥 지나쳐서 브라우저
+  // 자체의 "페이지 전체 확대"가 대신 걸려버리는 문제가 있었다 (이러면
+  // 툴바까지 함께 커져 보인다). 그래서 Ctrl+휠 자체는 화면 어디서
+  // 하든 항상 preventDefault로 브라우저 확대를 막고, 우리 확대 값을
+  // 실제로 바꾸는 건 이미지 영역(.pdf-page-wrap) 위에서 했을 때만
+  // 적용한다 — 툴바는 이 "확대되는 화면"에 포함되지 않는다.
   let wheelAccum = 0;
   document.addEventListener('wheel', (e) => {
     if (!e.ctrlKey) return;
-    if (!stage.contains(e.target)) return;
     e.preventDefault();
+
+    const wrap = stage.querySelector('.pdf-page-wrap');
+    if (!wrap || !wrap.contains(e.target)) return;
+
     wheelAccum += e.deltaY;
     const threshold = 35;
     if (Math.abs(wheelAccum) >= threshold) {
