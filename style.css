@@ -322,6 +322,50 @@ body{
 .slide-inner::-webkit-scrollbar{ width:8px; }
 .slide-inner::-webkit-scrollbar-thumb{ background:var(--paper-line); border-radius:4px; }
 
+/* 학습지 페이지를 이미지 그대로 넣는 슬라이드는 옆 여백을 최소화해서
+   가로 길이를 최대한 꽉 채운다 */
+.slide-inner--full{ padding:1.3rem 1.3rem 1rem; }
+
+/* 학습지 페이지 이미지 + 빈칸 클릭 핫스팟 */
+.pdf-page-wrap{
+  position:relative;
+  width:100%;
+  line-height:0;
+  margin-top:.3rem;
+}
+.pdf-page-img{
+  width:100%;
+  display:block;
+  border-radius:6px;
+  box-shadow:0 1px 0 var(--paper-line);
+}
+.pdf-hotspot{
+  position:absolute;
+  border:1.5px dashed rgba(110,91,250,.5);
+  background:rgba(110,91,250,.08);
+  border-radius:4px;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:var(--font-gothic);
+  font-weight:700;
+  color:var(--gain);
+  font-size:clamp(.6rem, 1.15vw, 1.05rem);
+  line-height:1.1;
+  overflow:hidden;
+  transition:background .15s, border-color .15s;
+}
+.pdf-hotspot:hover{ background:rgba(110,91,250,.16); }
+.pdf-hotspot.is-revealed{
+  background:#fff;
+  border-color:transparent;
+  box-shadow:0 0 0 1px #fff;
+}
+
 /* 표지/구분용 가운데 정렬 타이틀 슬라이드 */
 .slide-inner--center{
   display:flex;
