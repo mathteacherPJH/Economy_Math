@@ -99,5 +99,107 @@ const CURRICULUM = [
       '최적의 의사결정',
       '최적생산량'
     ].map((title) => ({ type: 'text', title, body: placeholder(title) }))
+  },
+
+  {
+    id: 'unit-5',
+    number: 'Ⅴ',
+    title: '경제수학 수행평가',
+    slides: [
+      {
+        type: 'game',
+        title: '세후 연봉, 연금 계산 프로그램',
+        render(container) {
+          container.innerHTML = `
+            <p class="game-desc">연봉과 저축 조건을 입력하면 간이 세후 연봉과,
+            매년 일정액을 저축했을 때의 은퇴 시점 연금 자산을 계산해줍니다.
+            (실제 세율표를 단순화한 학습용 계산이며, 정확한 세액과는 차이가
+            있을 수 있습니다.)</p>
+
+            <div class="calc-grid">
+              <label>연봉 (만원)
+                <input type="number" id="salaryInput" value="4000" min="0" step="100" />
+              </label>
+              <label>연 저축률 (%)
+                <input type="number" id="saveRateInput" value="15" min="0" max="100" step="1" />
+              </label>
+              <label>연 평균 수익률 (%)
+                <input type="number" id="returnRateInput" value="4" min="0" max="20" step="0.5" />
+              </label>
+              <label>저축 기간 (년)
+                <input type="number" id="yearsInput" value="30" min="1" max="60" step="1" />
+              </label>
+            </div>
+
+            <button type="button" id="calcBtn" class="calc-btn">계산하기</button>
+
+            <div class="game-readout" id="calcResult" style="display:none;">
+              <div><span>세후 연봉(추정)</span><strong id="netSalaryVal">-</strong></div>
+              <div><span>연간 저축액</span><strong id="yearlySaveVal">-</strong></div>
+              <div><span>은퇴 시점 연금 자산</span><strong id="futureValueVal">-</strong></div>
+            </div>
+            <p id="calcNote" class="game-result" style="display:none;"></p>
+          `;
+
+          // 아주 단순화한 누진세 구간 (교육용 예시일 뿐, 실제 소득세법과 다릅니다)
+          function estimateTax(grossManwon) {
+            const gross = grossManwon * 10000; // 만원 -> 원
+            const brackets = [
+              { upTo: 12000000, rate: 0.06 },
+              { upTo: 46000000, rate: 0.15 },
+              { upTo: 88000000, rate: 0.24 },
+              { upTo: 150000000, rate: 0.35 },
+              { upTo: Infinity, rate: 0.38 }
+            ];
+            let tax = 0;
+            let prevCap = 0;
+            for (const b of brackets) {
+              if (gross > prevCap) {
+                const taxableInBracket = Math.min(gross, b.upTo) - prevCap;
+                tax += taxableInBracket * b.rate;
+                prevCap = b.upTo;
+              } else {
+                break;
+              }
+            }
+            return { gross, tax, net: gross - tax };
+          }
+
+          function formatWon(v) {
+            return Math.round(v).toLocaleString('ko-KR') + '원';
+          }
+
+          const calcBtn = container.querySelector('#calcBtn');
+          calcBtn.addEventListener('click', () => {
+            const salary = parseFloat(container.querySelector('#salaryInput').value) || 0;
+            const saveRate = parseFloat(container.querySelector('#saveRateInput').value) || 0;
+            const returnRate = parseFloat(container.querySelector('#returnRateInput').value) || 0;
+            const years = parseInt(container.querySelector('#yearsInput').value, 10) || 0;
+
+            const { net } = estimateTax(salary);
+            const yearlySave = net * (saveRate / 100);
+
+            // 매년 초 yearlySave씩 납입, 연 복리 returnRate로 굴렸을 때의 미래가치
+            const r = returnRate / 100;
+            let futureValue;
+            if (r === 0) {
+              futureValue = yearlySave * years;
+            } else {
+              futureValue = yearlySave * (((Math.pow(1 + r, years) - 1) / r) * (1 + r));
+            }
+
+            container.querySelector('#netSalaryVal').textContent = formatWon(net);
+            container.querySelector('#yearlySaveVal').textContent = formatWon(yearlySave);
+            container.querySelector('#futureValueVal').textContent = formatWon(futureValue);
+            container.querySelector('#calcResult').style.display = 'flex';
+
+            const note = container.querySelector('#calcNote');
+            note.style.display = 'block';
+            note.classList.add('is-correct');
+            note.textContent = `${years}년간 매년 ${formatWon(yearlySave)}씩 연 ${returnRate}% 수익률로 저축하면, 은퇴 시점에 약 ${formatWon(futureValue)}을 모을 수 있습니다.`;
+          });
+        }
+      }
+    ]
   }
 ];
