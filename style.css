@@ -538,12 +538,6 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   border:1.5px dashed rgba(16,185,129,.55);
   border-radius:4px;
   background:rgba(255,255,255,.45);
-  /* display:table으로 만들어서 안의 .blank-box-text를 table-cell로
-     세로 중앙정렬한다. (display:flex는 크롬에서 contenteditable
-     커서/선택이 깨지는 문제가 있어서 피한다.) 이동/삭제/크기조절
-     손잡이는 전부 position:absolute라 이 table 레이아웃과 무관하다. */
-  display:table;
-  width:0; height:0; /* 인라인 style로 실제 %가 매번 덮어써진다 */
 }
 .blank-box.is-edit-mode{
   cursor:default;
@@ -553,19 +547,27 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .blank-box.is-hidden .blank-box-text{ visibility:hidden; }
 .blank-box.is-edit-mode .blank-box-text{ visibility:visible !important; }
 
-.blank-box-text{
+.blank-box-textwrap{
   width:100%;
   height:100%;
-  display:table-cell;
-  vertical-align:middle;
-  padding:.3em .3em;
   box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:.3em;
+  overflow:hidden;
+}
+.blank-box-text{
+  display:inline-block;
+  max-width:100%;
+  max-height:100%;
+  overflow:hidden;
+  overflow-wrap:break-word;
   font-family:var(--font-gothic);
   font-weight:700;
   color:var(--gain);
   font-size:clamp(.6rem, 1.1vw, 1.05rem);
   line-height:1.25;
-  overflow:hidden;
   outline:none;
   text-align:center;
   cursor:text;
