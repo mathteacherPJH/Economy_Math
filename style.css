@@ -176,14 +176,14 @@ body{
 .unit-num{
   font-family:var(--font-gothic);
   font-weight:600;
-  font-size:.78rem;
+  font-size:calc(.78rem + 2px);
   color:var(--accent-2);
-  width:22px; flex-shrink:0;
+  width:26px; flex-shrink:0;
 }
 .unit-title{
   font-family:var(--font-gothic);
   font-weight:500;
-  font-size:.87rem;
+  font-size:calc(.87rem + 2px);
   color:var(--text-on-dark);
   flex:1;
   overflow:hidden;
@@ -220,7 +220,7 @@ body{
   border:none;
   color:var(--text-on-dark-muted);
   font-family:var(--font-gothic);
-  font-size:.8rem;
+  font-size:calc(.8rem + 2px);
   padding:.4rem .55rem;
   border-radius:7px;
   cursor:pointer;
@@ -257,7 +257,7 @@ body{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:1rem 2.2rem 0;
+  padding:1rem 1.6rem 0;
   flex-shrink:0;
 }
 .stage-eyebrow{
@@ -286,13 +286,13 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:1.4rem 2.4rem 1.6rem;
+  padding:1.2rem 1.6rem 1.5rem;
   overflow:hidden;
 }
 
 .slide-card{
   width:100%;
-  max-width:980px;
+  max-width:1400px;
   height:100%;
   max-height:100%;
   background:var(--paper-card);
