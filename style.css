@@ -364,6 +364,21 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .draw-color::-webkit-color-swatch-wrapper{ padding:2px; }
 .draw-color::-webkit-color-swatch{ border:none; border-radius:4px; }
 
+.blank-fontsize{
+  width:2.4rem;
+  border:none;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  color:var(--text-dark);
+  background:transparent;
+  -moz-appearance:textfield;
+}
+.blank-fontsize::-webkit-inner-spin-button, .blank-fontsize::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+
 .draw-width{
   width:64px;
   accent-color:var(--accent-1);
@@ -581,6 +596,23 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   padding:0;
 }
 .blank-box.is-edit-mode .blank-box-delete{ display:flex; }
+
+.blank-box-hide{
+  position:absolute;
+  top:-10px;
+  right:12px;
+  width:16px; height:16px;
+  border:none;
+  border-radius:50%;
+  background:var(--accent-1);
+  color:#fff;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+}
+.blank-box.is-edit-mode .blank-box-hide{ display:flex; }
 
 .blank-box-resize{
   position:absolute;
@@ -910,8 +942,13 @@ ol.concept-list li{ padding-left:0; }
   align-items:center;
   justify-content:center;
   gap:1.1rem;
-  padding:1rem 0 1.4rem;
+  padding:.7rem 0;
   flex-shrink:0;
+  position:sticky;
+  bottom:0;
+  z-index:24;
+  background:var(--paper);
+  box-shadow:0 -8px 16px -8px rgba(20,20,40,.08);
 }
 .nav-btn{
   width:38px; height:38px;
@@ -994,7 +1031,7 @@ ol.concept-list li{ padding-left:0; }
   z-index:30;
   display:flex;
   align-items:center;
-  height:min(70vh, 520px);
+  height:auto;
 }
 .video-rail.is-hidden{ display:none; }
 
@@ -1023,7 +1060,7 @@ ol.concept-list li{ padding-left:0; }
 .video-rail-panel{
   width:0;
   overflow:hidden;
-  height:100%;
+  height:auto;
   background:var(--paper-card);
   border:1px solid var(--paper-line);
   border-radius:10px 0 0 10px;
@@ -1037,6 +1074,7 @@ ol.concept-list li{ padding-left:0; }
   font-size:.85rem;
   font-weight:700;
   color:var(--text-dark);
+  text-align:center;
   margin:1rem 1rem .6rem;
   white-space:nowrap;
 }
@@ -1056,7 +1094,7 @@ ol.concept-list li{ padding-left:0; }
   padding:.55rem .7rem;
   border-radius:8px;
   cursor:pointer;
-  text-align:left;
+  text-align:center;
   transition:border-color .15s, color .15s, background .15s;
 }
 .video-rail-item:hover{
