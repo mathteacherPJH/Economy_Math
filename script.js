@@ -120,6 +120,12 @@
 
     if (page.type === 'title') {
       inner.classList.add('slide-inner--center');
+      if (page.eyebrow) {
+        const eyebrowEl = document.createElement('p');
+        eyebrowEl.className = 'title-slide-eyebrow';
+        eyebrowEl.textContent = page.eyebrow;
+        inner.appendChild(eyebrowEl);
+      }
       const heading = document.createElement('h1');
       heading.className = 'title-slide-heading';
       heading.textContent = page.title;
