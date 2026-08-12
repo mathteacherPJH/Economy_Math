@@ -75,9 +75,29 @@ body{
   grid-template-columns: var(--sidebar-w-collapsed) 1fr;
 }
 
+/* ---------- 학습지 페이지 이미지 슬라이드: 카드에 갇히지 않고
+   페이지 전체 스크롤로 이어서 보기 (비율은 그대로, 세로로만 길어짐) ---------- */
+body.is-scroll-mode{ overflow-y:auto; overflow-x:hidden; }
+body.is-scroll-mode .app{ height:auto; min-height:100vh; }
+body.is-scroll-mode .main{ overflow:visible; }
+body.is-scroll-mode .stage{
+  overflow:visible;
+  align-items:flex-start;
+  padding-top:1rem;
+}
+body.is-scroll-mode .slide-card{
+  height:auto;
+  max-height:none;
+  overflow:visible;
+}
+body.is-scroll-mode .slide-inner{ overflow:visible; }
+
 /* ---------- 사이드바 ---------- */
 .sidebar{
-  position:relative;
+  position:sticky;
+  top:0;
+  align-self:start;
+  height:100vh;
   background:
     radial-gradient(560px 320px at 15% -10%, rgba(110,91,250,.20), transparent 60%),
     linear-gradient(180deg, var(--ink-900) 0%, #0B0B12 100%);
