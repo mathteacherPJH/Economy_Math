@@ -43,6 +43,13 @@
  *     -> render 함수 안에서 container(div)에 원하는 만큼 자유롭게
  *        DOM을 만들고 이벤트를 붙이면 됩니다.
  *
+ *  5) 학습지 페이지 이미지 슬라이드 (스캔/캡처한 페이지를 그대로 삽입)
+ *  { type: 'pdfpage', image: '이미지 경로', refWidth: 원본가로px, refHeight: 원본세로px }
+ *     -> 화면에서는 카드에 갇히지 않고 페이지 전체가 세로로 늘어나며
+ *        브라우저 스크롤로 이어서 봅니다. 빈칸은 화면 상단 "빈칸 추가"
+ *        버튼으로 그 자리에 직접 만들어서 타이핑하는 방식이라, data.js에
+ *        미리 좌표를 적어둘 필요가 없습니다.
+ *
  *  소단원 제목(topic.title)은 화면 좌상단에 작은 글씨(Line1)로 계속 떠
  *  있습니다. 그 아래(Line2)에는 슬라이드의 section 값(학습지의 소제목,
  *  예: '물가지표', '물가 지표의 활용')이 표시되고, section이 바뀌는
@@ -93,22 +100,7 @@ const CURRICULUM = [
             section: '물가지표 (학습지 1쪽)',
             image: 'images/eco-1-2-p1.jpg',
             refWidth: 1240,
-            refHeight: 1753,
-            hotspots: [
-              { left: 108, top: 376, width: 140, height: 28, answer: '물가지표' },
-              { left: 298, top: 376, width: 102, height: 28, answer: '고용지표' },
-              { left: 458, top: 376, width: 102, height: 28, answer: 'GDP' },
-              { left: 500, top: 588, width: 122, height: 29, answer: '소비자 물가지수 (CPI)' },
-              { left: 950, top: 588, width: 140, height: 29, answer: '생산자 물가지수 (PPI)' },
-              { left: 90, top: 898, width: 182, height: 27, answer: '비교 시점의 물가' },
-              { left: 90, top: 933, width: 182, height: 27, answer: '기준 시점의 물가' },
-              { left: 105, top: 1393, width: 125, height: 23, answer: '임금' },
-              { left: 555, top: 1393, width: 85, height: 23, answer: '임금 인상' },
-              { left: 865, top: 1393, width: 85, height: 23, answer: '임금 동결(인하)' },
-              { left: 110, top: 1435, width: 135, height: 23, answer: '실질소득' },
-              { left: 110, top: 1487, width: 135, height: 23, answer: '임금' },
-              { left: 110, top: 1528, width: 135, height: 24, answer: '물가' }
-            ]
+            refHeight: 1753
           },
 
           {
@@ -128,13 +120,7 @@ const CURRICULUM = [
             section: '고용지표 (학습지 2쪽)',
             image: 'images/eco-1-2-p2.jpg',
             refWidth: 1240,
-            refHeight: 1753,
-            hotspots: [
-              { left: 285, top: 190, width: 210, height: 35, answer: '15세 미만' },
-              { left: 285, top: 310, width: 210, height: 35, answer: '15세 이상' },
-              { left: 605, top: 215, width: 90, height: 35, answer: '경제' },
-              { left: 605, top: 365, width: 90, height: 35, answer: '비경제' }
-            ]
+            refHeight: 1753
           },
 
           {
@@ -154,8 +140,7 @@ const CURRICULUM = [
             section: '2차시 실전 문제 (학습지 3쪽)',
             image: 'images/eco-1-2-p3.jpg',
             refWidth: 1240,
-            refHeight: 1753,
-            hotspots: []
+            refHeight: 1753
           }
         ]
       },
