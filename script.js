@@ -160,7 +160,18 @@
     stage.innerHTML = '';
     stage.appendChild(card);
 
+    typesetMath(card);
     renderFooter(topic);
+  }
+
+  // 새로 그려진 슬라이드 안의 수식($...$, $$...$$)을 MathJax로 렌더링한다.
+  // MathJax 스크립트가 아직 로딩 중일 수 있으므로 startup.promise를 기다린다.
+  function typesetMath(el) {
+    if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+      window.MathJax.startup.promise.then(() => window.MathJax.typesetPromise([el]));
+    } else if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([el]);
+    }
   }
 
   function renderFooter(topic) {
@@ -217,6 +228,16 @@
       </div>
     `;
   }
+
+  /* ---------------- 빈칸 클릭 시 정답 표시 ----------------
+     data.js에서 <span class="blank-answer">정답</span> 형태로 적어두면
+     평소에는 빈칸으로 보이다가, 클릭하면 정답이 초록색으로 나타난다.
+     슬라이드가 다시 그려져도 계속 동작하도록 stage에 위임(delegation)한다.
+  ------------------------------------------------------------- */
+  stage.addEventListener('click', (e) => {
+    const blank = e.target.closest('.blank-answer');
+    if (blank) blank.classList.toggle('is-revealed');
+  });
 
   /* ---------------- 사이드바 접기/펼치기 ---------------- */
   collapseBtn.addEventListener('click', () => {
