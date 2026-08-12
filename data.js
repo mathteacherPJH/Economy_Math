@@ -89,68 +89,26 @@ const CURRICULUM = [
           { type: 'title', title: '경제지표 - 물가, 고용', eyebrow: '[02차시]' },
 
           {
-            type: 'text',
-            section: '경제지표의 뜻',
-            body: `
-              <ul class="concept-list">
-                <li>경제 활동의 분야별 상태 또는 성과를 수나 비율로 나타낸 것</li>
-                <li>
-                  <span class="blank-answer">물가지표</span>,
-                  <span class="blank-answer">고용지표</span>,
-                  <span class="blank-answer">GDP</span>
-                </li>
-              </ul>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '물가지표',
-            body: `
-              <table>
-                <tr>
-                  <th><span class="blank-answer">소비자 물가지수 (CPI)</span></th>
-                  <th><span class="blank-answer">생산자 물가지수 (PPI)</span></th>
-                </tr>
-                <tr>
-                  <td>소비자가 생활하기 위해 구매하는 상품과 서비스의 가격 변동을
-                  종합적으로 측정하는 지표</td>
-                  <td>국내 생산자가 국내 시장에 공급하는 상품과 서비스의 가격 변동을
-                  종합적으로 측정하는 지표</td>
-                </tr>
-              </table>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '물가지표',
-            body: `
-              <table>
-                <tr>
-                  <th>소비자 물가지수 (CPI)</th>
-                  <th>생산자 물가지수 (PPI)</th>
-                </tr>
-                <tr>
-                  <td>$$ \\frac{\\text{비교 시점의 물가}}{\\text{기준 시점의 물가}} \\times 100 $$</td>
-                  <td>$$ \\frac{\\text{비교 시점의 물가}}{\\text{기준 시점의 물가}} \\times 100 $$</td>
-                </tr>
-              </table>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '물가지표',
-            body: `
-              <p>※ <span class="blank-answer">비교 시점의 물가</span> : 올해의 소비자 물가</p>
-              <p>※ <span class="blank-answer">기준 시점의 물가</span> : 기준연도의 소비자
-              물가를 현재 우리나라 기준연도는 2020년이며,<br/>곧 2025년으로 바뀔 예정임.</p>
-              <div class="pdf-notes">
-                <p>시험문제 낼 때는 반드시 기준연도를 문제에 제시해 줄 것이며, 실제와
-                다를 수 있음.</p>
-              </div>
-            `
+            type: 'pdfpage',
+            section: '물가지표 (학습지 1쪽)',
+            image: 'images/eco-p1.jpg',
+            refWidth: 1240,
+            refHeight: 1753,
+            hotspots: [
+              { left: 108, top: 376, width: 140, height: 28, answer: '물가지표' },
+              { left: 298, top: 376, width: 102, height: 28, answer: '고용지표' },
+              { left: 458, top: 376, width: 102, height: 28, answer: 'GDP' },
+              { left: 500, top: 588, width: 122, height: 29, answer: '소비자 물가지수 (CPI)' },
+              { left: 950, top: 588, width: 140, height: 29, answer: '생산자 물가지수 (PPI)' },
+              { left: 90, top: 898, width: 182, height: 27, answer: '비교 시점의 물가' },
+              { left: 90, top: 933, width: 182, height: 27, answer: '기준 시점의 물가' },
+              { left: 105, top: 1393, width: 125, height: 23, answer: '임금' },
+              { left: 555, top: 1393, width: 85, height: 23, answer: '임금 인상' },
+              { left: 865, top: 1393, width: 85, height: 23, answer: '임금 동결(인하)' },
+              { left: 110, top: 1435, width: 135, height: 23, answer: '실질소득' },
+              { left: 110, top: 1487, width: 135, height: 23, answer: '임금' },
+              { left: 110, top: 1528, width: 135, height: 24, answer: '물가' }
+            ]
           },
 
           {
@@ -166,41 +124,23 @@ const CURRICULUM = [
           },
 
           {
-            type: 'text',
-            section: '개념 확인 문제',
-            body: `
-              <p>기준연도가 2024년 12월의 소비자 물가지수는 114.91이고, 2025년 12월의
-              소비자 물가지수는 117.57이다. 이때 전년 동월 대비 상승률을 계산기를
-              활용하여 소수 둘째 자리에서 반올림한 값을 계산하시오. 🧮</p>
-            `
+            type: 'pdfpage',
+            section: '고용지표 (학습지 2쪽)',
+            image: 'images/eco-p2.jpg',
+            refWidth: 1240,
+            refHeight: 1753,
+            hotspots: [
+              { left: 285, top: 190, width: 210, height: 35, answer: '15세 미만' },
+              { left: 285, top: 310, width: 210, height: 35, answer: '15세 이상' },
+              { left: 605, top: 215, width: 90, height: 35, answer: '경제' },
+              { left: 605, top: 365, width: 90, height: 35, answer: '비경제' }
+            ]
           },
 
           {
-            type: 'text',
-            section: '물가 지표의 활용',
-            body: `
-              <ul class="concept-list">
-                <li><span class="blank-answer">임금</span>의 결정 : 물가지수가 높으면
-                <span class="blank-answer">임금 인상</span>을 고려하고,<br/>
-                물가지수가 낮으면 <span class="blank-answer">임금 동결(인하)</span>을
-                고려한다.</li>
-                <li><span class="blank-answer">실질소득</span>의 계산 : CPI를 보면,
-                소비자의 실질적인 소득수준이<br/>얼마인지 대략 파악할 수 있다.</li>
-              </ul>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '물가 지표의 활용',
-            body: `
-              <ul class="concept-list">
-                <li><span class="blank-answer">임금</span>의 협상 : 실질적인
-                소득수준이 얼마인지를 판단하면서<br/>노사 간에 협상을 진행한다.</li>
-                <li><span class="blank-answer">물가</span>의 예측 : PPI의 변동은
-                CPI의 변동을 예측하는<br/>선행지표가 된다.</li>
-              </ul>
-            `
+            type: 'video',
+            section: '고용지표',
+            url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
           },
 
           {
@@ -210,238 +150,12 @@ const CURRICULUM = [
           },
 
           {
-            type: 'text',
-            section: '경제 활동 인구 용어 정리',
-            body: `
-              <svg viewBox="0 0 1000 320" class="org-chart-svg" xmlns="http://www.w3.org/2000/svg">
-                <g stroke="#1B2333" stroke-width="2" fill="none">
-                  <polyline points="170,160 215,160 215,67.5 260,67.5" />
-                  <polyline points="215,160 215,252.5 260,252.5" />
-                  <polyline points="480,252.5 520,252.5 520,177.5 560,177.5" />
-                  <polyline points="520,252.5 520,297.5 560,297.5" />
-                  <polyline points="760,177.5 760,175 800,175" />
-                  <polyline points="760,177.5 760,275 800,275" />
-                </g>
-                <foreignObject x="20" y="130" width="150" height="60">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">총인구</div>
-                </foreignObject>
-                <foreignObject x="260" y="40" width="220" height="55">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">
-                    <span class="blank-answer">15세 미만</span> 인구
-                  </div>
-                </foreignObject>
-                <foreignObject x="260" y="225" width="220" height="55">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">
-                    <span class="blank-answer">15세 이상</span> 인구
-                  </div>
-                </foreignObject>
-                <foreignObject x="560" y="150" width="200" height="55">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">
-                    <span class="blank-answer">경제</span> 활동 인구
-                  </div>
-                </foreignObject>
-                <foreignObject x="560" y="270" width="200" height="55">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">
-                    <span class="blank-answer">비경제</span> 활동 인구
-                  </div>
-                </foreignObject>
-                <foreignObject x="800" y="150" width="160" height="50">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">실업자</div>
-                </foreignObject>
-                <foreignObject x="800" y="250" width="160" height="50">
-                  <div xmlns="http://www.w3.org/1999/xhtml" class="org-box">취업자</div>
-                </foreignObject>
-                <text x="330" y="215" class="org-note">일할 생각이 있는지, 없는지</text>
-              </svg>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '경제 활동 지표의 계산',
-            body: `
-              <table>
-                <tr>
-                  <th>경제 활동 참가율</th>
-                  <th>실업률</th>
-                  <th>고용률</th>
-                </tr>
-                <tr>
-                  <td>15세 이상의 인구 중<br/>경제 활동 인구의 비율</td>
-                  <td>경제 활동 인구 중<br/>실업자의 비율</td>
-                  <td>15세 이상의 인구 중<br/>취업자의 비율</td>
-                </tr>
-              </table>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '경제 활동 지표의 계산',
-            body: `
-              <table>
-                <tr>
-                  <th>경제 활동 참가율</th>
-                  <th>실업률</th>
-                  <th>고용률</th>
-                </tr>
-                <tr>
-                  <td>$$ \\frac{\\text{경제 활동 인구}}{\\text{15세 이상 인구}} \\times 100 $$</td>
-                  <td>$$ \\frac{\\text{실업자 수}}{\\text{경제 활동 인구}} \\times 100 $$</td>
-                  <td>$$ \\frac{\\text{취업자 수}}{\\text{15세 이상 인구}} \\times 100 $$</td>
-                </tr>
-              </table>
-              <div class="pdf-notes">
-                <p>실업자만 분모가 다름에 유의한다.</p>
-              </div>
-            `
-          },
-
-          {
-            type: 'video',
-            section: '경제 활동 지표의 계산',
-            url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
-          },
-
-          {
-            type: 'text',
-            section: '개념 확인 문제 1',
-            body: `
-              <p>다음에 해당하는 사람이 경제 활동 인구에 포함되면 O, 그렇지 않으면 X
-              표시하시오.</p>
-              <ol class="concept-list">
-                <li>최근 한 달 동안 여러 기업에 이력서를 제출하였지만, 아직 합격하지
-                못하고 있는 사람</li>
-                <li>몇 달 전 직장을 그만둔 뒤, 어차피 나이 많고 취업 안 될 것 같아
-                구직 활동을 하지 않는 사람</li>
-                <li>하루에 2시간씩 동네 편의점에서 아르바이트를 하며 용돈을 벌고
-                있는 사람</li>
-                <li>직장에서 근무하지만, 어린 아이를 돌보기 위해 육아휴직을 쓰고
-                휴식을 취하고 있는 사람</li>
-              </ol>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '개념 확인 문제 2',
-            body: `
-              <p>표는 A 국가의 경제 활동 인구수이다. A 국가의 3월과 4월 경제 활동
-              참가율, 실업률, 고용률을 각각 구하시오. (단위: 명)</p>
-              <table>
-                <tr><th></th><th>3월</th><th>4월</th></tr>
-                <tr><td>15세 이상 인구수</td><td>120</td><td>120</td></tr>
-                <tr><td>경제 활동 인구수</td><td>100</td><td>90</td></tr>
-                <tr><td>실업자 수</td><td>35</td><td>30</td></tr>
-                <tr><td>취업자 수</td><td>65</td><td>60</td></tr>
-              </table>
-              <ul class="concept-list">
-                <li>3월 경제 활동 참가율 : </li>
-                <li>3월 실업률 : </li>
-                <li>3월 고용률 : </li>
-                <li>4월 경제 활동 참가율 : </li>
-                <li>4월 실업률 : </li>
-                <li>4월 고용률 : </li>
-              </ul>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '실전 문제 1',
-            label: '01',
-            body: `
-              <p>다음에 해당하는 용어로 가장 적절한 것은?</p>
-              <div class="quote-box">
-                <p>도시 가계가 소비하는 대표적인 상품과 서비스의 가격을 조사하여,
-                기준 시점의 가격을 100으로 하였을 때 비교 시점의 가격 수준이 얼마나
-                변화했는지를 나타낸 지수이다. 통계청이 매월 작성하여 발표하며, 각
-                품목이 소비 지출에서 차지하는 가중치를 반영하여 산출한다.</p>
-              </div>
-              <ul class="choice-list">
-                <li>① 생산자 물가지수 (PPI)</li>
-                <li>② 소비자 물가지수 (CPI)</li>
-                <li>③ 국내 총생산 (GDP)</li>
-                <li>④ 국민 총생산 (GNP)</li>
-                <li>⑤ 국민 총소득 (GNI)</li>
-              </ul>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '실전 문제 2',
-            label: '02',
-            body: `
-              <p>A 국가의 고용 통계 자료가 다음과 같을 때, A 국가의 실업자 수를
-              구하면?</p>
-              <table>
-                <tr><th>15세 이상 인구수</th><th>경제 활동 참가율</th><th>실업률</th></tr>
-                <tr><td>2,000만 명</td><td>70%</td><td>5%</td></tr>
-              </table>
-              <ul class="choice-list">
-                <li>① 50만 명</li>
-                <li>② 70만 명</li>
-                <li>③ 100만 명</li>
-                <li>④ 140만 명</li>
-                <li>⑤ 150만 명</li>
-              </ul>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '실전 문제 3',
-            label: '03',
-            body: `
-              <p>다음 표는 가상의 두 국가 A, B의 2026년 상반기 고용 통계 자료이다.
-              이에 대한 설명으로 옳은 것만을 모두 고른 것은? (단위: 만 명)</p>
-              <table>
-                <tr><th>구분</th><th>15세 이상 인구수</th><th>경제 활동 인구수</th><th>취업자 수</th></tr>
-                <tr><td>A</td><td>1,000</td><td>700</td><td>630</td></tr>
-                <tr><td>B</td><td>1,000</td><td>600</td><td>570</td></tr>
-              </table>
-              <div class="quote-box">
-                <p>ㄱ. A의 비경제 활동 인구수는 370만 명이다.<br/>
-                ㄴ. B의 실업자 수는 330만 명이다.<br/>
-                ㄷ. A가 B보다 실업률이 높다.</p>
-              </div>
-              <ul class="choice-list">
-                <li>① ㄱ</li>
-                <li>② ㄴ</li>
-                <li>③ ㄱ, ㄷ</li>
-                <li>④ ㄴ, ㄷ</li>
-                <li>⑤ ㄱ, ㄴ, ㄷ</li>
-              </ul>
-            `
-          },
-
-          {
-            type: 'text',
-            section: '실전 문제 4',
-            label: '04',
-            body: `
-              <p>다음은 A 국가의 고용 동향 보고서 중 일부를 발췌한 내용이다. 이
-              내용을 바탕으로 2026년 5월 A 국가의 고용률을 구하면?</p>
-              <div class="quote-box">
-                <p>A 국가의 2026년 5월 기준 15세 이상 인구수는 전년 동월 대비 50만
-                명 증가한 2,000만 명으로 집계되었다. 이번 달 고용 시장의 가장 큰
-                특징은 구직 활동을 일시적으로 중단했던 이들이 대거 노동 시장으로
-                진입하면서, 일할 능력과 의사를 갖춘 경제 활동 인구수가 취업자 수보다
-                100만 명 더 많아졌다는 점이다.</p>
-                <p>한편, 정부 관계자의 발표에 따르면 이번 달 A 국가의 실업률은
-                12.5%를 기록하였는데, 이는 신규 창업 열풍으로 인해 취업자 수가
-                지난달에 비해 많이 늘어났음에도 불구하고 구직자 수 자체가 더
-                가파르게 증가했기 때문으로 분석된다.</p>
-              </div>
-              <ul class="choice-list">
-                <li>① 25%</li>
-                <li>② 30%</li>
-                <li>③ 35%</li>
-                <li>④ 40%</li>
-                <li>⑤ 45%</li>
-              </ul>
-            `
+            type: 'pdfpage',
+            section: '2차시 실전 문제 (학습지 3쪽)',
+            image: 'images/eco-p3.jpg',
+            refWidth: 1240,
+            refHeight: 1753,
+            hotspots: []
           }
         ]
       },
