@@ -313,9 +313,11 @@ body{
 }
 
 .slide-inner{
-  padding:2.4rem 3rem 2rem;
+  padding:2.6rem 3.4rem 2.2rem;
   overflow-y:auto;
   flex:1;
+  display:flex;
+  flex-direction:column;
 }
 .slide-inner::-webkit-scrollbar{ width:8px; }
 .slide-inner::-webkit-scrollbar-thumb{ background:var(--paper-line); border-radius:4px; }
@@ -329,7 +331,7 @@ body{
 }
 .title-slide-heading{
   font-family:var(--font-title);
-  font-size:3.4rem;
+  font-size:4rem;
   line-height:1.3;
   color:var(--text-dark);
   margin:0;
@@ -337,33 +339,34 @@ body{
 
 .slide-title{
   font-family:var(--font-title);
-  font-size:2.6rem;
+  font-size:3rem;
   font-weight:700;
   color:var(--text-dark);
   line-height:1.3;
-  margin:0 0 1.4rem;
+  margin:0 0 1.6rem;
 }
 
 .slide-body{
-  font-size:1.32rem;
-  line-height:1.85;
+  font-size:1.65rem;
+  line-height:1.8;
   color:var(--text-dark);
-  max-width:78ch;
+  max-width:none;
+  width:100%;
 }
-.slide-body p{ margin:0 0 1.15rem; }
+.slide-body p{ margin:0 0 1.2rem; }
 .slide-body strong{ color:var(--gain); font-weight:600; }
 .slide-body em{ font-style:normal; color:var(--loss); font-weight:600; }
-.slide-body ul, .slide-body ol{ margin:0 0 1.15rem; padding-left:1.4rem; }
-.slide-body li{ margin-bottom:.5rem; }
+.slide-body ul, .slide-body ol{ margin:0 0 1.2rem; padding-left:1.5rem; }
+.slide-body li{ margin-bottom:.6rem; }
 .slide-body table{
   width:100%;
   border-collapse:collapse;
-  margin:1rem 0 1.4rem;
-  font-size:1.05rem;
+  margin:1.2rem 0 1.5rem;
+  font-size:1.4rem;
 }
 .slide-body th, .slide-body td{
   border:1px solid var(--paper-line);
-  padding:.65rem .85rem;
+  padding:.85rem 1rem;
   text-align:center;
   vertical-align:top;
 }
@@ -382,20 +385,20 @@ body{
 }
 .choice-list{
   list-style:none;
-  margin:0 0 1.15rem;
+  margin:0 0 1.2rem;
   padding:0;
   display:flex;
   flex-wrap:wrap;
-  gap:.5rem 1.6rem;
+  gap:.6rem 1.8rem;
   font-family:var(--font-mono);
-  font-size:1.15rem;
+  font-size:1.4rem;
 }
 .choice-list li{ margin:0; }
 .problem-box{
   background:#F7F7FA;
   border:1px solid var(--paper-line);
   border-radius:12px;
-  padding:1.1rem 1.3rem;
+  padding:1.3rem 1.5rem;
   margin:0 0 1.2rem;
 }
 .problem-box p:last-child{ margin-bottom:0; }
@@ -404,18 +407,55 @@ body{
   font-family:var(--font-mono);
   background:#F1EFFE;
   border-left:3px solid var(--accent-1);
-  padding:.9rem 1.2rem;
-  margin:1rem 0 1.3rem;
+  padding:1.1rem 1.4rem;
+  margin:1.2rem 0 1.4rem;
   border-radius:0 10px 10px 0;
-  font-size:1.15rem;
+  font-size:1.4rem;
   overflow-x:auto;
 }
+.math-box mjx-container{ font-size:1.15em !important; }
+
+/* 빈칸 클릭 → 정답 표시 */
+.blank-answer{
+  display:inline-block;
+  min-width:3.4em;
+  padding:0 .4em;
+  border-bottom:2px solid var(--accent-1);
+  border-radius:4px;
+  background:rgba(110,91,250,.08);
+  color:transparent;
+  cursor:pointer;
+  text-align:center;
+  user-select:none;
+  transition:background .15s, color .1s;
+}
+.blank-answer:hover{ background:rgba(110,91,250,.16); }
+.blank-answer.is-revealed{
+  color:var(--gain);
+  font-weight:600;
+  background:transparent;
+  border-bottom-color:transparent;
+  cursor:default;
+}
+
+/* PDF 원문의 빨간 ※ 안내 — 슬라이드 맨 아래에 한 줄씩 */
+.pdf-notes{
+  margin-top:auto;
+  padding-top:1.2rem;
+  border-top:1px dashed var(--paper-line);
+}
+.pdf-notes p{
+  color:var(--loss);
+  font-size:1.05rem;
+  line-height:1.6;
+  margin:0 0 .35rem;
+}
+.pdf-notes p:last-child{ margin-bottom:0; }
 
 /* 영상 슬라이드 */
 .video-wrap{
   position:relative;
   width:100%;
-  max-width:760px;
   aspect-ratio:16/9;
   background:var(--ink-900);
   border-radius:12px;
@@ -424,13 +464,13 @@ body{
 .video-wrap iframe{ width:100%; height:100%; border:0; }
 .video-caption{
   font-family:var(--font-mono);
-  font-size:.92rem;
+  font-size:1.05rem;
   color:var(--text-muted);
-  margin-top:.7rem;
+  margin-top:.9rem;
 }
 
 /* 게임/활동 슬라이드 */
-.game-desc{ margin-bottom:1.1rem; color:var(--text-muted); font-size:1.15rem; }
+.game-desc{ margin-bottom:1.2rem; color:var(--text-muted); font-size:1.3rem; }
 .game-area input[type="range"]{
   width:100%;
   accent-color:var(--accent-1);
@@ -442,13 +482,13 @@ body{
   font-family:var(--font-mono);
 }
 .game-readout div{ display:flex; flex-direction:column; gap:.2rem; }
-.game-readout span{ font-size:.82rem; color:var(--text-muted); letter-spacing:.05em; }
-.game-readout strong{ font-size:1.5rem; color:var(--text-dark); }
+.game-readout span{ font-size:.95rem; color:var(--text-muted); letter-spacing:.05em; }
+.game-readout strong{ font-size:1.7rem; color:var(--text-dark); }
 .game-result{
-  padding:.9rem 1.1rem;
+  padding:1rem 1.2rem;
   background:#F1EFFE;
   border-radius:10px;
-  font-size:1.08rem;
+  font-size:1.2rem;
   color:var(--loss);
   transition:background .2s, color .2s;
 }
