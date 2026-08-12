@@ -91,7 +91,7 @@ const CURRICULUM = [
           {
             type: 'pdfpage',
             section: '물가지표 (학습지 1쪽)',
-            image: 'images/eco-p1.jpg',
+            image: 'images/eco-1-2-p1.jpg',
             refWidth: 1240,
             refHeight: 1753,
             hotspots: [
@@ -126,7 +126,7 @@ const CURRICULUM = [
           {
             type: 'pdfpage',
             section: '고용지표 (학습지 2쪽)',
-            image: 'images/eco-p2.jpg',
+            image: 'images/eco-1-2-p2.jpg',
             refWidth: 1240,
             refHeight: 1753,
             hotspots: [
@@ -152,7 +152,7 @@ const CURRICULUM = [
           {
             type: 'pdfpage',
             section: '2차시 실전 문제 (학습지 3쪽)',
-            image: 'images/eco-p3.jpg',
+            image: 'images/eco-1-2-p3.jpg',
             refWidth: 1240,
             refHeight: 1753,
             hotspots: []
