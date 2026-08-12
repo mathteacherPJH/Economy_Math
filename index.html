@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>경제수학 — 2022 개정 교육과정</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ================= 사이드바 ================= -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-mark">경</div>
+      <div class="brand-text">
+        <div class="brand-title">경제수학</div>
+        <div class="brand-sub">2022 개정 교육과정</div>
+      </div>
+      <button class="collapse-btn" id="collapseBtn" aria-label="사이드바 접기/펼치기">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="index-line">
+      <svg viewBox="0 0 130 24" preserveAspectRatio="none"><path d=""/></svg>
+    </div>
+
+    <nav class="toc" id="toc" aria-label="단원 목차"></nav>
+
+    <div class="sidebar-footer">CURRICULUM.length = <span id="unitCount"></span> UNITS</div>
+  </aside>
+
+  <!-- ================= 메인 슬라이드 영역 ================= -->
+  <main class="main">
+    <div class="stage-header">
+      <div class="stage-eyebrow" id="stageEyebrow"></div>
+      <button class="fullscreen-btn" id="fullscreenBtn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 6V2H6M10 2H14V6M14 10V14H10M6 14H2V10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        발표 모드
+      </button>
+    </div>
+
+    <div class="stage" id="stage"></div>
+
+    <div class="stage-footer" id="stageFooter"></div>
+  </main>
+
+</div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+<script>
+  document.getElementById('unitCount').textContent = CURRICULUM.length;
+</script>
+</body>
+</html>
