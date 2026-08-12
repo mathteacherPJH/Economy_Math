@@ -176,6 +176,31 @@
         if (typeof page.render === 'function') {
           page.render(gameArea);
         }
+      } else if (page.type === 'pdfpage') {
+        inner.classList.add('slide-inner--full');
+        const wrap = document.createElement('div');
+        wrap.className = 'pdf-page-wrap';
+
+        const img = document.createElement('img');
+        img.className = 'pdf-page-img';
+        img.src = page.image;
+        img.alt = page.section || '학습지 페이지';
+        wrap.appendChild(img);
+
+        (page.hotspots || []).forEach((h) => {
+          const spot = document.createElement('button');
+          spot.type = 'button';
+          spot.className = 'pdf-hotspot';
+          spot.style.left = (h.left / page.refWidth * 100) + '%';
+          spot.style.top = (h.top / page.refHeight * 100) + '%';
+          spot.style.width = (h.width / page.refWidth * 100) + '%';
+          spot.style.height = (h.height / page.refHeight * 100) + '%';
+          spot.dataset.answer = h.answer;
+          spot.setAttribute('aria-label', '빈칸 정답 보기');
+          wrap.appendChild(spot);
+        });
+
+        inner.appendChild(wrap);
       }
     }
 
@@ -255,11 +280,22 @@
   /* ---------------- 빈칸 클릭 시 정답 표시 ----------------
      data.js에서 <span class="blank-answer">정답</span> 형태로 적어두면
      평소에는 빈칸으로 보이다가, 클릭하면 정답이 초록색으로 나타난다.
+     이미지로 넣은 학습지 페이지(.pdf-hotspot)는 빈칸 위치에 투명 버튼을
+     겹쳐두고, 클릭하면 그 자리에 정답을 흰 배경 위에 초록색으로 채운다.
      슬라이드가 다시 그려져도 계속 동작하도록 stage에 위임(delegation)한다.
   ------------------------------------------------------------- */
   stage.addEventListener('click', (e) => {
     const blank = e.target.closest('.blank-answer');
-    if (blank) blank.classList.toggle('is-revealed');
+    if (blank) {
+      blank.classList.toggle('is-revealed');
+      return;
+    }
+
+    const spot = e.target.closest('.pdf-hotspot');
+    if (spot) {
+      const revealed = spot.classList.toggle('is-revealed');
+      spot.textContent = revealed ? spot.dataset.answer : '';
+    }
   });
 
   /* ---------------- 사이드바 접기/펼치기 ---------------- */
