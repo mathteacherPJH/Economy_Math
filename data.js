@@ -104,12 +104,14 @@ const CURRICULUM = [
           {
             type: 'video',
             section: '물가지표',
+            label: '소비자 물가지수',
             url: 'https://www.youtube.com/embed/eyiJa2oX2_Q'
           },
 
           {
             type: 'video',
             section: '물가지표',
+            label: '생산자 물가지수',
             url: 'https://www.youtube.com/embed/f1UGOZTBGZs'
           },
 
@@ -124,12 +126,14 @@ const CURRICULUM = [
           {
             type: 'video',
             section: '고용지표',
+            label: '쉬었음 청년',
             url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
           },
 
           {
             type: 'video',
             section: '물가 지표의 활용',
+            label: '실업률',
             url: 'https://www.youtube.com/embed/8M8f_66msQg'
           },
 
