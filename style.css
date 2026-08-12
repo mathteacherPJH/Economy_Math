@@ -329,6 +329,12 @@ body{
   justify-content:center;
   text-align:center;
 }
+.title-slide-eyebrow{
+  font-family:var(--font-gothic);
+  font-size:1.7rem;
+  color:var(--text-muted);
+  margin:0 0 .6rem;
+}
 .title-slide-heading{
   font-family:var(--font-title);
   font-size:4rem;
@@ -393,6 +399,57 @@ body{
 .slide-body em{ font-style:normal; color:var(--loss); font-weight:600; }
 .slide-body ul, .slide-body ol{ margin:0 0 1.2rem; padding-left:1.5rem; }
 .slide-body li{ margin-bottom:.6rem; }
+
+/* 학습지 불릿을 여유 있게 띄워서 보여주는 리스트 (개념 문장, 문제 항목 등) */
+.concept-list{
+  list-style:none;
+  margin:0 0 1.2rem;
+  padding:0;
+}
+.concept-list li{
+  position:relative;
+  padding-left:1.5rem;
+  margin-bottom:1.6rem;
+}
+.concept-list li::before{
+  content:'•';
+  position:absolute;
+  left:0;
+  color:var(--text-dark);
+}
+ol.concept-list{ counter-reset:concept-counter; }
+ol.concept-list li::before{ content:none; }
+ol.concept-list li{ padding-left:0; }
+
+/* 경제 활동 인구 용어 정리 — 조직도(트리) 다이어그램 */
+.org-chart-svg{
+  width:100%;
+  max-width:900px;
+  height:auto;
+  margin-top:.5rem;
+}
+.org-box{
+  box-sizing:border-box;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border:1.5px solid var(--text-dark);
+  border-radius:22px;
+  background:#fff;
+  font-family:var(--font-gothic);
+  font-size:1.35rem;
+  color:var(--text-dark);
+  padding:0 .6rem;
+}
+.org-note{
+  font-family:var(--font-gothic);
+  font-style:italic;
+  font-size:.95rem;
+  fill:var(--loss);
+}
 .slide-body table{
   width:100%;
   border-collapse:collapse;
