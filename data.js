@@ -1,311 +1,1161 @@
-/**
- * ============================================================
- *  경제수학 수업 데이터 (data.js)
- * ============================================================
- *  구조는 3단계입니다.  단원(unit) > 소단원(topic, 사이드바 목차 한 줄)
- *  > 슬라이드(slide, 소단원 안에서 좌우 화살표로 넘기는 PPT 페이지).
- *
- *  새 단원을 추가하려면 CURRICULUM 배열에 객체를 하나 더 추가하고,
- *  그 안의 topics 배열에 소단원을 추가하면 사이드바 목차에 자동으로
- *  반영됩니다. 각 소단원의 slides 배열 안에는 원하는 만큼 PPT 페이지를
- *  넣을 수 있고, 화면 하단 좌우 화살표(또는 키보드/프리젠터)로 그
- *  페이지들 사이를 넘깁니다.
- *
- *  단원(unit) 구조
- *  {
- *    id: '고유값(영문/숫자)',
- *    number: 'Ⅰ',            // 사이드바에 표시될 단원 번호 (로마 숫자)
- *    title: '단원 제목',
- *    topics: [ ...소단원 배열... ]
- *  }
- *
- *  소단원(topic) 구조 — 사이드바 목차에 표시되는 한 줄
- *  {
- *    title: '소단원 제목',
- *    slides: [ ...이 소단원 안에서 넘기는 PPT 슬라이드 배열... ]
- *  }
- *
- *  슬라이드(slide) 종류는 4가지입니다.
- *
- *  1) 표지/구분용 가운데 정렬 타이틀 슬라이드 (본문 없이 큰 제목만)
- *  { type: 'title', title: '슬라이드 제목' }
- *
- *  2) 텍스트 슬라이드 (개념 설명 글)
- *  { type: 'text', title: '슬라이드 제목', body: `여기에 HTML로 긴 글 작성` }
- *
- *  3) 영상 슬라이드 (유튜브 등 임베드)
- *  { type: 'video', title: '슬라이드 제목',
- *    url: 'https://www.youtube.com/embed/영상ID',
- *    caption: '영상 아래 짧은 설명(선택)' }
- *
- *  4) 게임/활동 슬라이드 (직접 만든 HTML/JS 상호작용)
- *  { type: 'game', title: '슬라이드 제목', render: (container) => { ... } }
- *     -> render 함수 안에서 container(div)에 원하는 만큼 자유롭게
- *        DOM을 만들고 이벤트를 붙이면 됩니다.
- *
- *  5) 학습지 페이지 이미지 슬라이드 (스캔/캡처한 페이지를 그대로 삽입)
- *  { type: 'pdfpage', image: '이미지 경로', refWidth: 원본가로px, refHeight: 원본세로px }
- *     -> 화면에서는 카드에 갇히지 않고 페이지 전체가 세로로 늘어나며
- *        브라우저 스크롤로 이어서 봅니다. 빈칸은 화면 상단 "빈칸 추가"
- *        버튼으로 그 자리에 직접 만들어서 타이핑하는 방식이라, data.js에
- *        미리 좌표를 적어둘 필요가 없습니다.
- *
- *  소단원 제목(topic.title)은 화면 좌상단에 작은 글씨(Line1)로 계속 떠
- *  있습니다. 그 아래(Line2)에는 슬라이드의 section 값(학습지의 소제목,
- *  예: '물가지표', '물가 지표의 활용')이 표시되고, section이 바뀌는
- *  슬라이드부터 자동으로 갈아 끼워집니다. 학습지 문장을 그대로 옮길
- *  때는 슬라이드 하나에 문장(또는 빈칸 줄) 하나만 담아서, 학습지의
- *  빈칸 줄 순서와 슬라이드를 넘기는 순서가 똑같이 대응하도록 만듭니다.
- *  큰 표나 그림처럼 원래 학습지에서도 하나로 묶여 있는 덩어리는 예외
- *  적으로 슬라이드 하나에 통째로 담습니다.
- *
- *  text 슬라이드에 big: true를 추가하면 학습지 문장 한 줄을 큰 글씨로
- *  보여주는 스타일이 되고, 생략하면(표/문제 등) 기본 본문 크기로
- *  보여줍니다. label을 추가하면 그 슬라이드 고유의 작은 번호표
- *  (예: 'Q1]', '01')가 본문 위에 따로 표시됩니다.
- *
- *  지금은 각 소단원마다 슬라이드가 1장씩만 들어있는 자리표시자(placeholder)
- *  상태입니다. 한 소단원 안에 슬라이드를 여러 장 추가하고 싶다면 그
- *  topic의 slides 배열에 객체를 더 넣으면 됩니다.
- * ============================================================
- */
+/* =========================================================
+   경제수학 대시보드 — 디자인 토큰 v2
+   테마: "라이브 인덱스(Live Index)" — Linear / Vercel / Stripe 대시보드에서
+   보이는 딥 다크 사이드바 + 바이올렛→시안 그라디언트 액센트 언어를
+   경제 지표선(index line) 모티프에 결합.
+   ========================================================= */
+:root{
+  /* 다크 표면 (사이드바) — 차가운 검정, 미세한 블루 톤 */
+  --ink-900:#08080D;
+  --ink-800:#111119;
+  --ink-700:#1B1B26;
+  --ink-line: rgba(255,255,255,.08);
 
-function placeholder(title) {
-  return `<p>${title}에 대한 개념 설명을 이곳에 작성해 주세요.</p>`;
+  /* 라이트 표면 (본문 슬라이드) — 따뜻한 크림 대신 쿨 뉴트럴 */
+  --paper:#F6F6F9;
+  --paper-card:#FFFFFF;
+  --paper-line:#E7E7EF;
+
+  /* 액센트 — 바이올렛 → 시안 그라디언트 (최근 빅테크 대시보드 공통 언어) */
+  --accent-1:#6E5BFA;
+  --accent-2:#22D3EE;
+  --accent-grad: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  --accent-solid:#6E5BFA;
+  --accent-soft: rgba(110,91,250,.14);
+
+  --gain:#10B981;   /* 상승/정답 — 에메랄드 */
+  --loss:#F43F5E;   /* 하락/주의 — 로즈 */
+
+  --text-dark:#14141C;
+  --text-muted:#6B6B7A;
+  --text-on-dark:#F1F1F6;
+  --text-on-dark-muted:#8C8CA0;
+
+  --font-body:'IBM Plex Sans KR', 'Pretendard', sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+  --font-gothic:'IBM Plex Sans KR', 'Pretendard', sans-serif; /* 사이드바 전용 고딕 */
+  --font-title:'Tmon', 'IBM Plex Sans KR', sans-serif;        /* 본문 슬라이드 제목 전용 */
+
+  --sidebar-w: 296px;
+  --sidebar-w-collapsed: 64px;
 }
 
-// 소단원 제목 배열을 받아 "슬라이드 1장짜리 소단원" 배열로 바꿔주는 도우미
-function textTopics(titles) {
-  return titles.map((title) => ({
-    title,
-    slides: [{ type: 'text', title, body: placeholder(title) }]
-  }));
+/* 본문 제목용 — 티몬(TMON)이 상업적 이용까지 무료로 배포한 '티몬체(구 몬소리체)'.
+   눈누(noonnu.cc)에 공식 등록된 웹폰트 CDN으로 저작권 문제 없이 사용할 수 있습니다. */
+@font-face{
+  font-family:'Tmon';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/TmonMonsori.woff') format('woff');
+  font-weight:normal;
+  font-style:normal;
+  font-display:swap;
 }
 
-const CURRICULUM = [
-  {
-    id: 'unit-1',
-    number: 'Ⅰ',
-    title: '수와 경제',
-    topics: [
-      ...textTopics(['오리엔테이션']),
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--text-dark);
+  background:var(--ink-900);
+  overflow-y:hidden;
+  overflow-x:auto;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+}
 
-      {
-        title: '경제지표 - 물가, 고용',
-        slides: [
-          {
-            type: 'pdfpage',
-            section: '물가지표 (학습지 1쪽)',
-            image: 'images/eco-1-2-p1.jpg',
-            refWidth: 1240,
-            refHeight: 1753
-          },
+/* ---------- 앱 레이아웃 ---------- */
+.app{
+  display:grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  height:100vh;
+  transition: grid-template-columns .28s cubic-bezier(.4,0,.2,1);
+}
+.app.is-collapsed{
+  grid-template-columns: var(--sidebar-w-collapsed) 1fr;
+}
 
-          {
-            type: 'video',
-            section: '물가지표',
-            url: 'https://www.youtube.com/embed/eyiJa2oX2_Q'
-          },
+/* ---------- 학습지 페이지 이미지 슬라이드: 카드에 갇히지 않고
+   페이지 전체 스크롤로 이어서 보기 (비율은 그대로, 세로로만 길어짐) ---------- */
+body.is-scroll-mode{ overflow-y:auto; overflow-x:auto; }
+body.is-scroll-mode .app{ height:auto; min-height:100vh; }
+body.is-scroll-mode .main{ overflow:visible; }
+body.is-scroll-mode .stage{
+  overflow:visible;
+  align-items:flex-start;
+  padding:0;
+}
+body.is-scroll-mode .slide-card{
+  height:auto;
+  max-height:none;
+  max-width:none;
+  width:100%;
+  overflow:visible;
+  border-radius:0;
+  border-left:none;
+  border-right:none;
+  box-shadow:none;
+}
+body.is-scroll-mode .slide-card::before{ display:none; } /* 상단 그라디언트 선 제거 */
+body.is-scroll-mode .slide-inner{ overflow:visible; }
 
-          {
-            type: 'video',
-            section: '물가지표',
-            url: 'https://www.youtube.com/embed/f1UGOZTBGZs'
-          },
+/* ---------- 창이 좁아져도 레이아웃을 줄이지 않고, 대신 가로/세로
+   스크롤바가 생기게 한다 (네이버 초기화면과 같은 방식). 사이드바 폭은
+   그대로 유지된다. ---------- */
+.app{ min-width: calc(var(--sidebar-w) + 960px); }
+.app.is-collapsed{ min-width: calc(var(--sidebar-w-collapsed) + 960px); }
 
-          {
-            type: 'pdfpage',
-            section: '고용지표 (학습지 2쪽)',
-            image: 'images/eco-1-2-p2.jpg',
-            refWidth: 1240,
-            refHeight: 1753
-          },
+/* ---------- 사이드바 ---------- */
+.sidebar{
+  position:sticky;
+  top:0;
+  align-self:start;
+  height:100vh;
+  background:
+    radial-gradient(560px 320px at 15% -10%, rgba(110,91,250,.20), transparent 60%),
+    linear-gradient(180deg, var(--ink-900) 0%, #0B0B12 100%);
+  border-right:1px solid var(--ink-line);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.sidebar-header{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  padding:1.15rem 1.1rem .9rem;
+  border-bottom:1px solid var(--ink-line);
+  flex-shrink:0;
+}
+.brand-mark{
+  width:34px; height:34px; flex-shrink:0;
+  border-radius:9px;
+  background:var(--accent-grad);
+  box-shadow:0 4px 18px -4px rgba(110,91,250,.55);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family:var(--font-gothic); font-weight:700; font-size:.95rem;
+}
+.brand-text{ overflow:hidden; white-space:nowrap; }
+.brand-title{
+  font-family:var(--font-gothic);
+  color:var(--text-on-dark);
+  font-size:1.05rem;
+  line-height:1.2;
+  font-weight:700;
+}
+.brand-sub{
+  font-family:var(--font-gothic);
+  color:var(--text-on-dark-muted);
+  font-size:.66rem;
+  letter-spacing:.04em;
+}
+.app.is-collapsed .brand-text{ display:none; }
 
-          {
-            type: 'video',
-            section: '고용지표',
-            url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
-          },
+.collapse-btn{
+  margin-left:auto;
+  width:28px; height:28px;
+  border-radius:7px;
+  border:1px solid var(--ink-line);
+  background:transparent;
+  color:var(--text-on-dark-muted);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  transition:background .15s, color .15s, transform .28s, border-color .15s;
+}
+.collapse-btn:hover{ background:rgba(255,255,255,.06); color:var(--text-on-dark); border-color:rgba(110,91,250,.5); }
+.app.is-collapsed .collapse-btn{ transform:rotate(180deg); margin-left:0; }
+.app.is-collapsed .sidebar-header{ justify-content:center; }
 
-          {
-            type: 'video',
-            section: '물가 지표의 활용',
-            url: 'https://www.youtube.com/embed/8M8f_66msQg'
-          },
+.toc{
+  flex:1;
+  overflow-y:auto;
+  padding:.6rem .6rem 1.5rem;
+}
+.toc::-webkit-scrollbar{ width:6px; }
+.toc::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:3px; }
 
-          {
-            type: 'pdfpage',
-            section: '2차시 실전 문제 (학습지 3쪽)',
-            image: 'images/eco-1-2-p3.jpg',
-            refWidth: 1240,
-            refHeight: 1753
-          }
-        ]
-      },
+.unit{
+  margin-bottom:.25rem;
+  border-radius:10px;
+  overflow:hidden;
+  position:relative;
+}
+.unit-head{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  width:100%;
+  padding:.65rem .6rem;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  text-align:left;
+  border-radius:10px;
+  transition:background .15s;
+}
+.unit-head:hover{ background:var(--ink-700); }
+.unit.is-open > .unit-head{ background:var(--ink-800); }
+.unit.is-active > .unit-head{ background:var(--accent-soft); }
+.unit.is-active > .unit-head::before{
+  content:'';
+  position:absolute;
+  left:0; top:.4rem; bottom:.4rem;
+  width:3px;
+  border-radius:2px;
+  background:var(--accent-grad);
+}
 
-      ...textTopics([
-        '경제지표 - 주가, GDP',
-        '퍼센트와 퍼센트포인트',
-        '환율의 계산',
-        '환율의 변동',
-        '세금의 종류',
-        '소득세의 계산',
-        '단리와 복리의 원리합계',
-        '예금과 적금',
-        '현재가치와 연금',
-        '1단원 마무리 문제'
-      ])
-    ]
-  },
+.unit-num{
+  font-family:var(--font-gothic);
+  font-weight:600;
+  font-size:calc(.78rem + 2px);
+  color:var(--accent-2);
+  width:26px; flex-shrink:0;
+}
+.unit-title{
+  font-family:var(--font-gothic);
+  font-weight:500;
+  font-size:calc(.87rem + 2px);
+  color:var(--text-on-dark);
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.unit-chevron{
+  color:var(--text-on-dark-muted);
+  flex-shrink:0;
+  transition:transform .2s;
+  font-size:.65rem;
+}
+.unit.is-open .unit-chevron{ transform:rotate(90deg); }
 
-  {
-    id: 'unit-2',
-    number: 'Ⅱ',
-    title: '함수와 경제',
-    topics: textTopics([
-      '생산함수와 비용함수',
-      '수요함수와 공급함수',
-      '효용함수',
-      '균형가격의 결정',
-      '균형가격의 변화',
-      '부등식의 영역',
-      '부등식의 영역과 최대 최소의 문제',
-      '2단원 마무리 문제'
-    ])
-  },
+.app.is-collapsed .unit-title,
+.app.is-collapsed .unit-chevron{ display:none; }
+.app.is-collapsed .unit-head{ justify-content:center; padding:.65rem 0; }
 
-  {
-    id: 'unit-3',
-    number: 'Ⅲ',
-    title: '행렬과 경제',
-    topics: textTopics([
-      '행렬과 경제 현상',
-      '행렬의 연산과 경제 현상',
-      '역행렬과 역행렬의 계산 1',
-      '역행렬과 역행렬의 계산 2',
-      '역행렬과 연립일차방정식 1',
-      '역행렬과 연립일차방정식 2',
-      '3단원 마무리 문제'
-    ])
-  },
+.slide-list{
+  list-style:none;
+  margin:0; padding:.2rem .3rem .5rem 2.35rem;
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .25s ease;
+}
+.unit.is-open .slide-list{ max-height:640px; }
+.app.is-collapsed .slide-list{ display:none; }
 
-  {
-    id: 'unit-4',
-    number: 'Ⅳ',
-    title: '함수와 경제',
-    topics: textTopics([
-      '한계',
-      '탄력성',
-      '최적의 의사결정',
-      '최적생산량',
-      '4단원 마무리 문제'
-    ])
-  },
+.slide-list li{ margin:.1rem 0; }
+.slide-list button{
+  width:100%;
+  text-align:left;
+  background:transparent;
+  border:none;
+  color:var(--text-on-dark-muted);
+  font-family:var(--font-gothic);
+  font-size:calc(.8rem + 2px);
+  padding:.4rem .55rem;
+  border-radius:7px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  transition:background .15s, color .15s;
+}
+.slide-list button:hover{ background:rgba(255,255,255,.06); color:var(--text-on-dark); }
+.slide-list button.is-active{
+  background:var(--accent-soft);
+  color:#C9C2FF;
+}
+.slide-type-dot{
+  width:5px; height:5px; border-radius:50%;
+  background:currentColor;
+  opacity:.7;
+  flex-shrink:0;
+}
 
-  {
-    id: 'unit-5',
-    number: 'Ⅴ',
-    title: '경제수학 수행평가',
-    topics: [
-      {
-        title: '세후 연봉, 연금 계산 프로그램',
-        slides: [
-          {
-            type: 'game',
-            title: '세후 연봉, 연금 계산 프로그램',
-            render(container) {
-              container.innerHTML = `
-                <p class="game-desc">연봉과 저축 조건을 입력하면 간이 세후 연봉과,
-                매년 일정액을 저축했을 때의 은퇴 시점 연금 자산을 계산해줍니다.
-                (실제 세율표를 단순화한 학습용 계산이며, 정확한 세액과는 차이가
-                있을 수 있습니다.)</p>
+/* ---------- 메인(슬라이드) 영역 ---------- */
+.main{
+  position:relative;
+  background:
+    radial-gradient(640px 420px at 88% -8%, rgba(34,211,238,.10), transparent 62%),
+    radial-gradient(520px 360px at -6% 100%, rgba(110,91,250,.08), transparent 60%),
+    var(--paper);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
 
-                <div class="calc-grid">
-                  <label>연봉 (만원)
-                    <input type="number" id="salaryInput" value="4000" min="0" step="100" />
-                  </label>
-                  <label>연 저축률 (%)
-                    <input type="number" id="saveRateInput" value="15" min="0" max="100" step="1" />
-                  </label>
-                  <label>연 평균 수익률 (%)
-                    <input type="number" id="returnRateInput" value="4" min="0" max="20" step="0.5" />
-                  </label>
-                  <label>저축 기간 (년)
-                    <input type="number" id="yearsInput" value="30" min="1" max="60" step="1" />
-                  </label>
-                </div>
+.stage-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:1.1rem 1.6rem;
+  flex-shrink:0;
+  position:sticky;
+  top:0;
+  z-index:25;
+  background:var(--paper);
+}
+.stage-eyebrow{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  letter-spacing:.06em;
+  color:var(--text-muted);
+}
+.stage-eyebrow strong{ color:var(--accent-1); }
 
-                <button type="button" id="calcBtn" class="calc-btn">계산하기</button>
+.stage-tools{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  flex-shrink:0;
+}
 
-                <div class="game-readout" id="calcResult" style="display:none;">
-                  <div><span>세후 연봉(추정)</span><strong id="netSalaryVal">-</strong></div>
-                  <div><span>연간 저축액</span><strong id="yearlySaveVal">-</strong></div>
-                  <div><span>은퇴 시점 연금 자산</span><strong id="futureValueVal">-</strong></div>
-                </div>
-                <p id="calcNote" class="game-result" style="display:none;"></p>
-              `;
+.blank-toolbar,
+.draw-toolbar{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  height:34px;
+  box-sizing:border-box;
+  border:1px solid var(--paper-line);
+  border-radius:8px;
+  padding:0 .4rem;
+  background:var(--paper-card);
+}
+.blank-toolbar.is-hidden,
+.draw-toolbar.is-hidden{ display:none; }
 
-              // 아주 단순화한 누진세 구간 (교육용 예시일 뿐, 실제 소득세법과 다릅니다)
-              function estimateTax(grossManwon) {
-                const gross = grossManwon * 10000; // 만원 -> 원
-                const brackets = [
-                  { upTo: 12000000, rate: 0.06 },
-                  { upTo: 46000000, rate: 0.15 },
-                  { upTo: 88000000, rate: 0.24 },
-                  { upTo: 150000000, rate: 0.35 },
-                  { upTo: Infinity, rate: 0.38 }
-                ];
-                let tax = 0;
-                let prevCap = 0;
-                for (const b of brackets) {
-                  if (gross > prevCap) {
-                    const taxableInBracket = Math.min(gross, b.upTo) - prevCap;
-                    tax += taxableInBracket * b.rate;
-                    prevCap = b.upTo;
-                  } else {
-                    break;
-                  }
-                }
-                return { gross, tax, net: gross - tax };
-              }
+.draw-btn{
+  width:28px; height:28px;
+  border:none;
+  border-radius:6px;
+  background:transparent;
+  color:var(--text-muted);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, color .15s;
+}
+.draw-btn:hover{ background:var(--accent-soft); color:var(--accent-1); }
+.draw-btn.is-active{
+  background:var(--accent-grad);
+  color:#fff;
+}
+.draw-btn:disabled{ opacity:.35; cursor:default; }
+.draw-btn:disabled:hover{ background:transparent; color:var(--text-muted); }
 
-              function formatWon(v) {
-                return Math.round(v).toLocaleString('ko-KR') + '원';
-              }
+.draw-toolbar-divider{
+  width:1px;
+  height:18px;
+  background:var(--paper-line);
+  margin:0 .15rem;
+}
 
-              const calcBtn = container.querySelector('#calcBtn');
-              calcBtn.addEventListener('click', () => {
-                const salary = parseFloat(container.querySelector('#salaryInput').value) || 0;
-                const saveRate = parseFloat(container.querySelector('#saveRateInput').value) || 0;
-                const returnRate = parseFloat(container.querySelector('#returnRateInput').value) || 0;
-                const years = parseInt(container.querySelector('#yearsInput').value, 10) || 0;
+.draw-color{
+  width:22px; height:22px;
+  padding:0;
+  border:1px solid var(--paper-line);
+  border-radius:6px;
+  background:none;
+  cursor:pointer;
+}
+.draw-color::-webkit-color-swatch-wrapper{ padding:2px; }
+.draw-color::-webkit-color-swatch{ border:none; border-radius:4px; }
 
-                const { net } = estimateTax(salary);
-                const yearlySave = net * (saveRate / 100);
+.blank-fontsize{
+  width:2.4rem;
+  border:none;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  color:var(--text-dark);
+  background:transparent;
+  -moz-appearance:textfield;
+}
+.blank-fontsize::-webkit-inner-spin-button, .blank-fontsize::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
 
-                // 매년 초 yearlySave씩 납입, 연 복리 returnRate로 굴렸을 때의 미래가치
-                const r = returnRate / 100;
-                let futureValue;
-                if (r === 0) {
-                  futureValue = yearlySave * years;
-                } else {
-                  futureValue = yearlySave * (((Math.pow(1 + r, years) - 1) / r) * (1 + r));
-                }
+.draw-width{
+  width:64px;
+  accent-color:var(--accent-1);
+  cursor:pointer;
+}
 
-                container.querySelector('#netSalaryVal').textContent = formatWon(net);
-                container.querySelector('#yearlySaveVal').textContent = formatWon(yearlySave);
-                container.querySelector('#futureValueVal').textContent = formatWon(futureValue);
-                container.querySelector('#calcResult').style.display = 'flex';
+.zoom-group{
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+  height:34px;
+  box-sizing:border-box;
+  border:1px solid var(--paper-line);
+  border-radius:8px;
+  padding:0 .4rem;
+  background:var(--paper-card);
+}
+.zoom-btn{
+  width:22px; height:22px;
+  border:none;
+  background:transparent;
+  color:var(--text-muted);
+  font-size:.95rem;
+  line-height:1;
+  cursor:pointer;
+  border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, color .15s;
+}
+.zoom-btn:hover{ background:var(--accent-soft); color:var(--accent-1); }
+.zoom-input{
+  width:2.6rem;
+  border:none;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  color:var(--text-dark);
+  background:transparent;
+  -moz-appearance:textfield;
+}
+.zoom-input::-webkit-inner-spin-button, .zoom-input::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.zoom-unit{
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  color:var(--text-muted);
+}
 
-                const note = container.querySelector('#calcNote');
-                note.style.display = 'block';
-                note.classList.add('is-correct');
-                note.textContent = `${years}년간 매년 ${formatWon(yearlySave)}씩 연 ${returnRate}% 수익률로 저축하면, 은퇴 시점에 약 ${formatWon(futureValue)}을 모을 수 있습니다.`;
-              });
-            }
-          }
-        ]
-      }
-    ]
-  }
-];
+.fullscreen-btn{
+  height:34px;
+  box-sizing:border-box;
+  border:1px solid var(--paper-line);
+  background:var(--paper-card);
+  color:var(--text-muted);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  padding:0 .75rem;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex; align-items:center; gap:.4rem;
+  transition:border-color .15s, color .15s, box-shadow .15s;
+}
+.fullscreen-btn:hover{ border-color:var(--accent-1); color:var(--text-dark); box-shadow:0 0 0 3px var(--accent-soft); }
+
+.stage{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.2rem 1.6rem 1.5rem;
+  overflow:hidden;
+}
+
+.slide-card{
+  width:100%;
+  max-width:1400px;
+  height:100%;
+  max-height:100%;
+  background:var(--paper-card);
+  border:1px solid var(--paper-line);
+  border-radius:20px;
+  box-shadow:0 30px 70px -34px rgba(20,20,40,.28), 0 0 0 1px rgba(110,91,250,.04);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
+}
+.slide-card::before{
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background:var(--accent-grad);
+}
+
+.slide-inner{
+  padding:2.6rem 3.4rem 2.2rem;
+  overflow-y:auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.slide-inner::-webkit-scrollbar{ width:8px; }
+.slide-inner::-webkit-scrollbar-thumb{ background:var(--paper-line); border-radius:4px; }
+
+/* 학습지 페이지를 이미지 그대로 넣는 슬라이드는 옆 여백을 최소화해서
+   가로 길이를 최대한 꽉 채운다. 위쪽 여백은 상단 도구모음(stage-header)의
+   padding-top(1rem)과 똑같이 맞춰서, 도구모음 위쪽 여백과 도구모음~이미지
+   사이 간격이 동일해 보이도록 한다. */
+.slide-inner--full{ padding:0 .6rem 0; }
+
+/* 학습지 페이지 이미지 + 그 위에 겹쳐진 드로잉 캔버스 */
+.pdf-page-wrap{
+  position:relative;
+  width:100%;
+  line-height:0;
+  margin-top:0;
+}
+.pdf-page-img{
+  width:100%;
+  display:block;
+}
+.pdf-draw-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  touch-action:none;
+  cursor:default;
+}
+.pdf-draw-canvas.is-active{
+  cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke-linecap="round"><line x1="15" y1="1" x2="15" y2="29" stroke="white" stroke-width="4"/><line x1="1" y1="15" x2="29" y2="15" stroke="white" stroke-width="4"/><line x1="15" y1="1" x2="15" y2="29" stroke="%236E5BFA" stroke-width="1.6"/><line x1="1" y1="15" x2="29" y2="15" stroke="%236E5BFA" stroke-width="1.6"/><circle cx="15" cy="15" r="6" fill="none" stroke="white" stroke-width="3.5"/><circle cx="15" cy="15" r="6" fill="none" stroke="%236E5BFA" stroke-width="1.6"/></g></svg>') 15 15, crosshair;
+}
+
+/* 빈칸(수동 입력칸) 레이어 — 편집 모드가 아닐 때는 배경 클릭을 그냥
+   통과시켜서(pointer-events:none) 아래 캔버스 드로잉을 방해하지 않고,
+   개별 빈칸(.blank-box)은 항상 클릭할 수 있게 자기 자신만 auto로 켠다 */
+.blank-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.blank-layer.is-edit-mode{
+  pointer-events:auto;
+  cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke-linecap="round"><line x1="15" y1="1" x2="15" y2="29" stroke="white" stroke-width="4"/><line x1="1" y1="15" x2="29" y2="15" stroke="white" stroke-width="4"/><line x1="15" y1="1" x2="15" y2="29" stroke="%236E5BFA" stroke-width="1.6"/><line x1="1" y1="15" x2="29" y2="15" stroke="%236E5BFA" stroke-width="1.6"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="white" stroke-width="3.5"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="%236E5BFA" stroke-width="1.6"/></g></svg>') 15 15, crosshair;
+}
+
+.blank-box{
+  position:absolute;
+  box-sizing:border-box;
+  pointer-events:auto;
+  cursor:pointer;
+  min-width:14px;
+  min-height:14px;
+  border:1.5px dashed rgba(16,185,129,.55);
+  border-radius:4px;
+  background:rgba(255,255,255,.45);
+}
+.blank-box.is-edit-mode{
+  cursor:default;
+  border-color:var(--accent-1);
+  background:rgba(110,91,250,.08);
+}
+.blank-box.is-hidden .blank-box-text{ visibility:hidden; }
+.blank-box.is-edit-mode .blank-box-text{ visibility:visible !important; }
+
+.blank-box-text{
+  width:100%;
+  height:100%;
+  /* display:flex를 쓰면 크롬 등에서 contenteditable 커서/선택 영역이
+     깨져서 Ctrl+C·Ctrl+V가 잘 안 먹는 경우가 있어, 일반 블록 + 패딩으로
+     가운데 정렬을 흉내낸다 (완벽한 수직 중앙은 아니지만 복사/붙여넣기가
+     안정적으로 동작하는 쪽을 우선한다) */
+  display:block;
+  padding:.3em .3em;
+  box-sizing:border-box;
+  font-family:var(--font-gothic);
+  font-weight:700;
+  color:var(--gain);
+  font-size:clamp(.6rem, 1.1vw, 1.05rem);
+  line-height:1.25;
+  overflow:hidden;
+  outline:none;
+  text-align:center;
+  cursor:text;
+  user-select:text;
+  -webkit-user-select:text;
+}
+
+.blank-box-handle{
+  position:absolute;
+  top:-9px; left:-9px;
+  width:16px; height:16px;
+  border-radius:4px;
+  background:var(--accent-1);
+  color:#fff;
+  font-size:9px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:move;
+}
+.blank-box.is-edit-mode .blank-box-handle{ display:flex; }
+
+.blank-box-delete{
+  position:absolute;
+  top:-10px; right:-10px;
+  width:16px; height:16px;
+  border:none;
+  border-radius:50%;
+  background:var(--loss);
+  color:#fff;
+  font-size:.65rem;
+  line-height:1;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+}
+.blank-box.is-edit-mode .blank-box-delete{ display:flex; }
+
+.blank-box-hide{
+  position:absolute;
+  top:-10px;
+  right:12px;
+  width:16px; height:16px;
+  border:none;
+  border-radius:50%;
+  background:var(--accent-1);
+  color:#fff;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+}
+.blank-box.is-edit-mode .blank-box-hide{ display:flex; }
+
+.blank-box-resize{
+  position:absolute;
+  bottom:-6px; right:-6px;
+  width:12px; height:12px;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid var(--accent-1);
+  display:none;
+  cursor:nwse-resize;
+}
+.blank-box.is-edit-mode .blank-box-resize{ display:block; }
+
+/* 표지/구분용 가운데 정렬 타이틀 슬라이드 */
+.slide-inner--center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.title-slide-eyebrow{
+  font-family:var(--font-gothic);
+  font-size:1.7rem;
+  color:var(--text-muted);
+  margin:0 0 .6rem;
+}
+.title-slide-heading{
+  font-family:var(--font-title);
+  font-size:4rem;
+  line-height:1.3;
+  color:var(--text-dark);
+  margin:0;
+}
+
+/* 좌상단 고정 헤더 — Line1(소단원/학습지 이름) + Line2(학습지 소제목) */
+.slide-kicker-group{ margin-bottom:1.1rem; }
+.lesson-kicker{
+  font-family:var(--font-gothic);
+  font-size:1.15rem;
+  color:var(--text-muted);
+  margin:0 0 .15rem;
+}
+.section-kicker{
+  font-family:var(--font-gothic);
+  font-size:1.75rem;
+  font-weight:700;
+  color:var(--text-dark);
+  margin:0;
+}
+.item-label{
+  font-family:var(--font-gothic);
+  font-size:1.3rem;
+  color:var(--text-dark);
+  margin:0 0 1rem;
+}
+
+/* 학습지 문장 한 줄을 그대로 옮긴 큰 개념 문장 슬라이드 */
+.concept-sentence-wrap{ flex:1; display:flex; align-items:center; }
+.concept-sentence{
+  font-family:var(--font-gothic);
+  font-size:2.1rem;
+  line-height:1.75;
+  color:var(--text-dark);
+  margin:0;
+}
+
+/* 학습지에서 실제로 테두리 박스로 둘러싸여 있던 부분만 박스로 표시
+   (배경색은 칠하지 않고 흰 배경 그대로, 테두리만) */
+.quote-box{
+  border:1.5px solid #C7C7D6;
+  border-radius:4px;
+  padding:1.1rem 1.3rem;
+  margin:1rem 0 1.3rem;
+  background:#fff;
+}
+.quote-box p{ margin:0 0 .8rem; }
+.quote-box p:last-child{ margin-bottom:0; }
+
+.slide-body{
+  font-size:1.65rem;
+  line-height:1.8;
+  color:var(--text-dark);
+  max-width:none;
+  width:100%;
+}
+.slide-body p{ margin:0 0 1.2rem; }
+.slide-body strong{ color:var(--gain); font-weight:600; }
+.slide-body em{ font-style:normal; color:var(--loss); font-weight:600; }
+.slide-body ul, .slide-body ol{ margin:0 0 1.2rem; padding-left:1.5rem; }
+.slide-body li{ margin-bottom:.6rem; }
+
+/* 학습지 불릿을 여유 있게 띄워서 보여주는 리스트 (개념 문장, 문제 항목 등) */
+.concept-list{
+  list-style:none;
+  margin:0 0 1.2rem;
+  padding:0;
+}
+.concept-list li{
+  position:relative;
+  padding-left:1.5rem;
+  margin-bottom:1.6rem;
+}
+.concept-list li::before{
+  content:'•';
+  position:absolute;
+  left:0;
+  color:var(--text-dark);
+}
+ol.concept-list{ counter-reset:concept-counter; }
+ol.concept-list li::before{ content:none; }
+ol.concept-list li{ padding-left:0; }
+
+/* 경제 활동 인구 용어 정리 — 조직도(트리) 다이어그램 */
+.org-chart-svg{
+  width:100%;
+  max-width:900px;
+  height:auto;
+  margin-top:.5rem;
+}
+.org-box{
+  box-sizing:border-box;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border:1.5px solid var(--text-dark);
+  border-radius:22px;
+  background:#fff;
+  font-family:var(--font-gothic);
+  font-size:1.35rem;
+  color:var(--text-dark);
+  padding:0 .6rem;
+}
+.org-note{
+  font-family:var(--font-gothic);
+  font-style:italic;
+  font-size:.95rem;
+  fill:var(--loss);
+}
+.slide-body table{
+  width:100%;
+  border-collapse:collapse;
+  margin:1.2rem 0 1.5rem;
+  font-size:1.4rem;
+}
+.slide-body th, .slide-body td{
+  border:1px solid var(--paper-line);
+  padding:.85rem 1rem;
+  text-align:center;
+  vertical-align:top;
+}
+.slide-body th{
+  background:#F1EFFE;
+  font-weight:600;
+  font-family:var(--font-gothic);
+}
+.slide-body table caption{
+  caption-side:top;
+  text-align:left;
+  font-family:var(--font-mono);
+  font-size:.85rem;
+  color:var(--text-muted);
+  margin-bottom:.4rem;
+}
+.choice-list{
+  list-style:none;
+  margin:0 0 1.2rem;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.6rem 1.8rem;
+  font-family:var(--font-mono);
+  font-size:1.4rem;
+}
+.choice-list li{ margin:0; }
+.problem-box{
+  background:#F7F7FA;
+  border:1px solid var(--paper-line);
+  border-radius:12px;
+  padding:1.3rem 1.5rem;
+  margin:0 0 1.2rem;
+}
+.problem-box p:last-child{ margin-bottom:0; }
+
+.math-box{
+  font-family:var(--font-mono);
+  background:#F1EFFE;
+  border-left:3px solid var(--accent-1);
+  padding:1.1rem 1.4rem;
+  margin:1.2rem 0 1.4rem;
+  border-radius:0 10px 10px 0;
+  font-size:1.4rem;
+  overflow-x:auto;
+}
+.math-box mjx-container{ font-size:1.15em !important; }
+
+/* 빈칸 클릭 → 정답 표시 */
+.blank-answer{
+  display:inline-block;
+  min-width:3.4em;
+  padding:0 .4em;
+  border-bottom:2px solid var(--accent-1);
+  border-radius:4px;
+  background:rgba(110,91,250,.08);
+  color:transparent;
+  cursor:pointer;
+  text-align:center;
+  user-select:none;
+  transition:background .15s, color .1s;
+}
+.blank-answer:hover{ background:rgba(110,91,250,.16); }
+.blank-answer.is-revealed{
+  color:var(--gain);
+  font-weight:600;
+  background:transparent;
+  border-bottom-color:transparent;
+  cursor:default;
+}
+
+/* PDF 원문의 빨간 ※ 안내 — 슬라이드 맨 아래에 한 줄씩 */
+.pdf-notes{
+  margin-top:auto;
+  padding-top:1.2rem;
+  border-top:1px dashed var(--paper-line);
+}
+.pdf-notes p{
+  color:var(--loss);
+  font-size:1.05rem;
+  line-height:1.6;
+  margin:0 0 .35rem;
+}
+.pdf-notes p:last-child{ margin-bottom:0; }
+
+/* 영상 슬라이드 */
+.video-wrap{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  background:var(--ink-900);
+  border-radius:12px;
+  overflow:hidden;
+}
+.video-wrap iframe{ width:100%; height:100%; border:0; }
+.video-caption{
+  font-family:var(--font-mono);
+  font-size:1.05rem;
+  color:var(--text-muted);
+  margin-top:.9rem;
+}
+
+/* 게임/활동 슬라이드 */
+.game-desc{ margin-bottom:1.2rem; color:var(--text-muted); font-size:1.3rem; }
+.game-area input[type="range"]{
+  width:100%;
+  accent-color:var(--accent-1);
+}
+.game-readout{
+  display:flex;
+  gap:1.5rem;
+  margin:1.1rem 0;
+  font-family:var(--font-mono);
+}
+.game-readout div{ display:flex; flex-direction:column; gap:.2rem; }
+.game-readout span{ font-size:.95rem; color:var(--text-muted); letter-spacing:.05em; }
+.game-readout strong{ font-size:1.7rem; color:var(--text-dark); }
+.game-result{
+  padding:1rem 1.2rem;
+  background:#F1EFFE;
+  border-radius:10px;
+  font-size:1.2rem;
+  color:var(--loss);
+  transition:background .2s, color .2s;
+}
+.game-result.is-correct{
+  background:rgba(16,185,129,.12);
+  color:var(--gain);
+}
+
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:1rem;
+  margin-bottom:1.2rem;
+}
+.calc-grid label{
+  display:flex;
+  flex-direction:column;
+  gap:.35rem;
+  font-size:.82rem;
+  color:var(--text-muted);
+}
+.calc-grid input{
+  font-family:var(--font-mono);
+  font-size:.95rem;
+  padding:.5rem .6rem;
+  border:1px solid var(--paper-line);
+  border-radius:8px;
+  background:var(--paper-card);
+  color:var(--text-dark);
+}
+.calc-grid input:focus{
+  outline:none;
+  border-color:var(--accent-1);
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+.calc-btn{
+  font-family:var(--font-gothic);
+  font-weight:600;
+  font-size:.88rem;
+  color:#fff;
+  background:var(--accent-grad);
+  border:none;
+  padding:.65rem 1.3rem;
+  border-radius:9px;
+  cursor:pointer;
+  margin-bottom:1.2rem;
+  transition:filter .15s, transform .1s;
+}
+.calc-btn:hover{ filter:brightness(1.08); }
+.calc-btn:active{ transform:scale(.97); }
+
+/* ---------- 하단 네비게이션 ---------- */
+.stage-footer{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:1.1rem;
+  padding:.7rem 0;
+  flex-shrink:0;
+  position:sticky;
+  bottom:0;
+  z-index:24;
+  background:var(--paper);
+  box-shadow:0 -8px 16px -8px rgba(20,20,40,.08);
+}
+.nav-btn{
+  width:38px; height:38px;
+  border-radius:50%;
+  border:1px solid var(--paper-line);
+  background:var(--paper-card);
+  color:var(--text-dark);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color .15s, transform .1s, box-shadow .15s;
+}
+.nav-btn:hover:not(:disabled){ border-color:var(--accent-1); box-shadow:0 0 0 3px var(--accent-soft); }
+.nav-btn:active:not(:disabled){ transform:scale(.94); }
+.nav-btn:disabled{ opacity:.3; cursor:default; }
+
+.progress-track{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
+.progress-dot{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--paper-line);
+  transition:background .2s, width .2s;
+}
+.progress-dot.is-active{
+  background:var(--accent-grad);
+  width:16px;
+  border-radius:3px;
+}
+.progress-count{
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  color:var(--text-muted);
+  margin-left:.5rem;
+  min-width:52px;
+}
+
+/* ---------- 빈 상태 ---------- */
+.empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  text-align:center;
+  color:var(--text-muted);
+  gap:.6rem;
+  padding:2rem;
+}
+.empty-state .brand-mark{ width:52px; height:52px; font-size:1.4rem; margin-bottom:.6rem; }
+.empty-state h2{
+  font-family:var(--font-title);
+  font-size:1.4rem;
+  color:var(--text-dark);
+  margin:0;
+}
+.empty-state p{ margin:0; font-size:.92rem; max-width:34ch; }
+
+/* ---------- 슬라이드 전환 애니메이션 ---------- */
+.slide-inner{ animation:slide-in .32s cubic-bezier(.4,0,.2,1); }
+@keyframes slide-in{
+  from{ opacity:0; transform:translateX(14px); }
+  to{ opacity:1; transform:translateX(0); }
+}
+
+/* ---------- 반응형 ---------- */
+/* 참고: 예전에는 창이 좁아지면(모바일) 사이드바를 오버레이 서랍으로
+   바꾸고 글자 크기를 줄이는 반응형 미디어쿼리가 있었지만, 이제는 창이
+   좁아져도 레이아웃과 사이드바를 그대로 유지하고 대신 가로/세로
+   스크롤바가 생기도록 위에서 --sidebar-w 등 고정값과 .app min-width로
+   처리한다. */
+
+/* ---------- 우측 관련 영상 레일 (항상 접힌 채로 시작) ---------- */
+.video-rail{
+  position:fixed;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:30;
+  display:flex;
+  align-items:center;
+  height:auto;
+}
+.video-rail.is-hidden{ display:none; }
+
+.video-rail-toggle{
+  width:26px;
+  height:64px;
+  border:1px solid var(--paper-line);
+  border-right:none;
+  border-radius:8px 0 0 8px;
+  background:var(--paper-card);
+  color:var(--text-muted);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:-4px 0 14px -6px rgba(20,20,40,.22);
+}
+.video-rail-toggle:hover{ color:var(--accent-1); }
+.video-rail-toggle-arrow{
+  display:inline-block;
+  font-size:1rem;
+  transition:transform .2s;
+}
+.video-rail.is-open .video-rail-toggle-arrow{ transform:rotate(180deg); }
+
+.video-rail-panel{
+  width:0;
+  overflow:hidden;
+  height:auto;
+  background:var(--paper-card);
+  border:1px solid var(--paper-line);
+  border-radius:10px 0 0 10px;
+  box-shadow:-6px 0 20px -8px rgba(20,20,40,.22);
+  transition:width .22s ease;
+}
+.video-rail.is-open .video-rail-panel{ width:190px; }
+
+.video-rail-title{
+  font-family:var(--font-gothic);
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--text-dark);
+  text-align:center;
+  margin:1rem 1rem .6rem;
+  white-space:nowrap;
+}
+.video-rail-list{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  padding:0 .8rem 1rem;
+  white-space:nowrap;
+}
+.video-rail-item{
+  border:1px solid var(--paper-line);
+  background:#fff;
+  color:var(--text-dark);
+  font-family:var(--font-gothic);
+  font-size:.85rem;
+  padding:.55rem .7rem;
+  border-radius:8px;
+  cursor:pointer;
+  text-align:center;
+  transition:border-color .15s, color .15s, background .15s;
+}
+.video-rail-item:hover{
+  border-color:var(--accent-1);
+  color:var(--accent-1);
+  background:var(--accent-soft);
+}
+
+/* ---------- 영상 전체화면 플로팅 모달 ---------- */
+.video-modal{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.video-modal.is-open{ display:flex; }
+.video-modal-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(8,8,13,.82);
+}
+.video-modal-body{
+  position:relative;
+  width:min(92vw, 1400px);
+  height:min(88vh, 800px);
+}
+.video-modal-close{
+  position:absolute;
+  top:-46px;
+  right:0;
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:1.2rem;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.video-modal-close:hover{ background:rgba(255,255,255,.22); }
+.video-modal-frame{
+  width:100%;
+  height:100%;
+  border-radius:10px;
+  overflow:hidden;
+  background:#000;
+}
+.video-modal-frame iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
