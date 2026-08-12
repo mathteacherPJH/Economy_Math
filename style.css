@@ -309,23 +309,57 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   flex-shrink:0;
 }
 
-.tool-btn{
+.draw-toolbar{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
   border:1px solid var(--paper-line);
-  background:var(--paper-card);
-  color:var(--text-muted);
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  padding:.4rem .75rem;
   border-radius:8px;
-  cursor:pointer;
-  display:flex; align-items:center; gap:.4rem;
-  transition:border-color .15s, color .15s, box-shadow .15s, background .15s;
+  padding:.3rem .4rem;
+  background:var(--paper-card);
 }
-.tool-btn:hover{ border-color:var(--accent-1); color:var(--text-dark); }
-.tool-btn.is-active{
+.draw-toolbar.is-hidden{ display:none; }
+
+.draw-btn{
+  width:28px; height:28px;
+  border:none;
+  border-radius:6px;
+  background:transparent;
+  color:var(--text-muted);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, color .15s;
+}
+.draw-btn:hover{ background:var(--accent-soft); color:var(--accent-1); }
+.draw-btn.is-active{
   background:var(--accent-grad);
-  border-color:transparent;
   color:#fff;
+}
+.draw-btn:disabled{ opacity:.35; cursor:default; }
+.draw-btn:disabled:hover{ background:transparent; color:var(--text-muted); }
+
+.draw-toolbar-divider{
+  width:1px;
+  height:18px;
+  background:var(--paper-line);
+  margin:0 .15rem;
+}
+
+.draw-color{
+  width:22px; height:22px;
+  padding:0;
+  border:1px solid var(--paper-line);
+  border-radius:6px;
+  background:none;
+  cursor:pointer;
+}
+.draw-color::-webkit-color-swatch-wrapper{ padding:2px; }
+.draw-color::-webkit-color-swatch{ border:none; border-radius:4px; }
+
+.draw-width{
+  width:64px;
+  accent-color:var(--accent-1);
+  cursor:pointer;
 }
 
 .zoom-group{
@@ -426,64 +460,31 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .slide-inner::-webkit-scrollbar-thumb{ background:var(--paper-line); border-radius:4px; }
 
 /* 학습지 페이지를 이미지 그대로 넣는 슬라이드는 옆 여백을 최소화해서
-   가로 길이를 최대한 꽉 채운다 */
-.slide-inner--full{ padding:.6rem .6rem 0; }
+   가로 길이를 최대한 꽉 채운다. 위쪽 여백은 상단 도구모음(stage-header)의
+   padding-top(1rem)과 똑같이 맞춰서, 도구모음 위쪽 여백과 도구모음~이미지
+   사이 간격이 동일해 보이도록 한다. */
+.slide-inner--full{ padding:1rem .6rem 0; }
 
-/* 학습지 페이지 이미지 + 직접 만드는 빈칸(수동 입력칸) */
+/* 학습지 페이지 이미지 + 그 위에 겹쳐진 드로잉 캔버스 */
 .pdf-page-wrap{
   position:relative;
   width:100%;
   line-height:0;
-  margin-top:.3rem;
+  margin-top:0;
 }
 .pdf-page-img{
   width:100%;
   display:block;
 }
-.stage.is-add-blank-mode .pdf-page-wrap{ cursor:crosshair; }
-
-/* 이미지 위에 직접 클릭해서 만드는 빈칸 — 평소엔 옆에서 타이핑해 넣고,
-   초록색 볼드로 보인다 */
-.answer-blank{
+.pdf-draw-canvas{
   position:absolute;
-  transform:translate(-2px, -2px);
+  inset:0;
+  width:100%;
+  height:100%;
+  touch-action:none;
+  cursor:default;
 }
-.answer-blank-text{
-  display:inline-block;
-  min-width:2em;
-  max-width:16em;
-  padding:.1em .35em;
-  border:1.5px dashed rgba(16,185,129,.55);
-  border-radius:4px;
-  background:rgba(255,255,255,.92);
-  color:var(--gain);
-  font-family:var(--font-gothic);
-  font-weight:700;
-  font-size:clamp(.7rem, 1.3vw, 1.15rem);
-  line-height:1.3;
-  white-space:pre-wrap;
-  cursor:text;
-  outline:none;
-}
-.answer-blank-text:focus{ border-color:var(--gain); box-shadow:0 0 0 3px rgba(16,185,129,.18); }
-.answer-blank-delete{
-  position:absolute;
-  top:-10px; right:-10px;
-  width:18px; height:18px;
-  border:none;
-  border-radius:50%;
-  background:var(--loss);
-  color:#fff;
-  font-size:.7rem;
-  line-height:1;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  padding:0;
-}
-.answer-blank:hover .answer-blank-delete,
-.answer-blank-text:focus ~ .answer-blank-delete{ display:flex; }
+.pdf-draw-canvas.is-active{ cursor:crosshair; }
 
 /* 표지/구분용 가운데 정렬 타이틀 슬라이드 */
 .slide-inner--center{
@@ -875,3 +876,134 @@ ol.concept-list li{ padding-left:0; }
    좁아져도 레이아웃과 사이드바를 그대로 유지하고 대신 가로/세로
    스크롤바가 생기도록 위에서 --sidebar-w 등 고정값과 .app min-width로
    처리한다. */
+
+/* ---------- 우측 관련 영상 레일 (항상 접힌 채로 시작) ---------- */
+.video-rail{
+  position:fixed;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:30;
+  display:flex;
+  align-items:center;
+  height:min(70vh, 520px);
+}
+.video-rail.is-hidden{ display:none; }
+
+.video-rail-toggle{
+  width:26px;
+  height:64px;
+  border:1px solid var(--paper-line);
+  border-right:none;
+  border-radius:8px 0 0 8px;
+  background:var(--paper-card);
+  color:var(--text-muted);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:-4px 0 14px -6px rgba(20,20,40,.22);
+}
+.video-rail-toggle:hover{ color:var(--accent-1); }
+.video-rail-toggle-arrow{
+  display:inline-block;
+  font-size:1rem;
+  transition:transform .2s;
+}
+.video-rail.is-open .video-rail-toggle-arrow{ transform:rotate(180deg); }
+
+.video-rail-panel{
+  width:0;
+  overflow:hidden;
+  height:100%;
+  background:var(--paper-card);
+  border:1px solid var(--paper-line);
+  border-radius:10px 0 0 10px;
+  box-shadow:-6px 0 20px -8px rgba(20,20,40,.22);
+  transition:width .22s ease;
+}
+.video-rail.is-open .video-rail-panel{ width:190px; }
+
+.video-rail-title{
+  font-family:var(--font-gothic);
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--text-dark);
+  margin:1rem 1rem .6rem;
+  white-space:nowrap;
+}
+.video-rail-list{
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  padding:0 .8rem 1rem;
+  white-space:nowrap;
+}
+.video-rail-item{
+  border:1px solid var(--paper-line);
+  background:#fff;
+  color:var(--text-dark);
+  font-family:var(--font-gothic);
+  font-size:.85rem;
+  padding:.55rem .7rem;
+  border-radius:8px;
+  cursor:pointer;
+  text-align:left;
+  transition:border-color .15s, color .15s, background .15s;
+}
+.video-rail-item:hover{
+  border-color:var(--accent-1);
+  color:var(--accent-1);
+  background:var(--accent-soft);
+}
+
+/* ---------- 영상 전체화면 플로팅 모달 ---------- */
+.video-modal{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.video-modal.is-open{ display:flex; }
+.video-modal-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(8,8,13,.82);
+}
+.video-modal-body{
+  position:relative;
+  width:min(92vw, 1400px);
+  height:min(88vh, 800px);
+}
+.video-modal-close{
+  position:absolute;
+  top:-46px;
+  right:0;
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:1.2rem;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.video-modal-close:hover{ background:rgba(255,255,255,.22); }
+.video-modal-frame{
+  width:100%;
+  height:100%;
+  border-radius:10px;
+  overflow:hidden;
+  background:#000;
+}
+.video-modal-frame iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
