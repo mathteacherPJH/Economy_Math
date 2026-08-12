@@ -537,6 +537,14 @@
     handle.textContent = '⠿';
     el.appendChild(handle);
 
+    // 텍스트를 감싸는 비-편집 래퍼는 flex로 가로·세로 정중앙 정렬만
+    // 담당하고, 실제 contenteditable 요소(text) 자신은 display:flex나
+    // table 같은 특수 레이아웃을 쓰지 않는 평범한 블록으로 남겨둔다.
+    // (contenteditable 요소 자체에 flex/table을 걸면 크롬에서 커서·선택
+    // 영역이 깨져서 Ctrl+C/V가 잘 안 먹는 문제가 있었다.)
+    const textWrap = document.createElement('div');
+    textWrap.className = 'blank-box-textwrap';
+
     const text = document.createElement('div');
     text.className = 'blank-box-text';
     text.contentEditable = blankEditMode ? 'true' : 'false';
@@ -552,7 +560,15 @@
       activeBlankBoxTextEl = text;
       blankFontSizeInput.value = box.fontSize;
     });
-    el.appendChild(text);
+    textWrap.appendChild(text);
+    // 글자 주변의 빈 공간을 클릭해도 바로 타이핑할 수 있도록 포커스를 넘긴다
+    textWrap.addEventListener('mousedown', (e) => {
+      if (e.target === textWrap && blankEditMode) {
+        e.preventDefault();
+        text.focus();
+      }
+    });
+    el.appendChild(textWrap);
 
     const hideBtn = document.createElement('button');
     hideBtn.type = 'button';
@@ -843,7 +859,7 @@
   });
 
   /* ---------------- 확대/축소 ----------------
-     -버튼/+버튼(클릭당 5%), 숫자 직접 입력, 이미지 위에서 Ctrl+휠까지
+     -버튼/+버튼(클릭당 5%), 숫자 직접 입력, 이미지 위에서 Alt+휠까지
      모두 setZoom() 하나로 연동된다.
   ------------------------------------------------------------- */
   zoomOutBtn.addEventListener('click', () => setZoom(zoomLevel - 5));
@@ -853,15 +869,16 @@
     setZoom(Number.isNaN(val) ? 100 : val);
   });
 
-  // Ctrl+휠로 이미지 위에서 확대/축소한다. 브라우저 자체의 "페이지 전체
-  // 확대"가 같이 발동되지 않도록, ctrlKey가 눌린 휠 이벤트는 화면 어디서
-  // 발생하든 무조건 먼저 preventDefault로 막는다. 그 다음 실제로 우리
-  // 확대 값을 바꾸는 건 마우스가 학습지 이미지(.pdf-page-wrap) 위에 있을
-  // 때만 적용해서, 이미지에서 벗어난 곳(툴바 등)에서는 아무 것도 커지지
-  // 않는다.
+  // Alt+휠로 이미지 위에서 확대/축소한다. Ctrl+휠은 최신 크롬에서
+  // 브라우저 자체의 "페이지 전체 확대"가 우선돼서 우리 쪽에서
+  // preventDefault를 해도 막히지 않는 경우가 있었다(그래서 툴바까지
+  // 같이 커져 보였다). Alt+휠은 브라우저가 기본으로 쓰는 단축키가
+  // 아니라서 이런 충돌이 없다. 그래도 혹시 모를 다른 브라우저 동작에
+  // 대비해 이미지(.pdf-page-wrap) 위에 있을 때만 반응하고, preventDefault로
+  // 다른 기본 동작도 막아둔다.
   let wheelAccum = 0;
   document.addEventListener('wheel', (e) => {
-    if (!e.ctrlKey) return;
+    if (!e.altKey) return;
     e.preventDefault();
 
     const wrap = stage.querySelector('.pdf-page-wrap');
