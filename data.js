@@ -93,8 +93,6 @@ const CURRICULUM = [
       {
         title: '경제지표 - 물가, 고용',
         slides: [
-          { type: 'title', title: '경제지표 - 물가, 고용', eyebrow: '[02차시]' },
-
           {
             type: 'pdfpage',
             section: '물가지표 (학습지 1쪽)',
