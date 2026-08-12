@@ -8,7 +8,7 @@
  *  단원(unit) 구조
  *  {
  *    id: '고유값(영문/숫자)',
- *    number: '01',           // 사이드바에 표시될 단원 번호
+ *    number: 'Ⅰ',            // 사이드바에 표시될 단원 번호 (Ⅰ, Ⅱ, Ⅲ... 로마 숫자 사용)
  *    title: '단원 제목',
  *    slides: [ ...슬라이드 배열... ]
  *  }
@@ -33,8 +33,8 @@
 const CURRICULUM = [
   {
     id: 'unit-1',
-    number: '01',
-    title: '수요와 공급의 원리',
+    number: 'Ⅰ',
+    title: '수와 경제',
     slides: [
       {
         type: 'text',
@@ -151,8 +151,8 @@ const CURRICULUM = [
 
   {
     id: 'unit-2',
-    number: '02',
-    title: '탄력성과 의사결정',
+    number: 'Ⅱ',
+    title: '함수와 경제',
     slides: [
       {
         type: 'text',
@@ -176,8 +176,8 @@ const CURRICULUM = [
 
   {
     id: 'unit-3',
-    number: '03',
-    title: '수익과 비용',
+    number: 'Ⅲ',
+    title: '행렬과 경제',
     slides: [
       {
         type: 'text',
@@ -193,8 +193,8 @@ const CURRICULUM = [
 
   {
     id: 'unit-4',
-    number: '04',
-    title: '미래를 위한 준비',
+    number: 'Ⅳ',
+    title: '함수와 경제',
     slides: [
       {
         type: 'text',
