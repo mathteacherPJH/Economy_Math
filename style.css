@@ -57,7 +57,8 @@ body{
   font-family:var(--font-body);
   color:var(--text-dark);
   background:var(--ink-900);
-  overflow:hidden;
+  overflow-y:hidden;
+  overflow-x:auto;
   -webkit-font-smoothing:antialiased;
 }
 @media (prefers-reduced-motion: reduce){
@@ -77,20 +78,33 @@ body{
 
 /* ---------- 학습지 페이지 이미지 슬라이드: 카드에 갇히지 않고
    페이지 전체 스크롤로 이어서 보기 (비율은 그대로, 세로로만 길어짐) ---------- */
-body.is-scroll-mode{ overflow-y:auto; overflow-x:hidden; }
+body.is-scroll-mode{ overflow-y:auto; overflow-x:auto; }
 body.is-scroll-mode .app{ height:auto; min-height:100vh; }
 body.is-scroll-mode .main{ overflow:visible; }
 body.is-scroll-mode .stage{
   overflow:visible;
   align-items:flex-start;
-  padding-top:1rem;
+  padding:0;
 }
 body.is-scroll-mode .slide-card{
   height:auto;
   max-height:none;
+  max-width:none;
+  width:100%;
   overflow:visible;
+  border-radius:0;
+  border-left:none;
+  border-right:none;
+  box-shadow:none;
 }
+body.is-scroll-mode .slide-card::before{ display:none; } /* 상단 그라디언트 선 제거 */
 body.is-scroll-mode .slide-inner{ overflow:visible; }
+
+/* ---------- 창이 좁아져도 레이아웃을 줄이지 않고, 대신 가로/세로
+   스크롤바가 생기게 한다 (네이버 초기화면과 같은 방식). 사이드바 폭은
+   그대로 유지된다. ---------- */
+.app{ min-width: calc(var(--sidebar-w) + 960px); }
+.app.is-collapsed{ min-width: calc(var(--sidebar-w-collapsed) + 960px); }
 
 /* ---------- 사이드바 ---------- */
 .sidebar{
@@ -287,6 +301,75 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   color:var(--text-muted);
 }
 .stage-eyebrow strong{ color:var(--accent-1); }
+
+.stage-tools{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  flex-shrink:0;
+}
+
+.tool-btn{
+  border:1px solid var(--paper-line);
+  background:var(--paper-card);
+  color:var(--text-muted);
+  font-family:var(--font-mono);
+  font-size:.72rem;
+  padding:.4rem .75rem;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex; align-items:center; gap:.4rem;
+  transition:border-color .15s, color .15s, box-shadow .15s, background .15s;
+}
+.tool-btn:hover{ border-color:var(--accent-1); color:var(--text-dark); }
+.tool-btn.is-active{
+  background:var(--accent-grad);
+  border-color:transparent;
+  color:#fff;
+}
+
+.zoom-group{
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+  border:1px solid var(--paper-line);
+  border-radius:8px;
+  padding:.25rem .4rem;
+  background:var(--paper-card);
+}
+.zoom-btn{
+  width:22px; height:22px;
+  border:none;
+  background:transparent;
+  color:var(--text-muted);
+  font-size:.95rem;
+  line-height:1;
+  cursor:pointer;
+  border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s, color .15s;
+}
+.zoom-btn:hover{ background:var(--accent-soft); color:var(--accent-1); }
+.zoom-input{
+  width:2.6rem;
+  border:none;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  color:var(--text-dark);
+  background:transparent;
+  -moz-appearance:textfield;
+}
+.zoom-input::-webkit-inner-spin-button, .zoom-input::-webkit-outer-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.zoom-unit{
+  font-family:var(--font-mono);
+  font-size:.7rem;
+  color:var(--text-muted);
+}
+
 .fullscreen-btn{
   border:1px solid var(--paper-line);
   background:var(--paper-card);
@@ -344,9 +427,9 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 
 /* 학습지 페이지를 이미지 그대로 넣는 슬라이드는 옆 여백을 최소화해서
    가로 길이를 최대한 꽉 채운다 */
-.slide-inner--full{ padding:1.3rem 1.3rem 1rem; }
+.slide-inner--full{ padding:.6rem .6rem 0; }
 
-/* 학습지 페이지 이미지 + 빈칸 클릭 핫스팟 */
+/* 학습지 페이지 이미지 + 직접 만드는 빈칸(수동 입력칸) */
 .pdf-page-wrap{
   position:relative;
   width:100%;
@@ -356,35 +439,51 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .pdf-page-img{
   width:100%;
   display:block;
-  border-radius:6px;
-  box-shadow:0 1px 0 var(--paper-line);
 }
-.pdf-hotspot{
+.stage.is-add-blank-mode .pdf-page-wrap{ cursor:crosshair; }
+
+/* 이미지 위에 직접 클릭해서 만드는 빈칸 — 평소엔 옆에서 타이핑해 넣고,
+   초록색 볼드로 보인다 */
+.answer-blank{
   position:absolute;
-  border:1.5px dashed rgba(110,91,250,.5);
-  background:rgba(110,91,250,.08);
+  transform:translate(-2px, -2px);
+}
+.answer-blank-text{
+  display:inline-block;
+  min-width:2em;
+  max-width:16em;
+  padding:.1em .35em;
+  border:1.5px dashed rgba(16,185,129,.55);
   border-radius:4px;
-  padding:0;
-  margin:0;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
+  background:rgba(255,255,255,.92);
+  color:var(--gain);
   font-family:var(--font-gothic);
   font-weight:700;
-  color:var(--gain);
-  font-size:clamp(.6rem, 1.15vw, 1.05rem);
-  line-height:1.1;
-  overflow:hidden;
-  transition:background .15s, border-color .15s;
+  font-size:clamp(.7rem, 1.3vw, 1.15rem);
+  line-height:1.3;
+  white-space:pre-wrap;
+  cursor:text;
+  outline:none;
 }
-.pdf-hotspot:hover{ background:rgba(110,91,250,.16); }
-.pdf-hotspot.is-revealed{
-  background:#fff;
-  border-color:transparent;
-  box-shadow:0 0 0 1px #fff;
+.answer-blank-text:focus{ border-color:var(--gain); box-shadow:0 0 0 3px rgba(16,185,129,.18); }
+.answer-blank-delete{
+  position:absolute;
+  top:-10px; right:-10px;
+  width:18px; height:18px;
+  border:none;
+  border-radius:50%;
+  background:var(--loss);
+  color:#fff;
+  font-size:.7rem;
+  line-height:1;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
 }
+.answer-blank:hover .answer-blank-delete,
+.answer-blank-text:focus ~ .answer-blank-delete{ display:flex; }
 
 /* 표지/구분용 가운데 정렬 타이틀 슬라이드 */
 .slide-inner--center{
@@ -771,13 +870,8 @@ ol.concept-list li{ padding-left:0; }
 }
 
 /* ---------- 반응형 ---------- */
-@media (max-width: 860px){
-  :root{ --sidebar-w: 84vw; --sidebar-w-collapsed: 0px; }
-  .app{ grid-template-columns: 0 1fr; }
-  .app:not(.is-collapsed){ grid-template-columns: var(--sidebar-w) 1fr; }
-  .sidebar{ position:fixed; inset:0 auto 0 0; z-index:20; width:var(--sidebar-w); box-shadow:20px 0 40px rgba(0,0,0,.35); }
-  .app.is-collapsed .sidebar{ width:0; box-shadow:none; }
-  .slide-inner{ padding:1.6rem 1.4rem 1.4rem; }
-  .section-kicker{ font-size:1.3rem; }
-  .concept-sentence{ font-size:1.5rem; }
-}
+/* 참고: 예전에는 창이 좁아지면(모바일) 사이드바를 오버레이 서랍으로
+   바꾸고 글자 크기를 줄이는 반응형 미디어쿼리가 있었지만, 이제는 창이
+   좁아져도 레이아웃과 사이드바를 그대로 유지하고 대신 가로/세로
+   스크롤바가 생기도록 위에서 --sidebar-w 등 고정값과 .app min-width로
+   처리한다. */
