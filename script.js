@@ -112,19 +112,14 @@
     const inner = document.createElement('div');
     inner.className = 'slide-inner';
 
-    const kicker = document.createElement('div');
-    kicker.className = 'slide-kicker';
-    kicker.textContent = typeLabel(slide.type);
-
     const title = document.createElement('h2');
     title.className = 'slide-title';
     title.textContent = slide.title;
 
     const titleIndex = document.createElement('div');
     titleIndex.className = 'title-index';
-    titleIndex.innerHTML = `<svg viewBox="0 0 130 24" preserveAspectRatio="none"><path d="${randomIndexPath()}"/></svg>`;
+    titleIndex.innerHTML = `<svg viewBox="0 0 130 24" preserveAspectRatio="none"><defs><linearGradient id="titleIndexGradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6E5BFA"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs><path d="${randomIndexPath()}"/></svg>`;
 
-    inner.appendChild(kicker);
     inner.appendChild(title);
     inner.appendChild(titleIndex);
 
@@ -158,10 +153,6 @@
     stage.appendChild(card);
 
     renderFooter(unit);
-  }
-
-  function typeLabel(type) {
-    return { text: '개념 설명', video: '영상', game: '활동' }[type] || '';
   }
 
   function randomIndexPath() {
