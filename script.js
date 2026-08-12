@@ -104,6 +104,7 @@
       stage.innerHTML = emptyStateHTML();
       stageEyebrow.textContent = '';
       footer.innerHTML = '';
+      document.body.classList.remove('is-scroll-mode');
       return;
     }
 
@@ -111,7 +112,11 @@
     const topic = unit.topics[currentTopicIndex];
     const page = topic.slides[currentPageIndex];
 
-    stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title}`;
+    stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title} : ${topic.title}`;
+
+    // 학습지 페이지 이미지를 그대로 넣은 슬라이드는 카드 안에 갇히지 않고
+    // 페이지 전체가 세로로 늘어나며, 브라우저 스크롤로 이어서 본다.
+    document.body.classList.toggle('is-scroll-mode', page.type === 'pdfpage');
 
     const card = document.createElement('div');
     card.className = 'slide-card';
@@ -131,20 +136,17 @@
       heading.textContent = page.title;
       inner.appendChild(heading);
     } else {
-      // 좌상단 고정 헤더: Line1(소단원/학습지 제목) + Line2(학습지 소제목, section)
-      const kickerGroup = document.createElement('div');
-      kickerGroup.className = 'slide-kicker-group';
-      const lessonEl = document.createElement('p');
-      lessonEl.className = 'lesson-kicker';
-      lessonEl.textContent = topic.title;
-      kickerGroup.appendChild(lessonEl);
-      if (page.section) {
+      // 좌상단 고정 헤더 — 학습지 페이지 이미지 슬라이드는 위 stageEyebrow가
+      // 이미 단원·소단원 이름을 보여주므로 따로 표시하지 않는다.
+      if (page.type !== 'pdfpage' && page.section) {
+        const kickerGroup = document.createElement('div');
+        kickerGroup.className = 'slide-kicker-group';
         const sectionEl = document.createElement('p');
         sectionEl.className = 'section-kicker';
         sectionEl.textContent = page.section;
         kickerGroup.appendChild(sectionEl);
+        inner.appendChild(kickerGroup);
       }
-      inner.appendChild(kickerGroup);
 
       if (page.label) {
         const labelEl = document.createElement('p');
