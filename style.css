@@ -320,32 +320,94 @@ body{
 .slide-inner::-webkit-scrollbar{ width:8px; }
 .slide-inner::-webkit-scrollbar-thumb{ background:var(--paper-line); border-radius:4px; }
 
+/* 표지/구분용 가운데 정렬 타이틀 슬라이드 */
+.slide-inner--center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.title-slide-heading{
+  font-family:var(--font-title);
+  font-size:3.4rem;
+  line-height:1.3;
+  color:var(--text-dark);
+  margin:0;
+}
+
 .slide-title{
   font-family:var(--font-title);
-  font-size:2.1rem;
+  font-size:2.6rem;
   font-weight:700;
   color:var(--text-dark);
-  line-height:1.35;
+  line-height:1.3;
   margin:0 0 1.4rem;
 }
 
 .slide-body{
-  font-size:1.02rem;
-  line-height:1.9;
+  font-size:1.32rem;
+  line-height:1.85;
   color:var(--text-dark);
-  max-width:66ch;
+  max-width:78ch;
 }
 .slide-body p{ margin:0 0 1.15rem; }
 .slide-body strong{ color:var(--gain); font-weight:600; }
 .slide-body em{ font-style:normal; color:var(--loss); font-weight:600; }
+.slide-body ul, .slide-body ol{ margin:0 0 1.15rem; padding-left:1.4rem; }
+.slide-body li{ margin-bottom:.5rem; }
+.slide-body table{
+  width:100%;
+  border-collapse:collapse;
+  margin:1rem 0 1.4rem;
+  font-size:1.05rem;
+}
+.slide-body th, .slide-body td{
+  border:1px solid var(--paper-line);
+  padding:.65rem .85rem;
+  text-align:center;
+  vertical-align:top;
+}
+.slide-body th{
+  background:#F1EFFE;
+  font-weight:600;
+  font-family:var(--font-gothic);
+}
+.slide-body table caption{
+  caption-side:top;
+  text-align:left;
+  font-family:var(--font-mono);
+  font-size:.85rem;
+  color:var(--text-muted);
+  margin-bottom:.4rem;
+}
+.choice-list{
+  list-style:none;
+  margin:0 0 1.15rem;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem 1.6rem;
+  font-family:var(--font-mono);
+  font-size:1.15rem;
+}
+.choice-list li{ margin:0; }
+.problem-box{
+  background:#F7F7FA;
+  border:1px solid var(--paper-line);
+  border-radius:12px;
+  padding:1.1rem 1.3rem;
+  margin:0 0 1.2rem;
+}
+.problem-box p:last-child{ margin-bottom:0; }
+
 .math-box{
   font-family:var(--font-mono);
   background:#F1EFFE;
   border-left:3px solid var(--accent-1);
-  padding:.8rem 1.1rem;
+  padding:.9rem 1.2rem;
   margin:1rem 0 1.3rem;
   border-radius:0 10px 10px 0;
-  font-size:.98rem;
+  font-size:1.15rem;
   overflow-x:auto;
 }
 
@@ -362,13 +424,13 @@ body{
 .video-wrap iframe{ width:100%; height:100%; border:0; }
 .video-caption{
   font-family:var(--font-mono);
-  font-size:.78rem;
+  font-size:.92rem;
   color:var(--text-muted);
   margin-top:.7rem;
 }
 
 /* 게임/활동 슬라이드 */
-.game-desc{ margin-bottom:1.1rem; color:var(--text-muted); }
+.game-desc{ margin-bottom:1.1rem; color:var(--text-muted); font-size:1.15rem; }
 .game-area input[type="range"]{
   width:100%;
   accent-color:var(--accent-1);
@@ -380,13 +442,13 @@ body{
   font-family:var(--font-mono);
 }
 .game-readout div{ display:flex; flex-direction:column; gap:.2rem; }
-.game-readout span{ font-size:.7rem; color:var(--text-muted); letter-spacing:.05em; }
-.game-readout strong{ font-size:1.3rem; color:var(--text-dark); }
+.game-readout span{ font-size:.82rem; color:var(--text-muted); letter-spacing:.05em; }
+.game-readout strong{ font-size:1.5rem; color:var(--text-dark); }
 .game-result{
-  padding:.8rem 1rem;
+  padding:.9rem 1.1rem;
   background:#F1EFFE;
   border-radius:10px;
-  font-size:.92rem;
+  font-size:1.08rem;
   color:var(--loss);
   transition:background .2s, color .2s;
 }
