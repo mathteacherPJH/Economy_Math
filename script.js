@@ -111,41 +111,48 @@
     const topic = unit.topics[currentTopicIndex];
     const page = topic.slides[currentPageIndex];
 
-    stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title} · ${topic.title}`;
+    stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title}`;
 
     const card = document.createElement('div');
     card.className = 'slide-card';
     const inner = document.createElement('div');
     inner.className = 'slide-inner';
 
-    const title = document.createElement('h2');
-    title.className = 'slide-title';
-    title.textContent = page.title;
+    if (page.type === 'title') {
+      inner.classList.add('slide-inner--center');
+      const heading = document.createElement('h1');
+      heading.className = 'title-slide-heading';
+      heading.textContent = page.title;
+      inner.appendChild(heading);
+    } else {
+      const title = document.createElement('h2');
+      title.className = 'slide-title';
+      title.textContent = page.title;
+      inner.appendChild(title);
 
-    inner.appendChild(title);
-
-    if (page.type === 'text') {
-      const body = document.createElement('div');
-      body.className = 'slide-body';
-      body.innerHTML = page.body;
-      inner.appendChild(body);
-    } else if (page.type === 'video') {
-      const wrap = document.createElement('div');
-      wrap.className = 'video-wrap';
-      wrap.innerHTML = `<iframe src="${page.url}" title="${page.title}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-      inner.appendChild(wrap);
-      if (page.caption) {
-        const cap = document.createElement('p');
-        cap.className = 'video-caption';
-        cap.textContent = page.caption;
-        inner.appendChild(cap);
-      }
-    } else if (page.type === 'game') {
-      const gameArea = document.createElement('div');
-      gameArea.className = 'game-area';
-      inner.appendChild(gameArea);
-      if (typeof page.render === 'function') {
-        page.render(gameArea);
+      if (page.type === 'text') {
+        const body = document.createElement('div');
+        body.className = 'slide-body';
+        body.innerHTML = page.body;
+        inner.appendChild(body);
+      } else if (page.type === 'video') {
+        const wrap = document.createElement('div');
+        wrap.className = 'video-wrap';
+        wrap.innerHTML = `<iframe src="${page.url}" title="${page.title}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        inner.appendChild(wrap);
+        if (page.caption) {
+          const cap = document.createElement('p');
+          cap.className = 'video-caption';
+          cap.textContent = page.caption;
+          inner.appendChild(cap);
+        }
+      } else if (page.type === 'game') {
+        const gameArea = document.createElement('div');
+        gameArea.className = 'game-area';
+        inner.appendChild(gameArea);
+        if (typeof page.render === 'function') {
+          page.render(gameArea);
+        }
       }
     }
 
