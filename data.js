@@ -43,10 +43,19 @@
  *     -> render 함수 안에서 container(div)에 원하는 만큼 자유롭게
  *        DOM을 만들고 이벤트를 붙이면 됩니다.
  *
- *  소단원 제목(topic.title)은 사이드바 목차에만 쓰이고 슬라이드 화면
- *  안에는 표시되지 않습니다. 화면에 보이는 제목은 각 슬라이드 자신의
- *  title 값이니, 소단원 하나에 슬라이드가 여러 장이면 슬라이드마다
- *  제목을 따로 적어주세요.
+ *  소단원 제목(topic.title)은 화면 좌상단에 작은 글씨(Line1)로 계속 떠
+ *  있습니다. 그 아래(Line2)에는 슬라이드의 section 값(학습지의 소제목,
+ *  예: '물가지표', '물가 지표의 활용')이 표시되고, section이 바뀌는
+ *  슬라이드부터 자동으로 갈아 끼워집니다. 학습지 문장을 그대로 옮길
+ *  때는 슬라이드 하나에 문장(또는 빈칸 줄) 하나만 담아서, 학습지의
+ *  빈칸 줄 순서와 슬라이드를 넘기는 순서가 똑같이 대응하도록 만듭니다.
+ *  큰 표나 그림처럼 원래 학습지에서도 하나로 묶여 있는 덩어리는 예외
+ *  적으로 슬라이드 하나에 통째로 담습니다.
+ *
+ *  text 슬라이드에 big: true를 추가하면 학습지 문장 한 줄을 큰 글씨로
+ *  보여주는 스타일이 되고, 생략하면(표/문제 등) 기본 본문 크기로
+ *  보여줍니다. label을 추가하면 그 슬라이드 고유의 작은 번호표
+ *  (예: 'Q1]', '01')가 본문 위에 따로 표시됩니다.
  *
  *  지금은 각 소단원마다 슬라이드가 1장씩만 들어있는 자리표시자(placeholder)
  *  상태입니다. 한 소단원 안에 슬라이드를 여러 장 추가하고 싶다면 그
@@ -81,20 +90,25 @@ const CURRICULUM = [
 
           {
             type: 'text',
-            title: '경제지표의 뜻',
-            body: `
-              <p><strong>경제지표</strong>란 경제 활동의 분야별 상태 또는 성과를
-              수나 비율로 나타낸 것입니다.</p>
-              <p>대표적인 경제지표의 예로 <span class="blank-answer">물가지표</span>,
-              <span class="blank-answer">고용지표</span>,
-              <span class="blank-answer">GDP(국내총생산)</span> 등이 있습니다.
-              이번 시간에는 이 중 물가지표와 고용지표를 살펴봅니다.</p>
-            `
+            big: true,
+            section: '경제지표',
+            body: `<p class="concept-sentence">경제 활동의 분야별 상태 또는 성과를 수나 비율로 나타낸 것</p>`
           },
 
           {
             type: 'text',
-            title: '물가지표의 종류',
+            big: true,
+            section: '경제지표',
+            body: `<p class="concept-sentence">
+              <span class="blank-answer">물가지표</span>,
+              <span class="blank-answer">고용지표</span>,
+              <span class="blank-answer">GDP</span> 등 ⋯
+            </p>`
+          },
+
+          {
+            type: 'text',
+            section: '물가지표',
             body: `
               <table>
                 <tr>
@@ -109,10 +123,13 @@ const CURRICULUM = [
                   <td>국내 생산자가 국내 시장에 공급하는 상품과 서비스의 가격 변동을
                   종합적으로 측정하는 지표</td>
                 </tr>
+                <tr>
+                  <td>계산</td>
+                  <td colspan="2" style="text-align:center;">
+                    $$ \\frac{\\text{비교 시점의 물가}}{\\text{기준 시점의 물가}} \\times 100 $$
+                  </td>
+                </tr>
               </table>
-              <div class="math-box">
-                $$ \\text{물가지수} = \\frac{\\text{비교 시점의 물가}}{\\text{기준 시점의 물가}} \\times 100 $$
-              </div>
               <div class="pdf-notes">
                 <p>※ <span class="blank-answer">비교 시점의 물가</span> : 올해의 소비자 물가</p>
                 <p>※ <span class="blank-answer">기준 시점의 물가</span> : 기준연도의 소비자
@@ -125,19 +142,19 @@ const CURRICULUM = [
 
           {
             type: 'video',
-            title: '물가지표 개념 영상 1',
+            section: '물가지표',
             url: 'https://www.youtube.com/embed/eyiJa2oX2_Q'
           },
 
           {
             type: 'video',
-            title: '물가지표 개념 영상 2',
+            section: '물가지표',
             url: 'https://www.youtube.com/embed/f1UGOZTBGZs'
           },
 
           {
             type: 'text',
-            title: '물가지표 개념 확인 문제',
+            section: '개념 확인 문제',
             body: `
               <div class="problem-box">
                 <p><strong>[문제]</strong> 기준연도가 2024년 12월의 소비자 물가지수는
@@ -150,34 +167,55 @@ const CURRICULUM = [
 
           {
             type: 'text',
-            title: '물가지표의 활용',
-            body: `
-              <ul>
-                <li><span class="blank-answer">임금</span>의 결정 : 물가지수가
-                높으면 <span class="blank-answer">임금 인상</span>을 고려하고,
-                물가지수가 낮으면 <span class="blank-answer">임금 동결(인하)</span>을
-                고려한다.</li>
-                <li><span class="blank-answer">실질소득</span>의 계산 : CPI를
-                보면, 소비자의 실질적인 소득수준이 얼마인지 대략 파악할 수 있다.</li>
-                <li><span class="blank-answer">임금</span>의 협상 : 실질적인
-                소득수준이 얼마인지 판단하면서 노사 간에 협상을 진행한다.</li>
-                <li><span class="blank-answer">물가</span>의 예측 : PPI의 변동은
-                CPI의 변동을 예측하는 선행지표가 된다.</li>
-              </ul>
-            `
+            big: true,
+            section: '물가 지표의 활용',
+            body: `<p class="concept-sentence">
+              <span class="blank-answer">임금</span>의 결정 : 물가지수가 높으면
+              <span class="blank-answer">임금 인상</span>을 고려하고, 물가지수가
+              낮으면 <span class="blank-answer">임금 동결(인하)</span>을 고려한다.
+            </p>`
+          },
+
+          {
+            type: 'text',
+            big: true,
+            section: '물가 지표의 활용',
+            body: `<p class="concept-sentence">
+              <span class="blank-answer">실질소득</span>의 계산 : CPI를 보면,
+              소비자의 실질적인 소득수준이 얼마인지 대략 파악할 수 있다.
+            </p>`
+          },
+
+          {
+            type: 'text',
+            big: true,
+            section: '물가 지표의 활용',
+            body: `<p class="concept-sentence">
+              <span class="blank-answer">임금</span>의 협상 : 실질적인
+              소득수준이 얼마인지를 판단하면서 노사 간에 협상을 진행한다.
+            </p>`
+          },
+
+          {
+            type: 'text',
+            big: true,
+            section: '물가 지표의 활용',
+            body: `<p class="concept-sentence">
+              <span class="blank-answer">물가</span>의 예측 : PPI의 변동은
+              CPI의 변동을 예측하는 선행지표가 된다.
+            </p>`
           },
 
           {
             type: 'video',
-            title: '물가지표 개념 영상 3',
+            section: '물가 지표의 활용',
             url: 'https://www.youtube.com/embed/8M8f_66msQg'
           },
 
           {
             type: 'text',
-            title: '고용지표',
+            section: '경제 활동 인구 용어 정리',
             body: `
-              <p><strong>경제 활동 인구 용어 정리</strong></p>
               <ul>
                 <li>총인구
                   <ul>
@@ -203,7 +241,7 @@ const CURRICULUM = [
 
           {
             type: 'text',
-            title: '경제활동 지표의 계산',
+            section: '경제활동 지표의 계산',
             body: `
               <table>
                 <tr><th></th><th>경제 활동 참가율(%)</th><th>실업률(%)</th><th>고용률(%)</th></tr>
@@ -213,12 +251,13 @@ const CURRICULUM = [
                   <td>경제 활동 인구 중 실업자의 비율</td>
                   <td>15세 이상 인구 중 취업자의 비율</td>
                 </tr>
+                <tr>
+                  <td>계산</td>
+                  <td>$$ \\frac{\\text{경제 활동 인구}}{\\text{15세 이상 인구}} \\times 100 $$</td>
+                  <td>$$ \\frac{\\text{실업자 수}}{\\text{경제 활동 인구}} \\times 100 $$</td>
+                  <td>$$ \\frac{\\text{취업자 수}}{\\text{15세 이상 인구}} \\times 100 $$</td>
+                </tr>
               </table>
-              <div class="math-box">
-                $$ \\text{경제 활동 참가율} = \\frac{\\text{경제 활동 인구}}{\\text{15세 이상 인구}} \\times 100 $$
-                $$ \\text{실업률} = \\frac{\\text{실업자 수}}{\\text{경제 활동 인구}} \\times 100 $$
-                $$ \\text{고용률} = \\frac{\\text{취업자 수}}{\\text{15세 이상 인구}} \\times 100 $$
-              </div>
               <div class="pdf-notes">
                 <p>※ 실업자만 분모가 다름에 유의한다.</p>
               </div>
@@ -227,13 +266,13 @@ const CURRICULUM = [
 
           {
             type: 'video',
-            title: '고용지표 개념 영상',
+            section: '경제활동 지표의 계산',
             url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
           },
 
           {
             type: 'text',
-            title: '고용지표 개념 확인 문제 1',
+            section: '개념 확인 문제',
             body: `
               <div class="problem-box">
                 <p><strong>[문제 1]</strong> 다음에 해당하는 사람은 경제 활동 인구에
@@ -248,15 +287,6 @@ const CURRICULUM = [
                   <li>D : 직장에서 근무하지만, 올해는 어린 아이를 돌보기 위해
                   육아휴직을 쓰고 휴식을 취하고 있는 사람 ( &nbsp; )</li>
                 </ol>
-              </div>
-            `
-          },
-
-          {
-            type: 'text',
-            title: '고용지표 개념 확인 문제 2',
-            body: `
-              <div class="problem-box">
                 <p><strong>[문제 2]</strong> 아래 표는 A 국가의 경제 활동 인구수이다.
                 A 국가의 3월과 4월 경제 활동 참가율, 실업률, 고용률을 각각
                 구하시오. (단위: 명)</p>
@@ -285,80 +315,82 @@ const CURRICULUM = [
 
           {
             type: 'text',
-            title: '실전 문제 1',
+            section: '2차시 실전 문제',
+            label: '01',
             body: `
-              <div class="problem-box">
-                <p>다음에 해당하는 용어로 가장 적절한 것은?</p>
+              <p>다음에 해당하는 용어로 가장 적절한 것은?</p>
+              <div class="quote-box">
                 <p>도시 가계가 소비하는 대표적인 상품과 서비스의 가격을 조사하여,
                 기준 시점의 가격을 100으로 하였을 때 비교 시점의 가격 수준이 얼마나
                 변화했는지를 나타낸 지수이다. 통계청이 매월 작성하여 발표하며, 각
                 품목이 소비 지출에서 차지하는 가중치를 반영하여 산출한다.</p>
-                <ul class="choice-list">
-                  <li>① 생산자 물가지수 (PPI)</li>
-                  <li>② 소비자 물가지수 (CPI)</li>
-                  <li>③ 국내 총생산 (GDP)</li>
-                  <li>④ 국민 총생산 (GNP)</li>
-                  <li>⑤ 국민 총소득 (GNI)</li>
-                </ul>
               </div>
+              <ul class="choice-list">
+                <li>① 생산자 물가지수 (PPI)</li>
+                <li>② 소비자 물가지수 (CPI)</li>
+                <li>③ 국내 총생산 (GDP)</li>
+                <li>④ 국민 총생산 (GNP)</li>
+                <li>⑤ 국민 총소득 (GNI)</li>
+              </ul>
             `
           },
 
           {
             type: 'text',
-            title: '실전 문제 2',
+            section: '2차시 실전 문제',
+            label: '02',
             body: `
-              <div class="problem-box">
-                <p>A 국가의 고용 통계 자료가 다음과 같을 때, A 국가의 실업자 수를
-                구하면?</p>
-                <table>
-                  <tr><th>15세 이상 인구수</th><th>경제 활동 참가율</th><th>실업률</th></tr>
-                  <tr><td>2,000만 명</td><td>70%</td><td>5%</td></tr>
-                </table>
-                <ul class="choice-list">
-                  <li>① 50만 명</li>
-                  <li>② 70만 명</li>
-                  <li>③ 100만 명</li>
-                  <li>④ 140만 명</li>
-                  <li>⑤ 150만 명</li>
-                </ul>
-              </div>
+              <p>A 국가의 고용 통계 자료가 다음과 같을 때, A 국가의 실업자 수를
+              구하면?</p>
+              <table>
+                <tr><th>15세 이상 인구수</th><th>경제 활동 참가율</th><th>실업률</th></tr>
+                <tr><td>2,000만 명</td><td>70%</td><td>5%</td></tr>
+              </table>
+              <ul class="choice-list">
+                <li>① 50만 명</li>
+                <li>② 70만 명</li>
+                <li>③ 100만 명</li>
+                <li>④ 140만 명</li>
+                <li>⑤ 150만 명</li>
+              </ul>
             `
           },
 
           {
             type: 'text',
-            title: '실전 문제 3',
+            section: '2차시 실전 문제',
+            label: '03',
             body: `
-              <div class="problem-box">
-                <p>다음 표는 가상의 두 국가 A, B의 2026년 상반기 고용 통계 자료이다.
-                이에 대한 설명으로 옳은 것만을 모두 고른 것은? (단위: 만 명)</p>
-                <table>
-                  <tr><th>구분</th><th>15세 이상 인구수</th><th>경제 활동 인구수</th><th>취업자 수</th></tr>
-                  <tr><td>A</td><td>1,000</td><td>700</td><td>630</td></tr>
-                  <tr><td>B</td><td>1,000</td><td>600</td><td>570</td></tr>
-                </table>
+              <p>다음 표는 가상의 두 국가 A, B의 2026년 상반기 고용 통계 자료이다.
+              이에 대한 설명으로 옳은 것만을 모두 고른 것은? (단위: 만 명)</p>
+              <table>
+                <tr><th>구분</th><th>15세 이상 인구수</th><th>경제 활동 인구수</th><th>취업자 수</th></tr>
+                <tr><td>A</td><td>1,000</td><td>700</td><td>630</td></tr>
+                <tr><td>B</td><td>1,000</td><td>600</td><td>570</td></tr>
+              </table>
+              <div class="quote-box">
                 <p>ㄱ. A의 비경제 활동 인구수는 370만 명이다.<br/>
                 ㄴ. B의 실업자 수는 330만 명이다.<br/>
                 ㄷ. A가 B보다 실업률이 높다.</p>
-                <ul class="choice-list">
-                  <li>① ㄱ</li>
-                  <li>② ㄴ</li>
-                  <li>③ ㄱ, ㄷ</li>
-                  <li>④ ㄴ, ㄷ</li>
-                  <li>⑤ ㄱ, ㄴ, ㄷ</li>
-                </ul>
               </div>
+              <ul class="choice-list">
+                <li>① ㄱ</li>
+                <li>② ㄴ</li>
+                <li>③ ㄱ, ㄷ</li>
+                <li>④ ㄴ, ㄷ</li>
+                <li>⑤ ㄱ, ㄴ, ㄷ</li>
+              </ul>
             `
           },
 
           {
             type: 'text',
-            title: '실전 문제 4',
+            section: '2차시 실전 문제',
+            label: '04',
             body: `
-              <div class="problem-box">
-                <p>다음은 A 국가의 고용 동향 보고서 중 일부를 발췌한 내용이다. 이
-                내용을 바탕으로 2026년 5월 A 국가의 고용률을 구하면?</p>
+              <p>다음은 A 국가의 고용 동향 보고서 중 일부를 발췌한 내용이다. 이
+              내용을 바탕으로 2026년 5월 A 국가의 고용률을 구하면?</p>
+              <div class="quote-box">
                 <p>A 국가의 2026년 5월 기준 15세 이상 인구수는 전년 동월 대비 50만
                 명 증가한 2,000만 명으로 집계되었다. 이번 달 고용 시장의 가장 큰
                 특징은 구직 활동을 일시적으로 중단했던 이들이 대거 노동 시장으로
@@ -368,14 +400,14 @@ const CURRICULUM = [
                 12.5%를 기록하였는데, 이는 신규 창업 열풍으로 인해 취업자 수가
                 지난달에 비해 많이 늘어났음에도 불구하고 구직자 수 자체가 더
                 가파르게 증가했기 때문으로 분석된다.</p>
-                <ul class="choice-list">
-                  <li>① 25%</li>
-                  <li>② 30%</li>
-                  <li>③ 35%</li>
-                  <li>④ 40%</li>
-                  <li>⑤ 45%</li>
-                </ul>
               </div>
+              <ul class="choice-list">
+                <li>① 25%</li>
+                <li>② 30%</li>
+                <li>③ 35%</li>
+                <li>④ 40%</li>
+                <li>⑤ 45%</li>
+              </ul>
             `
           }
         ]
