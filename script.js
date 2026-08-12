@@ -736,7 +736,7 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'video-rail-item';
-      btn.textContent = `관련 영상 ${i + 1}`;
+      btn.textContent = v.label || `관련 영상 ${i + 1}`;
       btn.addEventListener('click', () => openVideoModal(v.url));
       videoRailList.appendChild(btn);
     });
@@ -843,8 +843,8 @@
   });
 
   /* ---------------- 확대/축소 ----------------
-     -버튼/+버튼(클릭당 5%), 숫자 직접 입력이 모두 setZoom() 하나로
-     연동된다. (Ctrl+휠은 브라우저 자체 확대와 충돌해서 지원하지 않는다)
+     -버튼/+버튼(클릭당 5%), 숫자 직접 입력, 이미지 위에서 Ctrl+휠까지
+     모두 setZoom() 하나로 연동된다.
   ------------------------------------------------------------- */
   zoomOutBtn.addEventListener('click', () => setZoom(zoomLevel - 5));
   zoomInBtn.addEventListener('click', () => setZoom(zoomLevel + 5));
@@ -853,13 +853,27 @@
     setZoom(Number.isNaN(val) ? 100 : val);
   });
 
-  // Ctrl+휠로 확대/축소하는 기능은 브라우저마다(특히 최신 크롬) 자체
-  // 페이지 확대와 충돌해서 -버튼/+버튼/숫자 입력을 써도 화면 전체가
-  // 같이 확대되는 문제가 있었다. 이 문제를 근본적으로 없애기 위해
-  // Ctrl+휠 확대는 지원하지 않기로 하고, 위 -/+ 버튼과 숫자 입력
-  // 세 가지 방법만 남긴다 — 이 방법들은 브라우저 확대와 전혀 무관하게
-  // 학습지 이미지의 실제 크기(px)만 바꾸므로 툴바가 함께 커질 일이
-  // 없다.
+  // Ctrl+휠로 이미지 위에서 확대/축소한다. 브라우저 자체의 "페이지 전체
+  // 확대"가 같이 발동되지 않도록, ctrlKey가 눌린 휠 이벤트는 화면 어디서
+  // 발생하든 무조건 먼저 preventDefault로 막는다. 그 다음 실제로 우리
+  // 확대 값을 바꾸는 건 마우스가 학습지 이미지(.pdf-page-wrap) 위에 있을
+  // 때만 적용해서, 이미지에서 벗어난 곳(툴바 등)에서는 아무 것도 커지지
+  // 않는다.
+  let wheelAccum = 0;
+  document.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+
+    const wrap = stage.querySelector('.pdf-page-wrap');
+    if (!wrap || !wrap.contains(e.target)) return;
+
+    wheelAccum += e.deltaY;
+    const threshold = 35;
+    if (Math.abs(wheelAccum) >= threshold) {
+      setZoom(zoomLevel + (wheelAccum < 0 ? 5 : -5));
+      wheelAccum = 0;
+    }
+  }, { passive: false });
 
   /* ---------------- 우측 관련 영상 레일 / 영상 모달 ---------------- */
   videoRailToggle.addEventListener('click', () => {
