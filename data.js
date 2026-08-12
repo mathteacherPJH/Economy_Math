@@ -97,7 +97,8 @@ const CURRICULUM = [
       '한계',
       '탄력성',
       '최적의 의사결정',
-      '최적생산량'
+      '최적생산량',
+      '4단원 마무리 문제'
     ].map((title) => ({ type: 'text', title, body: placeholder(title) }))
   },
 
