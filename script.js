@@ -125,20 +125,37 @@
       heading.textContent = page.title;
       inner.appendChild(heading);
     } else {
-      const title = document.createElement('h2');
-      title.className = 'slide-title';
-      title.textContent = page.title;
-      inner.appendChild(title);
+      // 좌상단 고정 헤더: Line1(소단원/학습지 제목) + Line2(학습지 소제목, section)
+      const kickerGroup = document.createElement('div');
+      kickerGroup.className = 'slide-kicker-group';
+      const lessonEl = document.createElement('p');
+      lessonEl.className = 'lesson-kicker';
+      lessonEl.textContent = topic.title;
+      kickerGroup.appendChild(lessonEl);
+      if (page.section) {
+        const sectionEl = document.createElement('p');
+        sectionEl.className = 'section-kicker';
+        sectionEl.textContent = page.section;
+        kickerGroup.appendChild(sectionEl);
+      }
+      inner.appendChild(kickerGroup);
+
+      if (page.label) {
+        const labelEl = document.createElement('p');
+        labelEl.className = 'item-label';
+        labelEl.textContent = page.label;
+        inner.appendChild(labelEl);
+      }
 
       if (page.type === 'text') {
         const body = document.createElement('div');
-        body.className = 'slide-body';
+        body.className = page.big ? 'concept-sentence-wrap' : 'slide-body';
         body.innerHTML = page.body;
         inner.appendChild(body);
       } else if (page.type === 'video') {
         const wrap = document.createElement('div');
         wrap.className = 'video-wrap';
-        wrap.innerHTML = `<iframe src="${page.url}" title="${page.title}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        wrap.innerHTML = `<iframe src="${page.url}" title="${page.section || '영상'}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
         inner.appendChild(wrap);
         if (page.caption) {
           const cap = document.createElement('p');
