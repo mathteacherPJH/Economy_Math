@@ -85,8 +85,9 @@ const CURRICULUM = [
             body: `
               <p><strong>경제지표</strong>란 경제 활동의 분야별 상태 또는 성과를
               수나 비율로 나타낸 것입니다.</p>
-              <p>대표적인 경제지표로는 <strong>물가지표</strong>, <strong>고용지표</strong>,
-              <strong>주가지표</strong>, <strong>GDP(국내총생산)</strong> 등이 있습니다.
+              <p>대표적인 경제지표의 예로 <span class="blank-answer">물가지표</span>,
+              <span class="blank-answer">고용지표</span>,
+              <span class="blank-answer">GDP(국내총생산)</span> 등이 있습니다.
               이번 시간에는 이 중 물가지표와 고용지표를 살펴봅니다.</p>
             `
           },
@@ -96,7 +97,11 @@ const CURRICULUM = [
             title: '물가지표의 종류',
             body: `
               <table>
-                <tr><th></th><th>소비자물가지수 (CPI)</th><th>생산자물가지수 (PPI)</th></tr>
+                <tr>
+                  <th></th>
+                  <th><span class="blank-answer">소비자물가지수 (CPI)</span></th>
+                  <th><span class="blank-answer">생산자물가지수 (PPI)</span></th>
+                </tr>
                 <tr>
                   <td>뜻</td>
                   <td>소비자가 생활하기 위해 구매하는 상품과 서비스의 가격 변동을
@@ -105,11 +110,16 @@ const CURRICULUM = [
                   종합적으로 측정하는 지표</td>
                 </tr>
               </table>
-              <div class="math-box">물가지수 = (비교 시점의 물가 ÷ 기준 시점의 물가) × 100</div>
-              <p>여기서 <strong>비교 시점의 물가</strong>는 올해(비교연도)의 소비자
-              물가이고, <strong>기준 시점의 물가</strong>는 기준연도의 소비자 물가입니다.</p>
-              <p>현재 우리나라의 기준연도는 2020년이며, 곧 2025년으로 바뀔 예정입니다.
-              (시험 문제를 낼 때는 반드시 기준연도를 문제에 제시합니다.)</p>
+              <div class="math-box">
+                $$ \\text{물가지수} = \\frac{\\text{비교 시점의 물가}}{\\text{기준 시점의 물가}} \\times 100 $$
+              </div>
+              <div class="pdf-notes">
+                <p>※ <span class="blank-answer">비교 시점의 물가</span> : 올해의 소비자 물가</p>
+                <p>※ <span class="blank-answer">기준 시점의 물가</span> : 기준연도의 소비자
+                물가로 현재 우리나라 기준연도는 2020년이며, 곧 2025년으로 바뀔 예정임.</p>
+                <p>※ 시험문제를 낼 때에는 반드시 기준연도를 문제에 제시해 줄 것이며,
+                실제와 다를 수 있음에 유의.</p>
+              </div>
             `
           },
 
@@ -143,14 +153,16 @@ const CURRICULUM = [
             title: '물가지표의 활용',
             body: `
               <ul>
-                <li><strong>임금의 결정</strong> : 물가지수가 높으면 임금 인상을
-                고려하고, 물가지수가 낮으면 임금 동결(또는 인하)을 고려한다.</li>
-                <li><strong>실질소득의 계산</strong> : CPI를 보면, 소비자의 실질적인
-                소득수준이 얼마인지 대략 파악할 수 있다.</li>
-                <li><strong>임금의 협상</strong> : 실질적인 소득수준이 얼마인지
-                판단하면서 노사 간에 협상을 진행한다.</li>
-                <li><strong>물가의 예측</strong> : PPI의 변동은 CPI의 변동을 예측하는
-                선행지표가 된다.</li>
+                <li><span class="blank-answer">임금</span>의 결정 : 물가지수가
+                높으면 <span class="blank-answer">임금 인상</span>을 고려하고,
+                물가지수가 낮으면 <span class="blank-answer">임금 동결(인하)</span>을
+                고려한다.</li>
+                <li><span class="blank-answer">실질소득</span>의 계산 : CPI를
+                보면, 소비자의 실질적인 소득수준이 얼마인지 대략 파악할 수 있다.</li>
+                <li><span class="blank-answer">임금</span>의 협상 : 실질적인
+                소득수준이 얼마인지 판단하면서 노사 간에 협상을 진행한다.</li>
+                <li><span class="blank-answer">물가</span>의 예측 : PPI의 변동은
+                CPI의 변동을 예측하는 선행지표가 된다.</li>
               </ul>
             `
           },
@@ -169,16 +181,18 @@ const CURRICULUM = [
               <ul>
                 <li>총인구
                   <ul>
-                    <li>15세 미만 인구</li>
-                    <li>15세 이상 인구
+                    <li><span class="blank-answer">15세 미만</span> 인구</li>
+                    <li><span class="blank-answer">15세 이상</span> 인구
                       <ul>
-                        <li>경제 활동 인구 <em>(일할 생각이 있는 사람)</em>
+                        <li><span class="blank-answer">경제</span> 활동 인구
+                        <em>(일할 생각이 있는 사람)</em>
                           <ul>
                             <li>실업자</li>
                             <li>취업자</li>
                           </ul>
                         </li>
-                        <li>비경제 활동 인구 <em>(일할 생각이 없는 사람)</em></li>
+                        <li><span class="blank-answer">비경제</span> 활동 인구
+                        <em>(일할 생각이 없는 사람)</em></li>
                       </ul>
                     </li>
                   </ul>
@@ -201,12 +215,13 @@ const CURRICULUM = [
                 </tr>
               </table>
               <div class="math-box">
-                경제 활동 참가율 = (경제 활동 인구 ÷ 15세 이상 인구) × 100<br/>
-                실업률 = (실업자 수 ÷ 경제 활동 인구) × 100<br/>
-                고용률 = (취업자 수 ÷ 15세 이상 인구) × 100
+                $$ \\text{경제 활동 참가율} = \\frac{\\text{경제 활동 인구}}{\\text{15세 이상 인구}} \\times 100 $$
+                $$ \\text{실업률} = \\frac{\\text{실업자 수}}{\\text{경제 활동 인구}} \\times 100 $$
+                $$ \\text{고용률} = \\frac{\\text{취업자 수}}{\\text{15세 이상 인구}} \\times 100 $$
               </div>
-              <p>※ <strong>실업률</strong>만 분모가 경제 활동 인구로 다른 것에
-              유의합니다. (나머지 둘은 15세 이상 인구가 분모)</p>
+              <div class="pdf-notes">
+                <p>※ 실업자만 분모가 다름에 유의한다.</p>
+              </div>
             `
           },
 
@@ -260,6 +275,8 @@ const CURRICULUM = [
                   <li>4월 실업률 : </li>
                   <li>4월 고용률 : </li>
                 </ul>
+              </div>
+              <div class="pdf-notes">
                 <p>※ 우리나라가 아닌 가상의 나라를 제시하더라도 문제 풀 때에는
                 교과서에 있는 계산식을 준용하여 풀면 됩니다.</p>
               </div>
