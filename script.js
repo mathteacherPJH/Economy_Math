@@ -19,6 +19,9 @@
   const redoBtn = document.getElementById('redoBtn');
   const clearBtn = document.getElementById('clearBtn');
   const drawToolbar = document.getElementById('drawToolbar');
+  const blankToolbar = document.getElementById('blankToolbar');
+  const blankAddBtn = document.getElementById('blankAddBtn');
+  const blankClearBtn = document.getElementById('blankClearBtn');
   const videoRail = document.getElementById('videoRail');
   const videoRailToggle = document.getElementById('videoRailToggle');
   const videoRailList = document.getElementById('videoRailList');
@@ -46,6 +49,11 @@
   // "현재 수업 세션 동안만" 유지되는 메모리다.
   // key: "uIdx-tIdx-pIdx" -> { history: [dataURL, ...], index }
   const drawHistories = new Map();
+
+  // 빈칸(수동 입력칸) 편집 모드 — 켜져 있는 동안만 새 빈칸을 드래그로
+  // 만들 수 있고, 기존 빈칸에 이동/크기조절 손잡이와 삭제 버튼이 보인다.
+  // 꺼져 있으면(수업 중 보기 모드) 빈칸을 클릭해서 숨김/표시만 토글한다.
+  let blankEditMode = false;
 
   function currentSlideKey() {
     return `${currentUnitIndex}-${currentTopicIndex}-${currentPageIndex}`;
@@ -196,9 +204,14 @@
     // 그림 도구는 학습지 이미지 슬라이드에서만 의미가 있으므로, 그 외
     // 슬라이드에서는 숨기고 펜/지우개도 꺼둔다.
     drawToolbar.classList.toggle('is-hidden', page.type !== 'pdfpage');
+    blankToolbar.classList.toggle('is-hidden', page.type !== 'pdfpage');
     if (page.type !== 'pdfpage' && drawTool) {
       drawTool = null;
       updateToolButtons();
+    }
+    if (page.type !== 'pdfpage' && blankEditMode) {
+      blankEditMode = false;
+      updateBlankToolButtons();
     }
 
     const card = document.createElement('div');
@@ -280,6 +293,11 @@
         // 이 슬라이드에 남아있던 그림(undo/redo 기록)을 복원한다.
         img.addEventListener('load', () => setupCanvas(canvas), { once: true });
         if (img.complete) setupCanvas(canvas);
+
+        const blankLayer = document.createElement('div');
+        blankLayer.className = 'blank-layer';
+        wrap.appendChild(blankLayer);
+        setupBlankLayer(blankLayer, page.image);
 
         inner.appendChild(wrap);
       }
@@ -450,6 +468,227 @@
     if (canvas) canvas.classList.toggle('is-active', !!drawTool);
   }
 
+  /* ---------------- 빈칸(수동 입력칸) — 만들기/이동/크기조절/삭제/
+     숨김-표시 토글/저장 ----------------
+     localStorage에 이미지 경로를 key로 저장해서, 새로고침하거나 다음에
+     다시 접속해도 만들어둔 빈칸이 그대로 남아있다.
+  ------------------------------------------------------------- */
+  function blanksStorageKey(imgSrc) {
+    return `economath-blanks:${imgSrc}`;
+  }
+
+  function loadBlanks(imgSrc) {
+    try {
+      const raw = localStorage.getItem(blanksStorageKey(imgSrc));
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function saveBlanks(imgSrc, list) {
+    try {
+      localStorage.setItem(blanksStorageKey(imgSrc), JSON.stringify(list));
+    } catch (err) {
+      // 저장 공간이 꽉 찼거나 localStorage를 쓸 수 없는 환경이면 조용히 무시
+    }
+  }
+
+  function persistLayerBlanks(layer, imgSrc) {
+    saveBlanks(imgSrc, layer._boxes || []);
+  }
+
+  function updateBlankToolButtons() {
+    blankAddBtn.classList.toggle('is-active', blankEditMode);
+    blankAddBtn.setAttribute('aria-pressed', String(blankEditMode));
+    const layer = stage.querySelector('.blank-layer');
+    if (!layer) return;
+    layer.classList.toggle('is-edit-mode', blankEditMode);
+    layer.querySelectorAll('.blank-box').forEach((el) => {
+      el.classList.toggle('is-edit-mode', blankEditMode);
+      const text = el.querySelector('.blank-box-text');
+      if (text) text.contentEditable = blankEditMode ? 'true' : 'false';
+    });
+  }
+
+  // 빈칸 하나(DOM)를 만든다. box = { left, top, width, height(모두 %), text, hidden }
+  function createBlankBoxEl(layer, imgSrc, box) {
+    const el = document.createElement('div');
+    el.className = 'blank-box' + (box.hidden ? ' is-hidden' : ' is-revealed');
+    el.classList.toggle('is-edit-mode', blankEditMode);
+    el.style.left = box.left + '%';
+    el.style.top = box.top + '%';
+    el.style.width = box.width + '%';
+    el.style.height = box.height + '%';
+
+    const handle = document.createElement('div');
+    handle.className = 'blank-box-handle';
+    handle.contentEditable = 'false';
+    handle.textContent = '⠿';
+    el.appendChild(handle);
+
+    const text = document.createElement('div');
+    text.className = 'blank-box-text';
+    text.contentEditable = blankEditMode ? 'true' : 'false';
+    text.spellcheck = false;
+    text.textContent = box.text || '';
+    text.addEventListener('input', () => {
+      box.text = text.textContent;
+      persistLayerBlanks(layer, imgSrc);
+    });
+    el.appendChild(text);
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'blank-box-delete';
+    del.contentEditable = 'false';
+    del.setAttribute('aria-label', '빈칸 삭제');
+    del.textContent = '×';
+    del.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = (layer._boxes || []).indexOf(box);
+      if (idx > -1) layer._boxes.splice(idx, 1);
+      el.remove();
+      persistLayerBlanks(layer, imgSrc);
+    });
+    el.appendChild(del);
+
+    const resize = document.createElement('div');
+    resize.className = 'blank-box-resize';
+    resize.contentEditable = 'false';
+    el.appendChild(resize);
+
+    // 보기 모드(편집 꺼짐)에서 클릭하면 숨김 ↔ 표시 토글
+    el.addEventListener('click', (e) => {
+      if (blankEditMode) return;
+      if (e.target === del) return;
+      box.hidden = !box.hidden;
+      el.classList.toggle('is-hidden', box.hidden);
+      el.classList.toggle('is-revealed', !box.hidden);
+      persistLayerBlanks(layer, imgSrc);
+    });
+
+    // 손잡이를 드래그해서 이동 (편집 모드에서만)
+    handle.addEventListener('pointerdown', (e) => {
+      if (!blankEditMode) return;
+      e.stopPropagation();
+      e.preventDefault();
+      const rect = layer.getBoundingClientRect();
+      const startLeft = parseFloat(el.style.left);
+      const startTop = parseFloat(el.style.top);
+      const startX = e.clientX;
+      const startY = e.clientY;
+
+      function onMove(ev) {
+        const dxPct = ((ev.clientX - startX) / rect.width) * 100;
+        const dyPct = ((ev.clientY - startY) / rect.height) * 100;
+        const w = parseFloat(el.style.width);
+        const h = parseFloat(el.style.height);
+        const newLeft = Math.max(0, Math.min(100 - w, startLeft + dxPct));
+        const newTop = Math.max(0, Math.min(100 - h, startTop + dyPct));
+        el.style.left = newLeft + '%';
+        el.style.top = newTop + '%';
+        box.left = newLeft;
+        box.top = newTop;
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        persistLayerBlanks(layer, imgSrc);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    });
+
+    // 모서리를 드래그해서 크기 조절 (편집 모드에서만)
+    resize.addEventListener('pointerdown', (e) => {
+      if (!blankEditMode) return;
+      e.stopPropagation();
+      e.preventDefault();
+      const rect = layer.getBoundingClientRect();
+      const startW = parseFloat(el.style.width);
+      const startH = parseFloat(el.style.height);
+      const leftPct = parseFloat(el.style.left);
+      const topPct = parseFloat(el.style.top);
+      const startX = e.clientX;
+      const startY = e.clientY;
+
+      function onMove(ev) {
+        const dwPct = ((ev.clientX - startX) / rect.width) * 100;
+        const dhPct = ((ev.clientY - startY) / rect.height) * 100;
+        const newW = Math.max(3, Math.min(100 - leftPct, startW + dwPct));
+        const newH = Math.max(3, Math.min(100 - topPct, startH + dhPct));
+        el.style.width = newW + '%';
+        el.style.height = newH + '%';
+        box.width = newW;
+        box.height = newH;
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        persistLayerBlanks(layer, imgSrc);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    });
+
+    layer.appendChild(el);
+    layer._boxes = layer._boxes || [];
+    layer._boxes.push(box);
+    return el;
+  }
+
+  // 이 슬라이드(이미지)의 빈칸 레이어를 저장된 내용으로 채우고,
+  // 편집 모드일 때 빈 배경을 드래그하면 새 빈칸을 만들도록 연결한다.
+  function setupBlankLayer(layer, imgSrc) {
+    layer.dataset.imgSrc = imgSrc;
+    layer.classList.toggle('is-edit-mode', blankEditMode);
+    layer._boxes = [];
+
+    loadBlanks(imgSrc).forEach((box) => createBlankBoxEl(layer, imgSrc, box));
+
+    layer.addEventListener('pointerdown', (e) => {
+      if (!blankEditMode) return;
+      if (e.target !== layer) return; // 빈 배경을 눌렀을 때만 새로 만들기 시작
+
+      const rect = layer.getBoundingClientRect();
+      const startXPct = ((e.clientX - rect.left) / rect.width) * 100;
+      const startYPct = ((e.clientY - rect.top) / rect.height) * 100;
+
+      const box = { left: startXPct, top: startYPct, width: 0, height: 0, text: '', hidden: false };
+      const el = createBlankBoxEl(layer, imgSrc, box);
+
+      function onMove(ev) {
+        const x = ((ev.clientX - rect.left) / rect.width) * 100;
+        const y = ((ev.clientY - rect.top) / rect.height) * 100;
+        const left = Math.max(0, Math.min(startXPct, x));
+        const top = Math.max(0, Math.min(startYPct, y));
+        const width = Math.abs(x - startXPct);
+        const height = Math.abs(y - startYPct);
+        el.style.left = left + '%';
+        el.style.top = top + '%';
+        el.style.width = width + '%';
+        el.style.height = height + '%';
+        box.left = left; box.top = top; box.width = width; box.height = height;
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        if (box.width < 1.5 || box.height < 1.2) {
+          // 그냥 클릭 수준의 미세한 드래그는 취소한다
+          const idx = layer._boxes.indexOf(box);
+          if (idx > -1) layer._boxes.splice(idx, 1);
+          el.remove();
+          return;
+        }
+        persistLayerBlanks(layer, imgSrc);
+        el.querySelector('.blank-box-text')?.focus();
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    });
+  }
+
   // 우측 "관련 영상" 레일을 현재 소단원의 영상 목록으로 채운다.
   // 소단원이 바뀔 때마다 항상 접힌 상태로 되돌아간다. 영상이 하나도
   // 없는 소단원이면 레일 자체를 숨긴다.
@@ -499,6 +738,21 @@
   stage.addEventListener('click', (e) => {
     const blank = e.target.closest('.blank-answer');
     if (blank) blank.classList.toggle('is-revealed');
+  });
+
+  /* ---------------- 빈칸(수동 입력칸) 툴바 ---------------- */
+  blankAddBtn.addEventListener('click', () => {
+    blankEditMode = !blankEditMode;
+    updateBlankToolButtons();
+  });
+
+  blankClearBtn.addEventListener('click', () => {
+    const layer = stage.querySelector('.blank-layer');
+    if (!layer) return;
+    const imgSrc = layer.dataset.imgSrc;
+    layer.querySelectorAll('.blank-box').forEach((el) => el.remove());
+    layer._boxes = [];
+    saveBlanks(imgSrc, []);
   });
 
   /* ---------------- 드로잉 도구 (펜/지우개/색깔/굵기/undo/redo/초기화) ---------------- */
@@ -552,11 +806,22 @@
     setZoom(Number.isNaN(val) ? 100 : val);
   });
 
+  // 트랙패드에서는 Ctrl+휠 한 번에도 방향이 잠깐씩 흔들리는 미세한
+  // deltaY가 섞여 들어와서, 분명 축소 방향인데 확대되는 것처럼 보이는
+  // 경우가 드물게 있었다. 매 이벤트마다 바로 반응하지 않고 누적값이
+  // 일정 크기를 넘을 때만 그 누적값의 부호로 방향을 정하도록 해서
+  // 이런 흔들림에 덜 민감하게 만든다.
+  let wheelAccum = 0;
   document.addEventListener('wheel', (e) => {
     if (!e.ctrlKey) return;
     if (!stage.contains(e.target)) return;
     e.preventDefault();
-    setZoom(zoomLevel + (e.deltaY < 0 ? 5 : -5));
+    wheelAccum += e.deltaY;
+    const threshold = 35;
+    if (Math.abs(wheelAccum) >= threshold) {
+      setZoom(zoomLevel + (wheelAccum < 0 ? 5 : -5));
+      wheelAccum = 0;
+    }
   }, { passive: false });
 
   /* ---------------- 우측 관련 영상 레일 / 영상 모달 ---------------- */
