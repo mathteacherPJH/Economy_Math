@@ -5,7 +5,6 @@
   const tocEl = document.getElementById('toc');
   const stage = document.getElementById('stage');
   const stageEyebrow = document.getElementById('stageEyebrow');
-  const footer = document.getElementById('stageFooter');
   const collapseBtn = document.getElementById('collapseBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
   const videoRail = document.getElementById('videoRail');
@@ -101,8 +100,6 @@
 
   /* ---------------- 소단원 선택 / 렌더 ----------------
      사이드바에서 소단원(목차 한 줄)을 클릭하면 그 소단원을 보여줍니다.
-     하단 좌우 화살표도 이제 같은 방식으로 같은 단원 안의 이전/다음
-     소단원으로 이동합니다(step() 참고).
   ------------------------------------------------------------- */
   function selectTopic(uIdx, tIdx) {
     currentUnitIndex = uIdx;
@@ -121,7 +118,6 @@
     if (currentUnitIndex === null) {
       stage.innerHTML = emptyStateHTML();
       stageEyebrow.textContent = '';
-      footer.innerHTML = '';
       document.body.classList.remove('is-scroll-mode');
       return;
     }
@@ -238,7 +234,6 @@
     stage.appendChild(card);
 
     typesetMath(card);
-    renderFooter(unit);
   }
 
   // 새로 그려진 슬라이드 안의 수식($...$, $$...$$)을 MathJax로 렌더링한다.
@@ -249,52 +244,6 @@
     } else if (window.MathJax && window.MathJax.typesetPromise) {
       window.MathJax.typesetPromise([el]);
     }
-  }
-
-  function renderFooter(unit) {
-    const total = unit.topics.length;
-    footer.innerHTML = '';
-
-    const prev = document.createElement('button');
-    prev.className = 'nav-btn';
-    prev.setAttribute('aria-label', '이전 소단원');
-    prev.innerHTML = '&#8592;';
-    prev.disabled = currentTopicIndex === 0;
-    prev.addEventListener('click', () => step(-1));
-
-    const track = document.createElement('div');
-    track.className = 'progress-track';
-    for (let i = 0; i < total; i++) {
-      const dot = document.createElement('span');
-      dot.className = 'progress-dot' + (i === currentTopicIndex ? ' is-active' : '');
-      track.appendChild(dot);
-    }
-    const count = document.createElement('span');
-    count.className = 'progress-count';
-    count.textContent = `${currentTopicIndex + 1} / ${total}`;
-    track.appendChild(count);
-
-    const next = document.createElement('button');
-    next.className = 'nav-btn';
-    next.setAttribute('aria-label', '다음 소단원');
-    next.innerHTML = '&#8594;';
-    next.disabled = currentTopicIndex === total - 1;
-    next.addEventListener('click', () => step(1));
-
-    footer.appendChild(prev);
-    footer.appendChild(track);
-    footer.appendChild(next);
-  }
-
-  // 하단 좌우 화살표는 이제 같은 단원 안의 다른 소단원(사이드바 목차
-  // 한 줄)으로 이동한다. 소단원으로 이동하면 그 소단원의 첫 페이지부터
-  // 다시 보여준다(사이드바에서 직접 클릭한 것과 동일하게 동작).
-  function step(dir) {
-    if (currentUnitIndex === null) return;
-    const unit = CURRICULUM[currentUnitIndex];
-    const nextTopicIndex = currentTopicIndex + dir;
-    if (nextTopicIndex < 0 || nextTopicIndex >= unit.topics.length) return;
-    selectTopic(currentUnitIndex, nextTopicIndex);
   }
 
   // 우측 "관련 영상" 레일을 현재 소단원의 영상 목록으로 채운다.
@@ -371,29 +320,13 @@
     }
   });
 
-  /* ---------------- 프리젠터 클리커 / 키보드 지원 ----------------
-     대부분의 PPT 프리젠터 리모컨은 오른쪽 화살표(다음)와
-     왼쪽 화살표(이전) 키 신호를 보냅니다. PageUp/PageDown, Space를
-     사용하는 리모컨도 있어 함께 지원합니다. 이 키들은 현재 열려있는
-     소단원 안의 PPT 페이지만 넘깁니다.
-  ------------------------------------------------------------- */
+  /* ---------------- 키보드 단축키 (Esc로 영상/전체화면 닫기) ---------------- */
   document.addEventListener('keydown', (e) => {
-    const tag = document.activeElement?.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
-    if (videoModal.classList.contains('is-open') && e.key !== 'Escape') return;
-
-    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
-      e.preventDefault();
-      step(1);
-    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
-      e.preventDefault();
-      step(-1);
-    } else if (e.key === 'Escape') {
-      if (videoModal.classList.contains('is-open')) {
-        closeVideoModal();
-      } else if (document.fullscreenElement) {
-        document.exitFullscreen?.();
-      }
+    if (e.key !== 'Escape') return;
+    if (videoModal.classList.contains('is-open')) {
+      closeVideoModal();
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen?.();
     }
   });
 
