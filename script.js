@@ -224,6 +224,7 @@
 
     const card = document.createElement('div');
     card.className = 'slide-card';
+    if (page.type === 'canva') card.classList.add('slide-card--flush');
     const inner = document.createElement('div');
     inner.className = 'slide-inner';
 
@@ -314,6 +315,16 @@
         wrap.className = 'canva-embed-wrap';
         wrap.innerHTML = `<iframe src="${page.url}" allow="fullscreen" allowfullscreen loading="lazy" title="캔바 프레젠테이션"></iframe>`;
         inner.appendChild(wrap);
+
+        // 캔바 무료 임베드 이용약관에 맞춘 저작자 표시 (캔바 공식 임베드
+        // 코드에 딸려오는 "OOO 님의 디자인 제목" 링크와 같은 역할)
+        if (page.attributionUrl) {
+          const attr = document.createElement('p');
+          attr.className = 'canva-attribution';
+          const authorText = page.attributionAuthor ? `${page.attributionAuthor} 님의 ` : '';
+          attr.innerHTML = `${authorText}<a href="${page.attributionUrl}" target="_blank" rel="noopener">${page.attributionTitle || '원본 디자인 보기'}</a>`;
+          inner.appendChild(attr);
+        }
       }
     }
 
