@@ -801,10 +801,11 @@ body.is-landing .stage{ padding:0; }
 .landing-title{
   font-family:'Fraunces', var(--font-title), serif;
   font-weight:600;
-  font-size:3.4rem;
+  font-size:clamp(1.8rem, 4.2vw, 3.2rem);
   line-height:1.2;
   letter-spacing:.01em;
-  color:var(--accent-1);
+  white-space:nowrap;
+  color:var(--ink-900);
   margin:0 0 1.3rem;
 }
 .landing-subtitle{
