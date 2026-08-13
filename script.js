@@ -117,6 +117,9 @@
 
   function renderStage() {
     if (currentUnitIndex === null) {
+      // 처음 화면(랜딩)에서는 상단 툴바(발표 모드 버튼 등)를 완전히
+      // 숨기고, 배경 이미지가 사이드바를 뺀 화면 전체를 꽉 채우도록 한다.
+      document.body.classList.add('is-landing');
       stage.innerHTML = emptyStateHTML();
       stageEyebrow.textContent = '';
       videoRail.classList.add('is-hidden');
@@ -130,6 +133,7 @@
     const pages = getPages(topic);
     const page = pages[currentPageIndex];
 
+    document.body.classList.remove('is-landing');
     stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title} : ${topic.title}`;
 
     // 이 소단원의 관련 영상을 우측 레일에 채우고, 소단원이 바뀔 때마다
@@ -283,12 +287,10 @@
   function emptyStateHTML() {
     return `
       <div class="landing">
-        <div class="landing-bg" style="background-image:url('background.jpg')"></div>
         <div class="landing-content">
-          <p class="landing-eyebrow">2022 개정 교육과정</p>
-          <h1 class="landing-title">경제수학</h1>
-          <p class="landing-tagline">물가와 환율, 이자와 확률 — 경제는 결국 수학의 언어로 말합니다.</p>
-          <p class="landing-cta">왼쪽 목차에서 단원을 골라 수업을 시작해보세요.</p>
+          <p class="landing-line1">2022 개정 교육과정</p>
+          <p class="landing-line2">경제수학</p>
+          <p class="landing-line3">왼쪽 목차를 골라주세요</p>
         </div>
       </div>
     `;
@@ -347,12 +349,11 @@
     }
   });
 
-  /* ---------------- 초기화 ---------------- */
+  /* ---------------- 초기화 ----------------
+     처음 접속하면 사이드바 목차만 그려두고, 화면은 표지(랜딩) 상태로
+     둔다. 특정 단원을 자동으로 열지 않는다 — 그래야 매번 접속할 때마다
+     이미지가 있는 처음 화면이 먼저 보인다.
+  ------------------------------------------------------------- */
   renderTOC();
   renderStage();
-
-  // 첫 단원을 기본으로 펼쳐서 보여준다
-  if (CURRICULUM.length > 0) {
-    toggleUnit(0);
-  }
 })();
