@@ -8,9 +8,6 @@
   const footer = document.getElementById('stageFooter');
   const collapseBtn = document.getElementById('collapseBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
-  const zoomInput = document.getElementById('zoomInput');
-  const zoomInBtn = document.getElementById('zoomInBtn');
-  const zoomOutBtn = document.getElementById('zoomOutBtn');
   const penBtn = document.getElementById('penBtn');
   const eraserBtn = document.getElementById('eraserBtn');
   const penColorInput = document.getElementById('penColor');
@@ -36,11 +33,6 @@
   let currentTopicIndex = null;
   let currentPageIndex = 0;
 
-  // 확대/축소 비율 (모든 컨트롤이 이 값 하나로 서로 연동된다). 학습지
-  // 이미지(.pdf-page-wrap)의 실제 가로폭(px)을 바꿔서, 이미지 위의
-  // 글자·그림·손글씨가 레이아웃 차원에서 실제로 커지고 작아지도록 한다.
-  let zoomLevel = 100;
-
   // 드로잉 도구 상태 — 펜/지우개 중 하나만 켜지고, 색깔·굵기는 공용이다.
   let drawTool = null; // 'pen' | 'eraser' | null(꺼짐)
   let penColor = penColorInput.value;
@@ -65,28 +57,6 @@
 
   function currentSlideKey() {
     return `${currentUnitIndex}-${currentTopicIndex}-${currentPageIndex}`;
-  }
-
-  // 확대/축소 비율을 하나의 값으로 관리 — -버튼/+버튼/숫자 입력이
-  // 모두 이 함수를 거쳐 서로 연동된다. transform: scale()이 아니라
-  // 학습지 이미지(.pdf-page-wrap)의 실제 가로폭(px)을 바꾸는 방식이라,
-  // 이미지 위의 글자·그림·손글씨가 레이아웃 차원에서 진짜로 커지고
-  // 작아지며, 화면보다 커지면 자연스럽게 가로/세로 스크롤이 생긴다.
-  function setZoom(value) {
-    zoomLevel = Math.max(25, Math.min(300, Math.round(value)));
-    zoomInput.value = zoomLevel;
-
-    const wrap = stage.querySelector('.pdf-page-wrap');
-    if (!wrap) return;
-
-    if (zoomLevel === 100) {
-      wrap.style.width = ''; // CSS 기본값(100%, 화면 가로 꽉 채움)으로 복귀
-    } else {
-      const parent = wrap.parentElement;
-      const cs = getComputedStyle(parent);
-      const base = parent.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-      wrap.style.width = (base * zoomLevel / 100) + 'px';
-    }
   }
 
   // 영상(type: 'video') 슬라이드는 더 이상 PPT 페이지 순서에 끼워 넣지 않고
@@ -168,9 +138,9 @@
   }
 
   /* ---------------- 소단원 선택 / 렌더 ----------------
-     사이드바에서 소단원(목차 한 줄)을 클릭하면 그 소단원의 첫 페이지부터
-     보여줍니다. 이후 하단 좌우 화살표는 이 소단원 "안"의 PPT 페이지만
-     넘기고, 다른 소단원으로는 이동하지 않습니다.
+     사이드바에서 소단원(목차 한 줄)을 클릭하면 그 소단원을 보여줍니다.
+     하단 좌우 화살표도 이제 같은 방식으로 같은 단원 안의 이전/다음
+     소단원으로 이동합니다(step() 참고).
   ------------------------------------------------------------- */
   function selectTopic(uIdx, tIdx) {
     currentUnitIndex = uIdx;
@@ -332,9 +302,8 @@
     stage.innerHTML = '';
     stage.appendChild(card);
 
-    setZoom(100);
     typesetMath(card);
-    renderFooter(pages);
+    renderFooter(unit);
   }
 
   // 새로 그려진 슬라이드 안의 수식($...$, $$...$$)을 MathJax로 렌더링한다.
@@ -347,34 +316,34 @@
     }
   }
 
-  function renderFooter(pages) {
-    const total = pages.length;
+  function renderFooter(unit) {
+    const total = unit.topics.length;
     footer.innerHTML = '';
 
     const prev = document.createElement('button');
     prev.className = 'nav-btn';
-    prev.setAttribute('aria-label', '이전 슬라이드');
+    prev.setAttribute('aria-label', '이전 소단원');
     prev.innerHTML = '&#8592;';
-    prev.disabled = currentPageIndex === 0;
+    prev.disabled = currentTopicIndex === 0;
     prev.addEventListener('click', () => step(-1));
 
     const track = document.createElement('div');
     track.className = 'progress-track';
     for (let i = 0; i < total; i++) {
       const dot = document.createElement('span');
-      dot.className = 'progress-dot' + (i === currentPageIndex ? ' is-active' : '');
+      dot.className = 'progress-dot' + (i === currentTopicIndex ? ' is-active' : '');
       track.appendChild(dot);
     }
     const count = document.createElement('span');
     count.className = 'progress-count';
-    count.textContent = `${currentPageIndex + 1} / ${total}`;
+    count.textContent = `${currentTopicIndex + 1} / ${total}`;
     track.appendChild(count);
 
     const next = document.createElement('button');
     next.className = 'nav-btn';
-    next.setAttribute('aria-label', '다음 슬라이드');
+    next.setAttribute('aria-label', '다음 소단원');
     next.innerHTML = '&#8594;';
-    next.disabled = currentPageIndex === total - 1;
+    next.disabled = currentTopicIndex === total - 1;
     next.addEventListener('click', () => step(1));
 
     footer.appendChild(prev);
@@ -382,15 +351,15 @@
     footer.appendChild(next);
   }
 
-  // 현재 소단원 "안"의 PPT 페이지만 넘긴다 (다른 소단원으로 넘어가지 않음, 영상 제외)
+  // 하단 좌우 화살표는 이제 같은 단원 안의 다른 소단원(사이드바 목차
+  // 한 줄)으로 이동한다. 소단원으로 이동하면 그 소단원의 첫 페이지부터
+  // 다시 보여준다(사이드바에서 직접 클릭한 것과 동일하게 동작).
   function step(dir) {
     if (currentUnitIndex === null) return;
-    const topic = CURRICULUM[currentUnitIndex].topics[currentTopicIndex];
-    const total = getPages(topic).length;
-    const next = currentPageIndex + dir;
-    if (next < 0 || next >= total) return;
-    currentPageIndex = next;
-    renderStage();
+    const unit = CURRICULUM[currentUnitIndex];
+    const nextTopicIndex = currentTopicIndex + dir;
+    if (nextTopicIndex < 0 || nextTopicIndex >= unit.topics.length) return;
+    selectTopic(currentUnitIndex, nextTopicIndex);
   }
 
   /* ---------------- 학습지 이미지 위 드로잉(펜/지우개) ----------------
@@ -440,8 +409,7 @@
     canvas.addEventListener('pointermove', (e) => {
       if (!drawing) return;
       const rect = canvas.getBoundingClientRect();
-      const baselineWidth = rect.width / (zoomLevel / 100);
-      const scaleFactor = canvas.width / baselineWidth;
+      const scaleFactor = canvas.width / rect.width;
       ctx.lineWidth = penWidth * scaleFactor;
       ctx.strokeStyle = penColor;
       ctx.globalCompositeOperation = drawTool === 'eraser' ? 'destination-out' : 'source-over';
@@ -874,40 +842,6 @@
     restoreCanvas(canvas, canvas.getContext('2d'), rec);
     updateDrawButtons();
   });
-
-  /* ---------------- 확대/축소 ----------------
-     -버튼/+버튼(클릭당 5%), 숫자 직접 입력, 이미지 위에서 Alt+휠까지
-     모두 setZoom() 하나로 연동된다.
-  ------------------------------------------------------------- */
-  zoomOutBtn.addEventListener('click', () => setZoom(zoomLevel - 5));
-  zoomInBtn.addEventListener('click', () => setZoom(zoomLevel + 5));
-  zoomInput.addEventListener('change', () => {
-    const val = parseInt(zoomInput.value, 10);
-    setZoom(Number.isNaN(val) ? 100 : val);
-  });
-
-  // Alt+휠로 이미지 위에서 확대/축소한다. Ctrl+휠은 최신 크롬에서
-  // 브라우저 자체의 "페이지 전체 확대"가 우선돼서 우리 쪽에서
-  // preventDefault를 해도 막히지 않는 경우가 있었다(그래서 툴바까지
-  // 같이 커져 보였다). Alt+휠은 브라우저가 기본으로 쓰는 단축키가
-  // 아니라서 이런 충돌이 없다. 그래도 혹시 모를 다른 브라우저 동작에
-  // 대비해 이미지(.pdf-page-wrap) 위에 있을 때만 반응하고, preventDefault로
-  // 다른 기본 동작도 막아둔다.
-  let wheelAccum = 0;
-  document.addEventListener('wheel', (e) => {
-    if (!e.altKey) return;
-    e.preventDefault();
-
-    const wrap = stage.querySelector('.pdf-page-wrap');
-    if (!wrap || !wrap.contains(e.target)) return;
-
-    wheelAccum += e.deltaY;
-    const threshold = 35;
-    if (Math.abs(wheelAccum) >= threshold) {
-      setZoom(zoomLevel + (wheelAccum < 0 ? 5 : -5));
-      wheelAccum = 0;
-    }
-  }, { passive: false });
 
   /* ---------------- 우측 관련 영상 레일 / 영상 모달 ---------------- */
   videoRailToggle.addEventListener('click', () => {
