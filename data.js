@@ -101,7 +101,15 @@ const CURRICULUM = [
     number: 'Ⅰ',
     title: '수와 경제',
     topics: [
-      ...textTopics(['오리엔테이션']),
+      {
+        title: '오리엔테이션',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSIU6dcrc/Xs6AeqxLbO7Z7v0GBCxHkg/view?embed'
+          }
+        ]
+      },
 
       {
         title: '경제지표 - 물가, 고용',
@@ -137,8 +145,17 @@ const CURRICULUM = [
         ]
       },
 
+      {
+        title: '경제지표 - 주가, GDP',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSIctIDyw/fJwS--dOW_mfzs4Ngf-ZzA/view?embed'
+          }
+        ]
+      },
+
       ...textTopics([
-        '경제지표 - 주가, GDP',
         '퍼센트와 퍼센트포인트',
         '환율의 계산',
         '환율의 변동',
