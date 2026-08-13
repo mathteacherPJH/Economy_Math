@@ -50,6 +50,14 @@
  *        버튼으로 그 자리에 직접 만들어서 타이핑하는 방식이라, data.js에
  *        미리 좌표를 적어둘 필요가 없습니다.
  *
+ *  6) 캔바(Canva) 프레젠테이션 통째로 삽입
+ *  { type: 'canva', url: '캔바 공유 링크 뒤에 ?embed 를 붙인 주소' }
+ *     -> 캔바에서 만든 슬라이드(클릭으로 답 나타내기, 무선 프리젠터 등)를
+ *        16:9 화면에 그대로 띄웁니다. 슬라이드 넘기기·애니메이션은 전부
+ *        캔바 자체가 처리하므로, 이 사이트의 좌우 넘기기 버튼이나 빈칸
+ *        기능과는 무관합니다. 캔바 디자인의 공유 링크(.../view) 맨 뒤에
+ *        ?embed 를 붙이면 됩니다.
+ *
  *  소단원 제목(topic.title)은 화면 좌상단에 작은 글씨(Line1)로 계속 떠
  *  있습니다. 그 아래(Line2)에는 슬라이드의 section 값(학습지의 소제목,
  *  예: '물가지표', '물가 지표의 활용')이 표시되고, section이 바뀌는
@@ -94,55 +102,8 @@ const CURRICULUM = [
         title: '경제지표 - 물가, 고용',
         slides: [
           {
-            type: 'pdfpage',
-            section: '물가지표 (학습지 1쪽)',
-            image: 'images/eco-1-2-p1.jpg',
-            refWidth: 1240,
-            refHeight: 1753
-          },
-
-          {
-            type: 'video',
-            section: '물가지표',
-            label: '소비자 물가지수',
-            url: 'https://www.youtube.com/embed/eyiJa2oX2_Q'
-          },
-
-          {
-            type: 'video',
-            section: '물가지표',
-            label: '생산자 물가지수',
-            url: 'https://www.youtube.com/embed/f1UGOZTBGZs'
-          },
-
-          {
-            type: 'pdfpage',
-            section: '고용지표 (학습지 2쪽)',
-            image: 'images/eco-1-2-p2.jpg',
-            refWidth: 1240,
-            refHeight: 1753
-          },
-
-          {
-            type: 'video',
-            section: '고용지표',
-            label: '쉬었음 청년',
-            url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
-          },
-
-          {
-            type: 'video',
-            section: '물가 지표의 활용',
-            label: '실업률',
-            url: 'https://www.youtube.com/embed/8M8f_66msQg'
-          },
-
-          {
-            type: 'pdfpage',
-            section: '2차시 실전 문제 (학습지 3쪽)',
-            image: 'images/eco-1-2-p3.jpg',
-            refWidth: 1240,
-            refHeight: 1753
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?embed'
           }
         ]
       },
