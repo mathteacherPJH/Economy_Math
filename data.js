@@ -108,10 +108,7 @@ const CURRICULUM = [
         slides: [
           {
             type: 'canva',
-            url: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?embed',
-            attributionAuthor: '박지환',
-            attributionTitle: '[02차시] 경제지표 - 물가, 고용',
-            attributionUrl: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?utm_content=DAHSHxMDt7M&utm_campaign=designshare&utm_medium=embeds&utm_source=link'
+            url: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?embed'
           },
 
           {
