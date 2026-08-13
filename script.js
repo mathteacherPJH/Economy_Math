@@ -6,6 +6,7 @@
   const stage = document.getElementById('stage');
   const stageEyebrow = document.getElementById('stageEyebrow');
   const collapseBtn = document.getElementById('collapseBtn');
+  const brandHomeBtn = document.getElementById('brandHomeBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
   const videoRail = document.getElementById('videoRail');
   const videoRailToggle = document.getElementById('videoRailToggle');
@@ -118,6 +119,8 @@
     if (currentUnitIndex === null) {
       stage.innerHTML = emptyStateHTML();
       stageEyebrow.textContent = '';
+      videoRail.classList.add('is-hidden');
+      videoRail.classList.remove('is-open');
       document.body.classList.remove('is-scroll-mode');
       return;
     }
@@ -279,10 +282,14 @@
 
   function emptyStateHTML() {
     return `
-      <div class="empty-state">
-        <div class="brand-mark">경제</div>
-        <h2>왼쪽 목차에서 단원을 선택하세요</h2>
-        <p>목차를 클릭하면 개념 설명, 영상, 활동으로 구성된 슬라이드가 시작됩니다.</p>
+      <div class="landing">
+        <div class="landing-bg" style="background-image:url('background.jpg')"></div>
+        <div class="landing-content">
+          <p class="landing-eyebrow">2022 개정 교육과정</p>
+          <h1 class="landing-title">경제수학</h1>
+          <p class="landing-tagline">물가와 환율, 이자와 확률 — 경제는 결국 수학의 언어로 말합니다.</p>
+          <p class="landing-cta">왼쪽 목차에서 단원을 골라 수업을 시작해보세요.</p>
+        </div>
       </div>
     `;
   }
@@ -309,6 +316,16 @@
   /* ---------------- 사이드바 접기/펼치기 ---------------- */
   collapseBtn.addEventListener('click', () => {
     app.classList.toggle('is-collapsed');
+  });
+
+  /* ---------------- 사이드바 '경제수학' 로고 -> 처음 화면으로 ---------------- */
+  brandHomeBtn.addEventListener('click', () => {
+    currentUnitIndex = null;
+    currentTopicIndex = null;
+    currentPageIndex = 0;
+    tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open', 'is-active'));
+    tocEl.querySelectorAll('.slide-list button').forEach((btn) => btn.classList.remove('is-active'));
+    renderStage();
   });
 
   /* ---------------- 전체화면(발표 모드) ---------------- */
