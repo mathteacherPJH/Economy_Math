@@ -133,6 +133,12 @@ const CURRICULUM = [
 
           {
             type: 'video',
+            label: '공무원 임금 인상',
+            url: 'https://www.youtube.com/embed/q8VAfs8snGw'
+          },
+
+          {
+            type: 'video',
             label: '쉬었음 청년',
             url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
           },
