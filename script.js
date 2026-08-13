@@ -289,8 +289,8 @@
       <div class="landing">
         <div class="landing-content">
           <p class="landing-eyebrow">VISUAL ECONOMICS COMPASS</p>
-          <h1 class="landing-title">DECODE THE ECONOMY</h1>
-          <p class="landing-subtitle">물가와 환율, 이자와 확률 — 수학으로 경제를 읽습니다.</p>
+          <h1 class="landing-title">ECONOMIC MATHEMATICS</h1>
+          <p class="landing-subtitle">왼쪽 목차를 클릭하여 학습을 시작하세요.</p>
         </div>
       </div>
     `;
