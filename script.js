@@ -288,9 +288,9 @@
     return `
       <div class="landing">
         <div class="landing-content">
-          <p class="landing-line1">2022 개정 교육과정</p>
-          <p class="landing-line2">경제수학</p>
-          <p class="landing-line3">왼쪽 목차를 골라주세요</p>
+          <p class="landing-eyebrow">VISUAL ECONOMICS COMPASS</p>
+          <h1 class="landing-title">DECODE THE ECONOMY</h1>
+          <p class="landing-subtitle">물가와 환율, 이자와 확률 — 수학으로 경제를 읽습니다.</p>
         </div>
       </div>
     `;
