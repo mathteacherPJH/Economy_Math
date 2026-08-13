@@ -767,61 +767,37 @@ ol.concept-list li{ padding-left:0; }
 .calc-btn:active{ transform:scale(.97); }
 
 /* ---------- 처음 화면(랜딩) — 사이드바 '경제수학' 로고를 누르거나
-   페이지를 처음 열었을 때 보여주는 표지 화면 ---------- */
+   페이지를 처음 열었을 때 보여주는 표지 화면. 배경 이미지가 사이드바를
+   뺀 화면 전체를 꽉 채운다(상단 툴바도 이 화면에서는 숨긴다). ---------- */
+body.is-landing .stage-header{ display:none; }
+body.is-landing .stage{ padding:0; }
+
 .landing{
-  position:relative;
   height:100%;
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
-  border-radius:20px;
-}
-.landing-bg{
-  position:absolute;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  opacity:.16;
-}
-.landing-bg::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg, var(--paper) 0%, rgba(246,246,249,.4) 55%, var(--paper) 100%);
+  background:
+    linear-gradient(rgba(246,246,249,.55), rgba(246,246,249,.55)),
+    url('background.jpg') center/cover no-repeat;
 }
 .landing-content{
-  position:relative;
-  z-index:1;
   text-align:center;
-  max-width:36rem;
-  padding:2rem;
+  font-family:'Malgun Gothic', '맑은 고딕', sans-serif;
 }
-.landing-eyebrow{
-  font-family:var(--font-mono);
-  font-size:.85rem;
-  letter-spacing:.14em;
-  color:var(--accent-1);
-  margin:0 0 .8rem;
-  text-transform:uppercase;
+.landing-line1{
+  font-size:1.2rem;
+  color:var(--text-muted);
+  margin:0 0 .5rem;
 }
-.landing-title{
-  font-family:var(--font-title);
-  font-size:4.5rem;
-  line-height:1.15;
+.landing-line2{
+  font-size:3.4rem;
+  font-weight:700;
   color:var(--text-dark);
-  margin:0 0 1.1rem;
+  margin:0 0 .7rem;
 }
-.landing-tagline{
-  font-family:var(--font-gothic);
+.landing-line3{
   font-size:1.15rem;
-  line-height:1.7;
-  color:var(--text-dark);
-  margin:0 0 1.6rem;
-}
-.landing-cta{
-  font-family:var(--font-gothic);
-  font-size:.92rem;
   color:var(--text-muted);
   margin:0;
 }
