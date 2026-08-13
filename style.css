@@ -385,44 +385,6 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   cursor:pointer;
 }
 
-.zoom-group{
-  display:flex;
-  align-items:center;
-  gap:.3rem;
-  height:34px;
-  box-sizing:border-box;
-  border:1px solid var(--paper-line);
-  border-radius:8px;
-  padding:0 .4rem;
-  background:var(--paper-card);
-}
-.zoom-btn{
-  width:22px; height:22px;
-  border:none;
-  background:transparent;
-  color:var(--text-muted);
-  font-size:.95rem;
-  line-height:1;
-  cursor:pointer;
-  border-radius:5px;
-  display:flex; align-items:center; justify-content:center;
-  transition:background .15s, color .15s;
-}
-.zoom-btn:hover{ background:var(--accent-soft); color:var(--accent-1); }
-.zoom-input{
-  width:2.6rem;
-  border:none;
-  text-align:center;
-  font-family:var(--font-mono);
-  font-size:.78rem;
-  color:var(--text-dark);
-  background:transparent;
-  -moz-appearance:textfield;
-}
-.zoom-input::-webkit-inner-spin-button, .zoom-input::-webkit-outer-spin-button{
-  -webkit-appearance:none;
-  margin:0;
-}
 .zoom-unit{
   font-family:var(--font-mono);
   font-size:.7rem;
