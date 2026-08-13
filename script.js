@@ -308,6 +308,12 @@
         setupBlankLayer(blankLayer, page.image);
 
         inner.appendChild(wrap);
+      } else if (page.type === 'canva') {
+        inner.classList.add('slide-inner--full');
+        const wrap = document.createElement('div');
+        wrap.className = 'canva-embed-wrap';
+        wrap.innerHTML = `<iframe src="${page.url}" allow="fullscreen" allowfullscreen loading="lazy" title="캔바 프레젠테이션"></iframe>`;
+        inner.appendChild(wrap);
       }
     }
 
