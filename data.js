@@ -51,12 +51,17 @@
  *        미리 좌표를 적어둘 필요가 없습니다.
  *
  *  6) 캔바(Canva) 프레젠테이션 통째로 삽입
- *  { type: 'canva', url: '캔바 공유 링크 뒤에 ?embed 를 붙인 주소' }
+ *  { type: 'canva', url: '캔바 공유 링크 뒤에 ?embed 를 붙인 주소',
+ *    attributionAuthor: '캔바 계정 이름(선택)',
+ *    attributionTitle: '디자인 제목(선택)',
+ *    attributionUrl: '원본 디자인 링크(선택)' }
  *     -> 캔바에서 만든 슬라이드(클릭으로 답 나타내기, 무선 프리젠터 등)를
- *        16:9 화면에 그대로 띄웁니다. 슬라이드 넘기기·애니메이션은 전부
- *        캔바 자체가 처리하므로, 이 사이트의 좌우 넘기기 버튼이나 빈칸
- *        기능과는 무관합니다. 캔바 디자인의 공유 링크(.../view) 맨 뒤에
- *        ?embed 를 붙이면 됩니다.
+ *        화면(카드) 크기에 맞춰 16:9 비율 그대로 보여줍니다. 슬라이드
+ *        넘기기·애니메이션은 전부 캔바 자체가 처리하므로, 이 사이트의
+ *        좌우 넘기기 버튼이나 빈칸 기능과는 무관합니다. attribution 관련
+ *        3개 값을 채우면 캔바 무료 임베드 이용약관에 맞춰 화면 아래에
+ *        작은 저작자 표시 링크가 함께 뜹니다(캔바 공식 임베드 코드의
+ *        "OOO 님의 디자인 제목" 부분과 같은 역할).
  *
  *  소단원 제목(topic.title)은 화면 좌상단에 작은 글씨(Line1)로 계속 떠
  *  있습니다. 그 아래(Line2)에는 슬라이드의 section 값(학습지의 소제목,
@@ -103,7 +108,34 @@ const CURRICULUM = [
         slides: [
           {
             type: 'canva',
-            url: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?embed'
+            url: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?embed',
+            attributionAuthor: '박지환',
+            attributionTitle: '[02차시] 경제지표 - 물가, 고용',
+            attributionUrl: 'https://www.canva.com/design/DAHSHxMDt7M/t2odsdgrJXV3QBW_3VxrXA/view?utm_content=DAHSHxMDt7M&utm_campaign=designshare&utm_medium=embeds&utm_source=link'
+          },
+
+          {
+            type: 'video',
+            label: '소비자 물가지수',
+            url: 'https://www.youtube.com/embed/eyiJa2oX2_Q'
+          },
+
+          {
+            type: 'video',
+            label: '생산자 물가지수',
+            url: 'https://www.youtube.com/embed/f1UGOZTBGZs'
+          },
+
+          {
+            type: 'video',
+            label: '쉬었음 청년',
+            url: 'https://www.youtube.com/embed/Jbv8SVdnS_I'
+          },
+
+          {
+            type: 'video',
+            label: '실업률',
+            url: 'https://www.youtube.com/embed/8M8f_66msQg'
           }
         ]
       },
