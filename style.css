@@ -585,14 +585,14 @@ ol.concept-list li{ padding-left:0; }
 /* '경제수학 학습지' 목록 화면 — 1~4단원을 가로로 나란히 놓고, 각
    단원 안의 차시는 세로로 쌓는다 */
 .worksheet-grid{
-  display:flex;
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
   gap:2.2rem;
-  align-items:flex-start;
-  overflow-x:auto;
+  align-items:start;
   padding-top:.5rem;
 }
 .worksheet-col{
-  flex:0 0 320px;
+  min-width:0;
 }
 .worksheet-group-title{
   font-family:var(--font-gothic);
