@@ -4,12 +4,10 @@
   const app = document.getElementById('app');
   const tocEl = document.getElementById('toc');
   const stage = document.getElementById('stage');
-  const stageEyebrow = document.getElementById('stageEyebrow');
   const collapseBtn = document.getElementById('collapseBtn');
   const brandHomeBtn = document.getElementById('brandHomeBtn');
   const assessmentBtn = document.getElementById('assessmentBtn');
   const worksheetsBtn = document.getElementById('worksheetsBtn');
-  const fullscreenBtn = document.getElementById('fullscreenBtn');
   const videoRail = document.getElementById('videoRail');
   const videoRailToggle = document.getElementById('videoRailToggle');
   const videoRailList = document.getElementById('videoRailList');
@@ -112,7 +110,6 @@
     currentUnitIndex = uIdx;
     currentTopicIndex = tIdx;
     currentPageIndex = 0;
-    fullscreenBtn.classList.remove('is-hidden');
 
     const unitEl = tocEl.querySelector(`.unit[data-unit-index="${uIdx}"]`);
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open'));
@@ -129,11 +126,10 @@
 
   function renderStage() {
     if (currentUnitIndex === null) {
-      // 처음 화면(랜딩)에서는 상단 툴바(발표 모드 버튼 등)를 완전히
-      // 숨기고, 배경 이미지가 사이드바를 뺀 화면 전체를 꽉 채우도록 한다.
+      // 처음 화면(랜딩)에서는 배경 이미지가 사이드바를 뺀 화면 전체를
+      // 꽉 채우도록 한다.
       document.body.classList.add('is-landing');
       stage.innerHTML = emptyStateHTML();
-      stageEyebrow.textContent = '';
       videoRail.classList.add('is-hidden');
       videoRail.classList.remove('is-open');
       document.body.classList.remove('is-scroll-mode');
@@ -146,11 +142,6 @@
     const page = pages[currentPageIndex];
 
     document.body.classList.remove('is-landing');
-    // '경제수학 수행평가'처럼 사이드바 맨 아래 버튼으로 들어가는
-    // 단원은 단원 번호(Ⅴ 등)를 breadcrumb에도 표시하지 않는다.
-    stageEyebrow.innerHTML = unit.sidebarHidden
-      ? `${unit.title} : ${topic.title}`
-      : `<strong>${unit.number}</strong> · ${unit.title} : ${topic.title}`;
 
     // 이 소단원의 관련 영상을 우측 레일에 채우고, 소단원이 바뀔 때마다
     // 레일은 항상 접힌 상태로 되돌린다.
@@ -179,8 +170,7 @@
       heading.textContent = page.title;
       inner.appendChild(heading);
     } else {
-      // 좌상단 고정 헤더 — 학습지 페이지 이미지 슬라이드는 위 stageEyebrow가
-      // 이미 단원·소단원 이름을 보여주므로 따로 표시하지 않는다.
+      // 좌상단 고정 헤더 (학습지 소제목 등)
       if (page.type !== 'pdfpage' && page.section) {
         const kickerGroup = document.createElement('div');
         kickerGroup.className = 'slide-kicker-group';
@@ -341,7 +331,6 @@
     currentUnitIndex = null;
     currentTopicIndex = null;
     currentPageIndex = 0;
-    fullscreenBtn.classList.remove('is-hidden');
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open', 'is-active'));
     tocEl.querySelectorAll('.slide-list button').forEach((btn) => btn.classList.remove('is-active'));
     assessmentBtn.classList.remove('is-active');
@@ -375,11 +364,6 @@
     worksheetsBtn.classList.add('is-active');
     videoRail.classList.add('is-hidden');
     videoRail.classList.remove('is-open');
-
-    // 이 화면에서는 좌상단 글자(breadcrumb)와 우상단 발표 모드 버튼을
-    // 둘 다 감춘다 — 목록만 깔끔하게 보여주면 되는 화면이라서다.
-    stageEyebrow.innerHTML = '';
-    fullscreenBtn.classList.add('is-hidden');
 
     const card = document.createElement('div');
     card.className = 'slide-card slide-card--flush';
@@ -433,22 +417,11 @@
     stage.appendChild(card);
   }
 
-  /* ---------------- 전체화면(발표 모드) ---------------- */
-  fullscreenBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.();
-    } else {
-      document.exitFullscreen?.();
-    }
-  });
-
-  /* ---------------- 키보드 단축키 (Esc로 영상/전체화면 닫기) ---------------- */
+  /* ---------------- 키보드 단축키 (Esc로 영상 닫기) ---------------- */
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (videoModal.classList.contains('is-open')) {
       closeVideoModal();
-    } else if (document.fullscreenElement) {
-      document.exitFullscreen?.();
     }
   });
 
