@@ -112,6 +112,7 @@
     currentUnitIndex = uIdx;
     currentTopicIndex = tIdx;
     currentPageIndex = 0;
+    fullscreenBtn.classList.remove('is-hidden');
 
     const unitEl = tocEl.querySelector(`.unit[data-unit-index="${uIdx}"]`);
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open'));
@@ -340,6 +341,7 @@
     currentUnitIndex = null;
     currentTopicIndex = null;
     currentPageIndex = 0;
+    fullscreenBtn.classList.remove('is-hidden');
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open', 'is-active'));
     tocEl.querySelectorAll('.slide-list button').forEach((btn) => btn.classList.remove('is-active'));
     assessmentBtn.classList.remove('is-active');
@@ -374,37 +376,57 @@
     videoRail.classList.add('is-hidden');
     videoRail.classList.remove('is-open');
 
-    stageEyebrow.innerHTML = '경제수학 학습지';
+    // 이 화면에서는 좌상단 글자(breadcrumb)와 우상단 발표 모드 버튼을
+    // 둘 다 감춘다 — 목록만 깔끔하게 보여주면 되는 화면이라서다.
+    stageEyebrow.innerHTML = '';
+    fullscreenBtn.classList.add('is-hidden');
 
     const card = document.createElement('div');
-    card.className = 'slide-card';
+    card.className = 'slide-card slide-card--flush';
     const inner = document.createElement('div');
     inner.className = 'slide-inner';
 
-    const heading = document.createElement('p');
-    heading.className = 'section-kicker';
-    heading.textContent = '경제수학 학습지';
-    inner.appendChild(heading);
+    const hasGroups = typeof WORKSHEETS !== 'undefined'
+      && WORKSHEETS.length > 0
+      && Array.isArray(WORKSHEETS[0].items);
 
-    const list = document.createElement('div');
-    list.className = 'worksheet-list';
-    if (typeof WORKSHEETS !== 'undefined' && WORKSHEETS.length > 0) {
-      WORKSHEETS.forEach((w) => {
-        const a = document.createElement('a');
-        a.className = 'worksheet-item';
-        a.href = `pdf/${w.file}.pdf`;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.textContent = w.label;
-        list.appendChild(a);
+    if (hasGroups) {
+      // 1·2·3·4단원을 가로로 나란히 놓고, 각 단원 안의 차시는 세로로 쌓는다
+      const grid = document.createElement('div');
+      grid.className = 'worksheet-grid';
+
+      WORKSHEETS.forEach((group) => {
+        const col = document.createElement('div');
+        col.className = 'worksheet-col';
+
+        const groupTitle = document.createElement('p');
+        groupTitle.className = 'worksheet-group-title';
+        groupTitle.textContent = group.unitTitle;
+        col.appendChild(groupTitle);
+
+        const list = document.createElement('div');
+        list.className = 'worksheet-list';
+        group.items.forEach((w) => {
+          const a = document.createElement('a');
+          a.className = 'worksheet-item';
+          a.href = `pdf/${w.file}.pdf`;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = w.label;
+          list.appendChild(a);
+        });
+        col.appendChild(list);
+
+        grid.appendChild(col);
       });
+
+      inner.appendChild(grid);
     } else {
       const empty = document.createElement('p');
       empty.className = 'worksheet-empty';
       empty.textContent = '아직 등록된 학습지가 없습니다.';
-      list.appendChild(empty);
+      inner.appendChild(empty);
     }
-    inner.appendChild(list);
 
     card.appendChild(inner);
     stage.innerHTML = '';
