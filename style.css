@@ -382,6 +382,7 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   transition:border-color .15s, color .15s, box-shadow .15s;
 }
 .fullscreen-btn:hover{ border-color:var(--accent-1); color:var(--text-dark); box-shadow:0 0 0 3px var(--accent-soft); }
+.fullscreen-btn.is-hidden{ display:none; }
 
 .stage{
   flex:1;
@@ -661,32 +662,53 @@ ol.concept-list li{ padding-left:0; }
 }
 .problem-box p:last-child{ margin-bottom:0; }
 
-/* '경제수학 학습지' 목록 화면 */
+/* '경제수학 학습지' 목록 화면 — 1~4단원을 가로로 나란히 놓고, 각
+   단원 안의 차시는 세로로 쌓는다 */
+.worksheet-grid{
+  display:flex;
+  gap:2.2rem;
+  align-items:flex-start;
+  overflow-x:auto;
+  padding-top:.5rem;
+}
+.worksheet-col{
+  flex:0 0 240px;
+}
+.worksheet-group-title{
+  font-family:var(--font-gothic);
+  font-weight:700;
+  font-size:1.05rem;
+  color:var(--accent-1);
+  margin:0 0 .9rem;
+  padding-bottom:.5rem;
+  border-bottom:2px solid var(--accent-soft);
+}
+
 .worksheet-list{
   display:flex;
   flex-direction:column;
-  gap:.8rem;
-  margin-top:1.6rem;
-  max-width:32rem;
+  gap:.7rem;
 }
 .worksheet-item{
   display:flex;
   align-items:center;
-  gap:.7rem;
-  padding:1.1rem 1.3rem;
+  gap:.6rem;
+  padding:.85rem 1rem;
   border:1px solid var(--paper-line);
-  border-radius:12px;
+  border-radius:10px;
   background:#fff;
   color:var(--text-dark);
   font-family:var(--font-gothic);
-  font-size:1.15rem;
+  font-size:.95rem;
   font-weight:600;
+  line-height:1.3;
   text-decoration:none;
   transition:border-color .15s, box-shadow .15s, background .15s;
 }
 .worksheet-item::before{
   content:'📄';
-  font-size:1.1rem;
+  font-size:1rem;
+  flex-shrink:0;
 }
 .worksheet-item:hover{
   border-color:var(--accent-1);
