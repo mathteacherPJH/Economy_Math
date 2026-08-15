@@ -223,6 +223,9 @@ const CURRICULUM = [
     id: 'unit-5',
     number: 'Ⅴ',
     title: '경제수학 수행평가',
+    // 사이드바 위쪽의 단원 목록(Ⅰ~Ⅳ)에는 표시하지 않고, 사이드바 맨
+    // 아래에 버튼 형태로 따로 보여준다 (script.js의 renderTOC 참고).
+    sidebarHidden: true,
     topics: [
       {
         title: '세후 연봉, 연금 계산 프로그램',
@@ -325,4 +328,18 @@ const CURRICULUM = [
       }
     ]
   }
+];
+
+/**
+ * 사이드바 맨 아래 "경제수학 학습지" 버튼을 누르면 보여주는 학습지
+ * 목록. GitHub 저장소 루트의 pdf/ 폴더에 파일을 올릴 때마다 이 배열에
+ * 한 줄씩만 추가하면 됩니다 (파일명은 pdf/ 폴더 안 실제 파일명과
+ * 정확히 같아야 합니다 — 지금은 chapter01.pdf, chapter02.pdf 처럼
+ * .pdf 확장자라고 가정했습니다. 다른 확장자라면 알려주세요).
+ *
+ * { label: '사이드바/목록에 보일 이름', file: 'pdf/ 폴더 안 파일명(확장자 제외)' }
+ */
+const WORKSHEETS = [
+  { label: '01차시', file: 'chapter01' },
+  { label: '02차시', file: 'chapter02' }
 ];
