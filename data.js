@@ -332,14 +332,63 @@ const CURRICULUM = [
 
 /**
  * 사이드바 맨 아래 "경제수학 학습지" 버튼을 누르면 보여주는 학습지
- * 목록. GitHub 저장소 루트의 pdf/ 폴더에 파일을 올릴 때마다 이 배열에
- * 한 줄씩만 추가하면 됩니다 (파일명은 pdf/ 폴더 안 실제 파일명과
- * 정확히 같아야 합니다 — 지금은 chapter01.pdf, chapter02.pdf 처럼
- * .pdf 확장자라고 가정했습니다. 다른 확장자라면 알려주세요).
+ * 목록. 단원별로 묶어서 표시한다. GitHub 저장소 루트의 pdf/ 폴더 안
+ * 파일명과 file 값이 정확히 같아야 합니다 (확장자는 .pdf로 가정 —
+ * 다르면 알려주세요).
  *
- * { label: '사이드바/목록에 보일 이름', file: 'pdf/ 폴더 안 파일명(확장자 제외)' }
+ * { unitTitle: '이 묶음 제목', items: [ { label: '목록에 보일 이름', file: 'pdf/ 폴더 안 파일명(확장자 제외)' }, ... ] }
  */
 const WORKSHEETS = [
-  { label: '01차시', file: 'chapter01' },
-  { label: '02차시', file: 'chapter02' }
+  {
+    unitTitle: '1단원 · 수와 경제',
+    items: [
+      { label: '[01차시] 오리엔테이션', file: 'chapter01exe' },
+      { label: '[02차시] 경제지표 - 물가, 고용', file: 'chapter02exe' },
+      { label: '[03차시] 경제지표 - 주가, GDP', file: 'chapter03exe' },
+      { label: '[04차시] 퍼센트와 퍼센트포인트', file: 'chapter04exe' },
+      { label: '[05차시] 환율의 계산', file: 'chapter05exe' },
+      { label: '[06차시] 환율의 변동', file: 'chapter06exe' },
+      { label: '[07차시] 세금의 종류', file: 'chapter07exe' },
+      { label: '[08차시] 소득세의 계산', file: 'chapter08exe' },
+      { label: '[09차시] 단리와 복리의 원리합계', file: 'chapter09exe' },
+      { label: '[10차시] 예금과 적금', file: 'chapter10exe' },
+      { label: '[11차시] 현재가치와 연금', file: 'chapter11exe' },
+      { label: '[12차시] 1단원 마무리 문제', file: 'chapter12exe' }
+    ]
+  },
+  {
+    unitTitle: '2단원 · 함수와 경제',
+    items: [
+      { label: '[13차시] 생산함수와 비용함수', file: 'chapter13exe' },
+      { label: '[14차시] 수요함수와 공급함수', file: 'chapter14exe' },
+      { label: '[15차시] 효용함수', file: 'chapter15exe' },
+      { label: '[16차시] 균형가격의 결정', file: 'chapter16exe' },
+      { label: '[17차시] 균형가격의 변화', file: 'chapter17exe' },
+      { label: '[18차시] 부등식의 영역', file: 'chapter18exe' },
+      { label: '[19차시] 부등식의 영역과 최대 최소', file: 'chapter19exe' },
+      { label: '[20차시] 2단원 마무리 문제', file: 'chapter20exe' }
+    ]
+  },
+  {
+    unitTitle: '3단원 · 행렬과 경제',
+    items: [
+      { label: '[21차시] 행렬과 경제 현상', file: 'chapter21exe' },
+      { label: '[22차시] 행렬의 연산과 경제 현상', file: 'chapter22exe' },
+      { label: '[23차시] 역행렬과 역행렬의 계산 1', file: 'chapter23exe' },
+      { label: '[24차시] 역행렬과 역행렬의 계산 2', file: 'chapter24exe' },
+      { label: '[25차시] 역행렬과 연립일차방정식 1', file: 'chapter25exe' },
+      { label: '[26차시] 역행렬과 연립일차방정식 2', file: 'chapter26exe' },
+      { label: '[27차시] 3단원 마무리 문제', file: 'chapter27exe' }
+    ]
+  },
+  {
+    unitTitle: '4단원 · 함수와 경제',
+    items: [
+      { label: '[28차시] 한계', file: 'chapter28exe' },
+      { label: '[29차시] 탄력성', file: 'chapter29exe' },
+      { label: '[30차시] 최적의 의사결정', file: 'chapter30exe' },
+      { label: '[31차시] 최적생산량', file: 'chapter31exe' },
+      { label: '[32차시] 4단원 마무리 문제', file: 'chapter32exe' }
+    ]
+  }
 ];
