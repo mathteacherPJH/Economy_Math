@@ -80,14 +80,12 @@
       app.classList.remove('is-collapsed');
     }
 
+    // 단원명을 누르면 그 아래 소단원 목록만 펼치고/접고, 오른쪽 화면은
+    // 그대로 둔다 (예전에는 첫 소단원을 자동으로 열었지만 이제 안 한다).
     const willOpen = !unitEl.classList.contains('is-open');
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open'));
     if (willOpen) {
       unitEl.classList.add('is-open');
-      // 단원을 열면 자동으로 첫 소단원을 보여준다
-      if (currentUnitIndex !== uIdx) {
-        selectTopic(uIdx, 0);
-      }
     }
   }
 
