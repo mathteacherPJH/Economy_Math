@@ -592,7 +592,7 @@ ol.concept-list li{ padding-left:0; }
   padding-top:.5rem;
 }
 .worksheet-col{
-  flex:0 0 240px;
+  flex:0 0 270px;
 }
 .worksheet-group-title{
   font-family:var(--font-gothic);
@@ -607,40 +607,40 @@ ol.concept-list li{ padding-left:0; }
 .worksheet-list{
   display:flex;
   flex-direction:column;
-  gap:.6rem;
+  gap:.9rem;
 }
 .worksheet-item{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:.6rem;
-  padding:.8rem 0;
-  border:none;
+  flex-direction:column;
+  gap:.5rem;
+  padding:0 0 .9rem;
   border-bottom:1px solid var(--paper-line);
-  border-radius:0;
-  background:transparent;
+}
+.worksheet-label{
   color:var(--text-dark);
   font-family:var(--font-gothic);
   font-size:.92rem;
   font-weight:500;
   line-height:1.3;
+}
+.worksheet-actions{
+  display:flex;
+  gap:.5rem;
+}
+.worksheet-btn{
+  border:1px solid var(--text-dark);
+  color:var(--text-dark);
+  background:transparent;
+  font-family:var(--font-gothic);
+  font-size:.76rem;
+  font-weight:500;
+  padding:.35rem .7rem;
   text-decoration:none;
-  transition:opacity .15s, padding-left .15s;
+  transition:background .15s, color .15s;
 }
-.worksheet-item::after{
-  content:'→';
-  font-size:.9rem;
-  flex-shrink:0;
-  opacity:0;
-  transition:opacity .15s, transform .15s;
-  transform:translateX(-4px);
-}
-.worksheet-item:hover{
-  opacity:.6;
-}
-.worksheet-item:hover::after{
-  opacity:1;
-  transform:translateX(0);
+.worksheet-btn:hover{
+  background:var(--text-dark);
+  color:#fff;
 }
 .worksheet-empty{
   color:var(--text-muted);
