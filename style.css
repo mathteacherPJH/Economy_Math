@@ -583,11 +583,14 @@ ol.concept-list li{ padding-left:0; }
 .problem-box p:last-child{ margin-bottom:0; }
 
 /* '경제수학 학습지' 목록 화면 — 1~4단원을 가로로 나란히 놓고, 각
-   단원 안의 차시는 세로로 쌓는다 */
+   단원 안의 차시는 세로로 쌓는다. 이 화면은 좌우 여백을 좀 더 좁게
+   써서, 차시 제목이 한 줄에 들어갈 여지를 최대한 넓힌다. */
+.slide-inner--worksheets{ padding-left:1.6rem; padding-right:1.6rem; }
+
 .worksheet-grid{
   display:grid;
   grid-template-columns:repeat(4, 1fr);
-  gap:2.2rem;
+  gap:1.5rem;
   align-items:start;
   padding-top:.5rem;
 }
@@ -613,7 +616,7 @@ ol.concept-list li{ padding-left:0; }
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
-  gap:.7rem;
+  gap:.5rem;
   padding:0 0 .9rem;
   border-bottom:1px solid var(--paper-line);
 }
@@ -630,7 +633,7 @@ ol.concept-list li{ padding-left:0; }
 .worksheet-actions{
   display:flex;
   flex-direction:row;
-  gap:.4rem;
+  gap:.35rem;
   flex-shrink:0;
 }
 .worksheet-btn{
@@ -638,9 +641,9 @@ ol.concept-list li{ padding-left:0; }
   color:var(--text-dark);
   background:transparent;
   font-family:var(--font-gothic);
-  font-size:.74rem;
+  font-size:.72rem;
   font-weight:500;
-  padding:.3rem .65rem;
+  padding:.28rem .5rem;
   text-align:center;
   text-decoration:none;
   transition:background .15s, color .15s;
