@@ -313,62 +313,18 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   overflow:hidden;
 }
 
-.stage-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:1.1rem 1.6rem;
-  flex-shrink:0;
-  position:sticky;
-  top:0;
-  z-index:25;
-  background:var(--paper);
-  border-bottom:1px solid var(--paper-line);
-}
-.stage-eyebrow{
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  letter-spacing:.06em;
-  color:var(--text-muted);
-}
-.stage-eyebrow strong{ color:var(--text-dark); }
-
-.stage-tools{
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-  flex-shrink:0;
-}
-
-.fullscreen-btn{
-  height:34px;
-  box-sizing:border-box;
-  border:1px solid var(--text-dark);
-  background:transparent;
-  color:var(--text-dark);
-  font-family:var(--font-mono);
-  font-size:.72rem;
-  padding:0 .75rem;
-  border-radius:0;
-  cursor:pointer;
-  display:flex; align-items:center; gap:.4rem;
-  transition:background .15s, color .15s;
-}
-.fullscreen-btn:hover{ background:var(--text-dark); color:#fff; }
-.fullscreen-btn.is-hidden{ display:none; }
-
 .stage{
   flex:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:1.2rem 1.6rem 1.5rem;
+  padding:1.6rem;
   overflow:hidden;
 }
 
 .slide-card{
   width:100%;
-  max-width:1400px;
+  max-width:none;
   height:100%;
   max-height:100%;
   background:var(--paper-card);
@@ -402,9 +358,7 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .slide-inner::-webkit-scrollbar-thumb{ background:var(--paper-line); border-radius:4px; }
 
 /* 학습지 페이지를 이미지 그대로 넣는 슬라이드는 옆 여백을 최소화해서
-   가로 길이를 최대한 꽉 채운다. 위쪽 여백은 상단 도구모음(stage-header)의
-   padding-top(1rem)과 똑같이 맞춰서, 도구모음 위쪽 여백과 도구모음~이미지
-   사이 간격이 동일해 보이도록 한다. */
+   가로 길이를 최대한 꽉 채운다. */
 .slide-inner--full{ padding:0 .6rem 0; }
 
 /* 캔바(Canva) 프레젠테이션 임베드 — 세로 스크롤 없이 화면(카드)에 딱
@@ -836,7 +790,6 @@ ol.concept-list li{ padding-left:0; }
    뺀 화면 전체를 꽉 채운다(상단 툴바도 이 화면에서는 숨긴다). 참고
    레퍼런스처럼 배경을 아주 밝고 은은하게 깔아서, 카드 없이도 글자가
    바로 잘 읽히도록 한다. ---------- */
-body.is-landing .stage-header{ display:none; }
 body.is-landing .stage{ padding:0; }
 
 .landing{
