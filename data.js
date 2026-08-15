@@ -161,12 +161,57 @@ const CURRICULUM = [
         ]
       },
 
+      {
+        title: '퍼센트와 퍼센트포인트',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSQ0SAUrQ/RIE2HKK5OjTaCjnooqr9qQ/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '환율의 계산',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXcszZjw/-0-KElS6_Ong7uvI5ahIEA/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '환율의 변동',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXVZBkgY/D5d3B3o9AUv25a-nA8kmjA/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '세금의 종류',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXUhRoek/FAoOmRPVdnU77-n4rbIJnA/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '소득세의 계산',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXTSqE2c/nAYW9KToO_iAcsMzOcjK1Q/view?embed'
+          }
+        ]
+      },
+
       ...textTopics([
-        '퍼센트와 퍼센트포인트',
-        '환율의 계산',
-        '환율의 변동',
-        '세금의 종류',
-        '소득세의 계산',
         '단리와 복리의 원리합계',
         '예금과 적금',
         '현재가치와 연금',
