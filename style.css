@@ -198,6 +198,38 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .toc::-webkit-scrollbar{ width:6px; }
 .toc::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:3px; }
 
+/* 사이드바 맨 아래, 목차 스크롤 영역과 별개로 항상 고정되어 보이는
+   '경제수학 수행평가' / '경제수학 학습지' 버튼 영역 */
+.sidebar-bottom{
+  flex-shrink:0;
+  padding:.8rem .7rem 1.1rem;
+  border-top:1px solid var(--ink-line);
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+}
+.app.is-collapsed .sidebar-bottom{ display:none; }
+.sidebar-btn{
+  width:100%;
+  text-align:left;
+  background:var(--ink-800);
+  border:1px solid var(--ink-line);
+  color:var(--text-on-dark);
+  font-family:var(--font-gothic);
+  font-weight:600;
+  font-size:calc(.85rem + 2px);
+  padding:.7rem .9rem;
+  border-radius:9px;
+  cursor:pointer;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.sidebar-btn:hover{ background:var(--ink-700); border-color:rgba(110,91,250,.5); }
+.sidebar-btn.is-active{
+  background:var(--accent-soft);
+  border-color:var(--accent-1);
+  color:#C9C2FF;
+}
+
 .unit{
   margin-bottom:.25rem;
   border-radius:10px;
@@ -628,6 +660,44 @@ ol.concept-list li{ padding-left:0; }
   margin:0 0 1.2rem;
 }
 .problem-box p:last-child{ margin-bottom:0; }
+
+/* '경제수학 학습지' 목록 화면 */
+.worksheet-list{
+  display:flex;
+  flex-direction:column;
+  gap:.8rem;
+  margin-top:1.6rem;
+  max-width:32rem;
+}
+.worksheet-item{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  padding:1.1rem 1.3rem;
+  border:1px solid var(--paper-line);
+  border-radius:12px;
+  background:#fff;
+  color:var(--text-dark);
+  font-family:var(--font-gothic);
+  font-size:1.15rem;
+  font-weight:600;
+  text-decoration:none;
+  transition:border-color .15s, box-shadow .15s, background .15s;
+}
+.worksheet-item::before{
+  content:'📄';
+  font-size:1.1rem;
+}
+.worksheet-item:hover{
+  border-color:var(--accent-1);
+  box-shadow:0 0 0 3px var(--accent-soft);
+  background:#FBFAFF;
+}
+.worksheet-empty{
+  color:var(--text-muted);
+  font-size:.95rem;
+  margin-top:1.6rem;
+}
 
 .math-box{
   font-family:var(--font-mono);
