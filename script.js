@@ -368,7 +368,7 @@
     const card = document.createElement('div');
     card.className = 'slide-card slide-card--flush';
     const inner = document.createElement('div');
-    inner.className = 'slide-inner';
+    inner.className = 'slide-inner slide-inner--worksheets';
 
     const hasGroups = typeof WORKSHEETS !== 'undefined'
       && WORKSHEETS.length > 0
