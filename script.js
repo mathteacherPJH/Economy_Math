@@ -391,13 +391,37 @@
         const list = document.createElement('div');
         list.className = 'worksheet-list';
         group.items.forEach((w) => {
-          const a = document.createElement('a');
-          a.className = 'worksheet-item';
-          a.href = `pdf/${w.file}.pdf`;
-          a.target = '_blank';
-          a.rel = 'noopener';
-          a.textContent = w.label;
-          list.appendChild(a);
+          const row = document.createElement('div');
+          row.className = 'worksheet-item';
+
+          const label = document.createElement('span');
+          label.className = 'worksheet-label';
+          label.textContent = w.label;
+          row.appendChild(label);
+
+          const actions = document.createElement('span');
+          actions.className = 'worksheet-actions';
+
+          // 정답지 파일명은 학습지 파일명 끝의 'exe'를 'ans'로 바꾼 것
+          // (예: chapter02exe -> chapter02ans), pdfans/ 폴더 안에 있다.
+          const ansFile = w.file.replace(/exe$/, 'ans');
+
+          const worksheetLink = document.createElement('a');
+          worksheetLink.className = 'worksheet-btn';
+          worksheetLink.href = `pdf/${w.file}.pdf`;
+          worksheetLink.download = '';
+          worksheetLink.textContent = '학습지';
+          actions.appendChild(worksheetLink);
+
+          const answerLink = document.createElement('a');
+          answerLink.className = 'worksheet-btn';
+          answerLink.href = `pdfans/${ansFile}.pdf`;
+          answerLink.download = '';
+          answerLink.textContent = '답안지';
+          actions.appendChild(answerLink);
+
+          row.appendChild(actions);
+          list.appendChild(row);
         });
         col.appendChild(list);
 
