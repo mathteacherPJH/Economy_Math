@@ -589,10 +589,12 @@ ol.concept-list li{ padding-left:0; }
 
 .worksheet-grid{
   display:grid;
-  grid-template-columns:repeat(4, 1fr);
+  grid-template-columns:repeat(4, minmax(320px, 1fr));
   gap:1.5rem;
   align-items:start;
   padding-top:.5rem;
+  overflow-x:auto;
+  padding-bottom:.5rem;
 }
 .worksheet-col{
   min-width:0;
