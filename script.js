@@ -7,6 +7,8 @@
   const stageEyebrow = document.getElementById('stageEyebrow');
   const collapseBtn = document.getElementById('collapseBtn');
   const brandHomeBtn = document.getElementById('brandHomeBtn');
+  const assessmentBtn = document.getElementById('assessmentBtn');
+  const worksheetsBtn = document.getElementById('worksheetsBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
   const videoRail = document.getElementById('videoRail');
   const videoRailToggle = document.getElementById('videoRailToggle');
@@ -37,6 +39,10 @@
     tocEl.innerHTML = '';
 
     CURRICULUM.forEach((unit, uIdx) => {
+      // '경제수학 수행평가'처럼 sidebarHidden으로 표시된 단원은 위쪽
+      // 목록에 넣지 않는다 — 사이드바 맨 아래에 버튼으로 따로 보여준다.
+      if (unit.sidebarHidden) return;
+
       const unitEl = document.createElement('div');
       unitEl.className = 'unit';
       unitEl.dataset.unitIndex = uIdx;
@@ -111,6 +117,11 @@
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open'));
     unitEl?.classList.add('is-open');
 
+    // 사이드바 맨 아래 버튼(경제수학 수행평가/학습지)의 활성 표시도
+    // 여기서 같이 관리한다 — 일반 단원으로 이동하면 둘 다 꺼진다.
+    assessmentBtn.classList.toggle('is-active', CURRICULUM[uIdx]?.sidebarHidden === true);
+    worksheetsBtn.classList.remove('is-active');
+
     markActiveInTOC();
     renderStage();
   }
@@ -134,7 +145,11 @@
     const page = pages[currentPageIndex];
 
     document.body.classList.remove('is-landing');
-    stageEyebrow.innerHTML = `<strong>${unit.number}</strong> · ${unit.title} : ${topic.title}`;
+    // '경제수학 수행평가'처럼 사이드바 맨 아래 버튼으로 들어가는
+    // 단원은 단원 번호(Ⅴ 등)를 breadcrumb에도 표시하지 않는다.
+    stageEyebrow.innerHTML = unit.sidebarHidden
+      ? `${unit.title} : ${topic.title}`
+      : `<strong>${unit.number}</strong> · ${unit.title} : ${topic.title}`;
 
     // 이 소단원의 관련 영상을 우측 레일에 채우고, 소단원이 바뀔 때마다
     // 레일은 항상 접힌 상태로 되돌린다.
@@ -327,8 +342,74 @@
     currentPageIndex = 0;
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open', 'is-active'));
     tocEl.querySelectorAll('.slide-list button').forEach((btn) => btn.classList.remove('is-active'));
+    assessmentBtn.classList.remove('is-active');
+    worksheetsBtn.classList.remove('is-active');
     renderStage();
   });
+
+  /* ---------------- 사이드바 맨 아래 버튼: 경제수학 수행평가 / 학습지 ---------------- */
+  assessmentBtn.addEventListener('click', () => {
+    const uIdx = CURRICULUM.findIndex((u) => u.sidebarHidden);
+    if (uIdx === -1) return;
+    selectTopic(uIdx, 0);
+  });
+
+  worksheetsBtn.addEventListener('click', () => {
+    renderWorksheetsPage();
+  });
+
+  // '경제수학 학습지' 버튼을 누르면 보여주는, 단원 목차와는 별개인
+  // 학습지(pdf/ 폴더) 목록 화면. WORKSHEETS 배열(data.js)에 항목을
+  // 추가하면 여기 목록도 그만큼 늘어난다.
+  function renderWorksheetsPage() {
+    currentUnitIndex = null;
+    currentTopicIndex = null;
+    currentPageIndex = 0;
+
+    document.body.classList.remove('is-landing', 'is-scroll-mode');
+    tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open', 'is-active'));
+    tocEl.querySelectorAll('.slide-list button').forEach((btn) => btn.classList.remove('is-active'));
+    assessmentBtn.classList.remove('is-active');
+    worksheetsBtn.classList.add('is-active');
+    videoRail.classList.add('is-hidden');
+    videoRail.classList.remove('is-open');
+
+    stageEyebrow.innerHTML = '경제수학 학습지';
+
+    const card = document.createElement('div');
+    card.className = 'slide-card';
+    const inner = document.createElement('div');
+    inner.className = 'slide-inner';
+
+    const heading = document.createElement('p');
+    heading.className = 'section-kicker';
+    heading.textContent = '경제수학 학습지';
+    inner.appendChild(heading);
+
+    const list = document.createElement('div');
+    list.className = 'worksheet-list';
+    if (typeof WORKSHEETS !== 'undefined' && WORKSHEETS.length > 0) {
+      WORKSHEETS.forEach((w) => {
+        const a = document.createElement('a');
+        a.className = 'worksheet-item';
+        a.href = `pdf/${w.file}.pdf`;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = w.label;
+        list.appendChild(a);
+      });
+    } else {
+      const empty = document.createElement('p');
+      empty.className = 'worksheet-empty';
+      empty.textContent = '아직 등록된 학습지가 없습니다.';
+      list.appendChild(empty);
+    }
+    inner.appendChild(list);
+
+    card.appendChild(inner);
+    stage.innerHTML = '';
+    stage.appendChild(card);
+  }
 
   /* ---------------- 전체화면(발표 모드) ---------------- */
   fullscreenBtn.addEventListener('click', () => {
