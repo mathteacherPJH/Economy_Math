@@ -592,7 +592,7 @@ ol.concept-list li{ padding-left:0; }
   padding-top:.5rem;
 }
 .worksheet-col{
-  flex:0 0 300px;
+  flex:0 0 320px;
 }
 .worksheet-group-title{
   font-family:var(--font-gothic);
@@ -629,8 +629,8 @@ ol.concept-list li{ padding-left:0; }
 }
 .worksheet-actions{
   display:flex;
-  flex-direction:column;
-  gap:.35rem;
+  flex-direction:row;
+  gap:.4rem;
   flex-shrink:0;
 }
 .worksheet-btn{
