@@ -260,14 +260,25 @@
   // 우측 "관련 영상" 레일을 현재 소단원의 영상 목록으로 채운다.
   // 소단원이 바뀔 때마다 항상 접힌 상태로 되돌아간다. 영상이 하나도
   // 없는 소단원이면 레일 자체를 숨긴다.
+  // 우측 "관련 영상" 레일을 현재 소단원의 영상 목록으로 채운다.
+  // 소단원이 바뀔 때마다 항상 접힌 상태로 되돌아간다. 아직 영상을
+  // 하나도 안 올린 소단원이어도 레일 자체(< 버튼)는 항상 보여준다 —
+  // 나중에 영상이 생기면 그 소단원도 똑같이 바로 쓸 수 있어야 해서다.
   function renderVideoRail(topic) {
     const videos = getTopicVideos(topic);
 
-    videoRail.classList.remove('is-open');
+    videoRail.classList.remove('is-open', 'is-hidden');
     videoRailToggle.setAttribute('aria-expanded', 'false');
-    videoRail.classList.toggle('is-hidden', videos.length === 0);
 
     videoRailList.innerHTML = '';
+    if (videos.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'video-rail-empty';
+      empty.textContent = '아직 등록된 영상이 없습니다.';
+      videoRailList.appendChild(empty);
+      return;
+    }
+
     videos.forEach((v, i) => {
       const btn = document.createElement('button');
       btn.type = 'button';
