@@ -945,6 +945,15 @@ body.is-landing .stage{ padding:0; }
   color:#fff;
   background:var(--text-dark);
 }
+.video-rail-empty{
+  font-family:var(--font-gothic);
+  font-size:.78rem;
+  color:var(--text-muted);
+  text-align:center;
+  white-space:normal;
+  margin:0;
+  padding:.4rem .2rem;
+}
 
 /* ---------- 영상 전체화면 플로팅 모달 ---------- */
 .video-modal{
