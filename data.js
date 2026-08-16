@@ -213,6 +213,12 @@ const CURRICULUM = [
             type: 'video',
             label: '공항 환전',
             url: 'https://www.youtube.com/embed/__Xa_RBAzZA?start=1897'
+          },
+
+          {
+            type: 'video',
+            label: '디지털 이민',
+            url: 'https://www.youtube.com/embed/HPqqSqt8JKk?start=16'
           }
         ]
       },
