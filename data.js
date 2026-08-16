@@ -207,6 +207,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHSXcszZjw/-0-KElS6_Ong7uvI5ahIEA/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '공항 환전',
+            url: 'https://www.youtube.com/embed/__Xa_RBAzZA?start=1897'
           }
         ]
       },
