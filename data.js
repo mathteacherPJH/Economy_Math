@@ -157,6 +157,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHSIctIDyw/fJwS--dOW_mfzs4Ngf-ZzA/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '물적분할',
+            url: 'https://www.youtube.com/embed/L2fm0kdgp1U'
           }
         ]
       },
