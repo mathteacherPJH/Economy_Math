@@ -179,6 +179,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHSQ0SAUrQ/RIE2HKK5OjTaCjnooqr9qQ/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '문제 출제 오류',
+            url: 'https://www.youtube.com/embed/e-5HSzOkTD4'
           }
         ]
       },
