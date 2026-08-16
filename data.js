@@ -185,6 +185,18 @@ const CURRICULUM = [
             type: 'video',
             label: '문제 출제 오류',
             url: 'https://www.youtube.com/embed/e-5HSzOkTD4'
+          },
+
+          {
+            type: 'video',
+            label: '물가상승률',
+            url: 'https://www.youtube.com/embed/bpkkyjdH9OE'
+          },
+
+          {
+            type: 'video',
+            label: '경제성장률',
+            url: 'https://www.youtube.com/embed/x24jxlTZHJ0'
           }
         ]
       },
