@@ -163,6 +163,12 @@ const CURRICULUM = [
             type: 'video',
             label: '물적분할',
             url: 'https://www.youtube.com/embed/L2fm0kdgp1U'
+          },
+
+          {
+            type: 'video',
+            label: '국내총생산',
+            url: 'https://www.youtube.com/embed/lwpdSp1vrqw'
           }
         ]
       },
