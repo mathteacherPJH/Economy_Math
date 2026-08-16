@@ -229,6 +229,24 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHSXVZBkgY/D5d3B3o9AUv25a-nA8kmjA/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '환율의 상승',
+            url: 'https://www.youtube.com/embed/LmHrihtEPTs'
+          },
+
+          {
+            type: 'video',
+            label: '환율의 하락',
+            url: 'https://www.youtube.com/embed/uGHlPcLEsf4'
+          },
+
+          {
+            type: 'video',
+            label: '원유 수입',
+            url: 'https://www.youtube.com/embed/eUt75iGilk0'
           }
         ]
       },
@@ -239,6 +257,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHSXUhRoek/FAoOmRPVdnU77-n4rbIJnA/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '세금의 종류',
+            url: 'https://www.youtube.com/embed/QI3bCaB9QZE'
           }
         ]
       },
@@ -249,6 +273,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHSXTSqE2c/nAYW9KToO_iAcsMzOcjK1Q/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '소득세의 종류',
+            url: 'https://www.youtube.com/embed/ooNt7avfMnc?start=135'
           }
         ]
       },
