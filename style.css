@@ -311,6 +311,7 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   color:var(--text-muted);
   font-family:var(--font-gothic);
   font-size:calc(.8rem + 2px);
+  font-weight:400 !important;
   padding:.35rem .55rem;
   border-radius:0;
   cursor:pointer;
@@ -322,7 +323,7 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
 .slide-list button:hover{ color:var(--text-dark); }
 .slide-list button.is-active{
   color:var(--text-dark);
-  font-weight:700;
+  font-weight:700 !important;
 }
 .slide-type-dot{ display:none; }
 
