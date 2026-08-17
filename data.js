@@ -339,14 +339,167 @@ const CURRICULUM = [
   {
     id: 'unit-5',
     number: 'Ⅴ',
-    title: '경제수학 수행평가',
+    title: '경제수학 프로그램',
     // 사이드바 위쪽의 단원 목록(Ⅰ~Ⅳ)에는 표시하지 않고, 사이드바 맨
     // 아래에 버튼 형태로 따로 보여준다 (script.js의 renderTOC 참고).
+    // 이 단원의 topics[0].slides 각각이 "프로그램" 하나씩이고, 우측의
+    // "< " 레일을 누르면 (다른 단원의 "관련 영상" 레일 자리에) 이
+    // 프로그램 목록이 뜬다 — script.js의 renderVideoRail 참고.
     sidebarHidden: true,
     topics: [
       {
-        title: '세후 연봉, 연금 계산 프로그램',
+        title: '경제수학 프로그램 모음',
         slides: [
+          {
+            type: 'game',
+            title: '간이 소득세 계산기',
+            render(container) {
+              container.innerHTML = `
+                <p class="game-desc">연간 근로소득, 비과세소득, 종합소득공제, 세액공제를 입력하면
+                근로소득세 계산 6단계를 표로 보여줍니다. (학습지에 실린 표1~표4를 그대로 적용한
+                간이 계산이며, 실제 세액과는 차이가 있을 수 있습니다.)</p>
+
+                <div class="calc-grid">
+                  <label>연간 근로소득 (원)
+                    <input type="number" id="taxGrossInput" value="50000000" min="0" step="100000" />
+                  </label>
+                  <label>비과세소득 (원)
+                    <input type="number" id="taxNonTaxableInput" value="0" min="0" step="10000" />
+                  </label>
+                  <label>종합소득공제 (원)
+                    <input type="number" id="taxIncomeDeductionInput" value="0" min="0" step="10000" />
+                  </label>
+                  <label>세액공제 (원)
+                    <input type="number" id="taxCreditInput" value="0" min="0" step="10000" />
+                  </label>
+                </div>
+
+                <button type="button" id="taxCalcBtn" class="calc-btn">계산하기</button>
+
+                <table class="tax-calc-table" id="taxCalcTable" style="display:none;">
+                  <thead>
+                    <tr><th>단계</th><th>계산 과정</th><th>계산 방법</th><th>금액</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>0단계</td>
+                      <td>연간 근로소득</td>
+                      <td>입력한 값</td>
+                      <td id="taxRow0"></td>
+                    </tr>
+                    <tr>
+                      <td>1단계</td>
+                      <td>총급여액</td>
+                      <td>연간 근로소득 - 비과세소득<span class="tax-calc-sub" id="taxSub1"></span></td>
+                      <td id="taxRow1"></td>
+                    </tr>
+                    <tr>
+                      <td>2단계</td>
+                      <td>근로소득금액</td>
+                      <td>총급여액 - 근로소득공제<span class="tax-calc-sub" id="taxSub2"></span></td>
+                      <td id="taxRow2"></td>
+                    </tr>
+                    <tr>
+                      <td>3단계</td>
+                      <td>과세표준</td>
+                      <td>근로소득금액 - 종합소득공제<span class="tax-calc-sub" id="taxSub3"></span></td>
+                      <td id="taxRow3"></td>
+                    </tr>
+                    <tr>
+                      <td>4단계</td>
+                      <td>산출세액</td>
+                      <td>과세표준 × 세율 - 누진공제액<span class="tax-calc-sub" id="taxSub4"></span></td>
+                      <td id="taxRow4"></td>
+                    </tr>
+                    <tr>
+                      <td>5단계</td>
+                      <td>결정세액</td>
+                      <td>산출세액 - 세액공제<span class="tax-calc-sub" id="taxSub5"></span></td>
+                      <td id="taxRow5"></td>
+                    </tr>
+                    <tr>
+                      <td>6단계</td>
+                      <td>지방소득세</td>
+                      <td>결정세액 × 10%<span class="tax-calc-sub" id="taxSub6"></span></td>
+                      <td id="taxRow6"></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="tax-calc-total">
+                      <td colspan="3">최종 납부세액 (결정세액 + 지방소득세)</td>
+                      <td id="taxRowTotal"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              `;
+
+              // [표1] 근로소득공제 계산표 (학습지 3p 기준)
+              function earnedIncomeDeduction(total) {
+                if (total <= 5000000) return { amount: total * 0.7, note: '총급여액의 70%' };
+                if (total <= 15000000) return { amount: 3500000 + (total - 5000000) * 0.4, note: '350만원 + (총급여액-500만원)×40%' };
+                if (total <= 45000000) return { amount: 7500000 + (total - 15000000) * 0.15, note: '750만원 + (총급여액-1,500만원)×15%' };
+                if (total <= 100000000) return { amount: 12000000 + (total - 45000000) * 0.05, note: '1,200만원 + (총급여액-4,500만원)×5%' };
+                return { amount: 14750000 + (total - 100000000) * 0.02, note: '1,475만원 + (총급여액-1억원)×2%' };
+              }
+
+              // [표3] 과세표준에 따른 산출세액 계산표 (학습지 3p 기준)
+              function taxBracket(base) {
+                const brackets = [
+                  { upTo: 14000000, rate: 0.06, deduction: 0 },
+                  { upTo: 50000000, rate: 0.15, deduction: 1260000 },
+                  { upTo: 88000000, rate: 0.24, deduction: 5760000 },
+                  { upTo: 150000000, rate: 0.35, deduction: 15440000 },
+                  { upTo: 300000000, rate: 0.38, deduction: 19940000 },
+                  { upTo: 500000000, rate: 0.40, deduction: 25940000 },
+                  { upTo: 1000000000, rate: 0.42, deduction: 35940000 },
+                  { upTo: Infinity, rate: 0.45, deduction: 65940000 }
+                ];
+                return brackets.find((b) => base <= b.upTo) || brackets[brackets.length - 1];
+              }
+
+              function formatWon(v) {
+                return Math.round(v).toLocaleString('ko-KR') + '원';
+              }
+
+              const calcBtn = container.querySelector('#taxCalcBtn');
+              calcBtn.addEventListener('click', () => {
+                const gross = parseFloat(container.querySelector('#taxGrossInput').value) || 0;
+                const nonTaxable = parseFloat(container.querySelector('#taxNonTaxableInput').value) || 0;
+                const incomeDeductionInput = parseFloat(container.querySelector('#taxIncomeDeductionInput').value) || 0;
+                const taxCreditInput = parseFloat(container.querySelector('#taxCreditInput').value) || 0;
+
+                const step0 = gross;
+                const step1 = Math.max(0, gross - nonTaxable);
+                const deduction = earnedIncomeDeduction(step1);
+                const step2 = Math.max(0, step1 - deduction.amount);
+                const step3 = Math.max(0, step2 - incomeDeductionInput);
+                const bracket = taxBracket(step3);
+                const step4 = Math.max(0, step3 * bracket.rate - bracket.deduction);
+                const step5 = Math.max(0, step4 - taxCreditInput);
+                const step6 = step5 * 0.1;
+                const total = step5 + step6;
+
+                container.querySelector('#taxRow0').textContent = formatWon(step0);
+                container.querySelector('#taxRow1').textContent = formatWon(step1);
+                container.querySelector('#taxRow2').textContent = formatWon(step2);
+                container.querySelector('#taxRow3').textContent = formatWon(step3);
+                container.querySelector('#taxRow4').textContent = formatWon(step4);
+                container.querySelector('#taxRow5').textContent = formatWon(step5);
+                container.querySelector('#taxRow6').textContent = formatWon(step6);
+                container.querySelector('#taxRowTotal').textContent = formatWon(total);
+
+                container.querySelector('#taxSub1').textContent = `${formatWon(gross)} - ${formatWon(nonTaxable)}`;
+                container.querySelector('#taxSub2').textContent = `${formatWon(step1)} - ${formatWon(deduction.amount)} (${deduction.note})`;
+                container.querySelector('#taxSub3').textContent = `${formatWon(step2)} - ${formatWon(incomeDeductionInput)}`;
+                container.querySelector('#taxSub4').textContent = `${formatWon(step3)} × ${Math.round(bracket.rate * 100)}% - ${formatWon(bracket.deduction)}`;
+                container.querySelector('#taxSub5').textContent = `${formatWon(step4)} - ${formatWon(taxCreditInput)}`;
+                container.querySelector('#taxSub6').textContent = `${formatWon(step5)} × 10%`;
+
+                container.querySelector('#taxCalcTable').style.display = '';
+              });
+            }
+          },
+
           {
             type: 'game',
             title: '세후 연봉, 연금 계산 프로그램',
