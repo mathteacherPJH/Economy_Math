@@ -797,6 +797,52 @@ ol.concept-list li{ padding-left:0; }
 .calc-btn:hover{ filter:brightness(1.08); }
 .calc-btn:active{ transform:scale(.97); }
 
+/* 간이 소득세 계산기 — 단계별 계산 결과 표 */
+.tax-calc-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:1.4rem;
+  font-size:.92rem;
+}
+.tax-calc-table th,
+.tax-calc-table td{
+  border:1px solid var(--paper-line);
+  padding:.7rem .85rem;
+  text-align:left;
+  vertical-align:top;
+}
+.tax-calc-table th{
+  background:#F4F3EF;
+  font-weight:700;
+  font-family:var(--font-gothic);
+}
+.tax-calc-table td:first-child{
+  white-space:nowrap;
+  font-weight:600;
+}
+.tax-calc-table td:last-child{
+  text-align:right;
+  font-family:var(--font-mono);
+  font-weight:600;
+  white-space:nowrap;
+}
+.tax-calc-sub{
+  display:block;
+  margin-top:.35rem;
+  font-size:.76rem;
+  color:var(--text-muted);
+  font-family:var(--font-mono);
+  font-weight:400;
+  white-space:normal;
+}
+.tax-calc-total td{
+  background:#F4F3EF;
+  font-weight:700;
+}
+.tax-calc-total td:last-child{
+  font-size:1.05rem;
+}
+
 /* ---------- 처음 화면(랜딩) — 사이드바 '경제수학' 로고를 누르거나
    페이지를 처음 열었을 때 보여주는 표지 화면. 배경 이미지가 사이드바를
    뺀 화면 전체를 꽉 채운다(상단 툴바도 이 화면에서는 숨긴다). 참고
@@ -944,6 +990,11 @@ body.is-landing .stage{ padding:0; }
   border-color:var(--text-dark);
   color:#fff;
   background:var(--text-dark);
+}
+.video-rail-item.is-active{
+  background:var(--text-dark);
+  color:#fff;
+  font-weight:600;
 }
 .video-rail-empty{
   font-family:var(--font-gothic);
