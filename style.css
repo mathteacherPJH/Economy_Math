@@ -764,6 +764,10 @@ ol.concept-list li{ padding-left:0; }
   font-size:.85rem;
   color:var(--text-muted);
 }
+.tv-widget-wrap{
+  width:100%;
+  border:1px solid var(--paper-line);
+}
 .game-area input[type="range"]{
   width:100%;
   accent-color:var(--accent-1);
