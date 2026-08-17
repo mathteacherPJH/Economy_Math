@@ -352,6 +352,49 @@ const CURRICULUM = [
         slides: [
           {
             type: 'game',
+            title: '환율 실시간 확인',
+            render(container) {
+              container.innerHTML = `
+                <h2 class="game-title">환율 실시간 확인</h2>
+                <div class="tv-widget-wrap">
+                  <div id="tvUsdKrwChart"></div>
+                </div>
+              `;
+
+              // TradingView 고급 차트 위젯 (원/달러 환율, 실시간)
+              // — 공식 무료 임베드 위젯. 여러 번 이 화면에 들어와도
+              // tv.js 스크립트를 중복으로 불러오지 않도록 한 번만 로드한다.
+              function createWidget() {
+                if (!window.TradingView) return;
+                new window.TradingView.widget({
+                  width: '100%',
+                  height: 620,
+                  symbol: 'FX:USDKRW',
+                  interval: 'D',
+                  timezone: 'Asia/Seoul',
+                  theme: 'light',
+                  style: '1',
+                  locale: 'kr',
+                  toolbar_bg: '#ffffff',
+                  enable_publishing: false,
+                  allow_symbol_change: true,
+                  container_id: 'tvUsdKrwChart'
+                });
+              }
+
+              if (window.TradingView) {
+                createWidget();
+              } else {
+                const script = document.createElement('script');
+                script.src = 'https://s3.tradingview.com/tv.js';
+                script.onload = createWidget;
+                container.appendChild(script);
+              }
+            }
+          },
+
+          {
+            type: 'game',
             title: '간이 소득세 계산기',
             render(container) {
               container.innerHTML = `
