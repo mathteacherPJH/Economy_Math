@@ -355,9 +355,8 @@ const CURRICULUM = [
             title: '간이 소득세 계산기',
             render(container) {
               container.innerHTML = `
-                <p class="game-desc">연간 근로소득, 비과세소득, 종합소득공제, 세액공제를 입력하면
-                근로소득세 계산 6단계를 표로 보여줍니다. (학습지에 실린 표1~표4를 그대로 적용한
-                간이 계산이며, 실제 세액과는 차이가 있을 수 있습니다.)</p>
+                <h2 class="game-title">간이 소득세 계산기</h2>
+                <p class="game-title-sub">학습용으로 제작한 프로그램이므로, 실제 계산과 차이가 있을 수 있음.</p>
 
                 <div class="calc-grid">
                   <label>연간 근로소득 (원)
@@ -377,56 +376,70 @@ const CURRICULUM = [
                 <button type="button" id="taxCalcBtn" class="calc-btn">계산하기</button>
 
                 <table class="tax-calc-table" id="taxCalcTable" style="display:none;">
+                  <colgroup>
+                    <col style="width:8%;">
+                    <col style="width:13%;">
+                    <col style="width:26%;">
+                    <col style="width:35%;">
+                    <col style="width:18%;">
+                  </colgroup>
                   <thead>
-                    <tr><th>단계</th><th>계산 과정</th><th>계산 방법</th><th>금액</th></tr>
+                    <tr><th>단계</th><th>계산 과정</th><th>계산 방법</th><th>계산</th><th>금액</th></tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>0단계</td>
                       <td>연간 근로소득</td>
                       <td>입력한 값</td>
+                      <td id="taxCalc0">—</td>
                       <td id="taxRow0"></td>
                     </tr>
                     <tr>
                       <td>1단계</td>
                       <td>총급여액</td>
-                      <td>연간 근로소득 - 비과세소득<span class="tax-calc-sub" id="taxSub1"></span></td>
+                      <td>연간 근로소득 - 비과세소득</td>
+                      <td id="taxCalc1"></td>
                       <td id="taxRow1"></td>
                     </tr>
                     <tr>
                       <td>2단계</td>
                       <td>근로소득금액</td>
-                      <td>총급여액 - 근로소득공제<span class="tax-calc-sub" id="taxSub2"></span></td>
+                      <td>총급여액 - 근로소득공제</td>
+                      <td id="taxCalc2"></td>
                       <td id="taxRow2"></td>
                     </tr>
                     <tr>
                       <td>3단계</td>
                       <td>과세표준</td>
-                      <td>근로소득금액 - 종합소득공제<span class="tax-calc-sub" id="taxSub3"></span></td>
+                      <td>근로소득금액 - 종합소득공제</td>
+                      <td id="taxCalc3"></td>
                       <td id="taxRow3"></td>
                     </tr>
                     <tr>
                       <td>4단계</td>
                       <td>산출세액</td>
-                      <td>과세표준 × 세율 - 누진공제액<span class="tax-calc-sub" id="taxSub4"></span></td>
+                      <td>과세표준 × 세율 - 누진공제액</td>
+                      <td id="taxCalc4"></td>
                       <td id="taxRow4"></td>
                     </tr>
                     <tr>
                       <td>5단계</td>
                       <td>결정세액</td>
-                      <td>산출세액 - 세액공제<span class="tax-calc-sub" id="taxSub5"></span></td>
+                      <td>산출세액 - 세액공제</td>
+                      <td id="taxCalc5"></td>
                       <td id="taxRow5"></td>
                     </tr>
                     <tr>
                       <td>6단계</td>
                       <td>지방소득세</td>
-                      <td>결정세액 × 10%<span class="tax-calc-sub" id="taxSub6"></span></td>
+                      <td>결정세액 × 10%</td>
+                      <td id="taxCalc6"></td>
                       <td id="taxRow6"></td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr class="tax-calc-total">
-                      <td colspan="3">최종 납부세액 (결정세액 + 지방소득세)</td>
+                      <td colspan="4">최종 납부세액 (결정세액 + 지방소득세)</td>
                       <td id="taxRowTotal"></td>
                     </tr>
                   </tfoot>
@@ -488,12 +501,12 @@ const CURRICULUM = [
                 container.querySelector('#taxRow6').textContent = formatWon(step6);
                 container.querySelector('#taxRowTotal').textContent = formatWon(total);
 
-                container.querySelector('#taxSub1').textContent = `${formatWon(gross)} - ${formatWon(nonTaxable)}`;
-                container.querySelector('#taxSub2').textContent = `${formatWon(step1)} - ${formatWon(deduction.amount)} (${deduction.note})`;
-                container.querySelector('#taxSub3').textContent = `${formatWon(step2)} - ${formatWon(incomeDeductionInput)}`;
-                container.querySelector('#taxSub4').textContent = `${formatWon(step3)} × ${Math.round(bracket.rate * 100)}% - ${formatWon(bracket.deduction)}`;
-                container.querySelector('#taxSub5').textContent = `${formatWon(step4)} - ${formatWon(taxCreditInput)}`;
-                container.querySelector('#taxSub6').textContent = `${formatWon(step5)} × 10%`;
+                container.querySelector('#taxCalc1').textContent = `${formatWon(gross)} - ${formatWon(nonTaxable)}`;
+                container.querySelector('#taxCalc2').textContent = `${formatWon(step1)} - ${formatWon(deduction.amount)} (${deduction.note})`;
+                container.querySelector('#taxCalc3').textContent = `${formatWon(step2)} - ${formatWon(incomeDeductionInput)}`;
+                container.querySelector('#taxCalc4').textContent = `${formatWon(step3)} × ${Math.round(bracket.rate * 100)}% - ${formatWon(bracket.deduction)}`;
+                container.querySelector('#taxCalc5').textContent = `${formatWon(step4)} - ${formatWon(taxCreditInput)}`;
+                container.querySelector('#taxCalc6').textContent = `${formatWon(step5)} × 10%`;
 
                 container.querySelector('#taxCalcTable').style.display = '';
               });
@@ -502,7 +515,7 @@ const CURRICULUM = [
 
           {
             type: 'game',
-            title: '세후 연봉, 연금 계산 프로그램',
+            title: '연금 계산 프로그램',
             render(container) {
               container.innerHTML = `
                 <p class="game-desc">연봉과 저축 조건을 입력하면 간이 세후 연봉과,
