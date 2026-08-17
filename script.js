@@ -143,14 +143,28 @@
 
     const unit = CURRICULUM[currentUnitIndex];
     const topic = unit.topics[currentTopicIndex];
-    const pages = getPages(topic);
-    const page = pages[currentPageIndex];
 
     document.body.classList.remove('is-landing');
 
     // 이 소단원의 관련 영상을 우측 레일에 채우고, 소단원이 바뀔 때마다
     // 레일은 항상 접힌 상태로 되돌린다.
     renderVideoRail(topic);
+
+    // '경제수학 프로그램' 허브 — 아직 프로그램을 하나도 안 고른
+    // 상태(currentPageIndex === -1)라면, 처음 화면과 같은 배경 위에
+    // 안내 문구만 보여주고 여기서 끝낸다.
+    if (unit.sidebarHidden && currentPageIndex === -1) {
+      document.body.classList.remove('is-scroll-mode');
+      stage.innerHTML = `
+        <div class="landing">
+          <p class="program-hub-message">오른쪽 사이드바에 사용할 프로그램을 선택해 주세요</p>
+        </div>
+      `;
+      return;
+    }
+
+    const pages = getPages(topic);
+    const page = pages[currentPageIndex];
 
     // 학습지 페이지 이미지를 그대로 넣은 슬라이드는 카드 안에 갇히지 않고
     // 페이지 전체가 세로로 늘어나며, 브라우저 스크롤로 이어서 본다.
@@ -161,6 +175,15 @@
     if (page.type === 'canva') card.classList.add('slide-card--flush');
     const inner = document.createElement('div');
     inner.className = 'slide-inner';
+    card.appendChild(inner);
+
+    // inner를 먼저 실제 문서(stage)에 붙여둔 다음 내용을 채운다 — 'game'
+    // 타입 프로그램(예: TradingView 위젯)이 자기 컨테이너를
+    // document.getElementById로 찾아야 하는 경우가 있는데, DOM에
+    // 붙기 전에 render()를 호출하면 그 시점엔 아직 문서 안에 없어서
+    // 찾지 못하는 문제가 있었다.
+    stage.innerHTML = '';
+    stage.appendChild(card);
 
     if (page.type === 'title') {
       inner.classList.add('slide-inner--center');
@@ -246,10 +269,6 @@
         }
       }
     }
-
-    card.appendChild(inner);
-    stage.innerHTML = '';
-    stage.appendChild(card);
 
     typesetMath(card);
   }
@@ -395,11 +414,27 @@
     renderStage();
   });
 
-  /* ---------------- 사이드바 맨 아래 버튼: 경제수학 수행평가 / 학습지 ---------------- */
+  /* ---------------- 사이드바 맨 아래 버튼: 경제수학 프로그램 / 학습지 ---------------- */
   assessmentBtn.addEventListener('click', () => {
     const uIdx = CURRICULUM.findIndex((u) => u.sidebarHidden);
     if (uIdx === -1) return;
-    selectTopic(uIdx, 0);
+
+    // '경제수학 프로그램'은 특정 프로그램을 자동으로 열지 않고, 먼저
+    // "오른쪽에서 골라주세요" 안내 화면부터 보여준다.
+    currentUnitIndex = uIdx;
+    currentTopicIndex = 0;
+    currentPageIndex = -1;
+
+    tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open'));
+    assessmentBtn.classList.add('is-active');
+    worksheetsBtn.classList.remove('is-active');
+
+    // 우측 프로그램 목록 레일은 바로 펼쳐서 보여준다.
+    videoRail.classList.add('is-open');
+    videoRailToggle.setAttribute('aria-expanded', 'true');
+
+    markActiveInTOC();
+    renderStage();
   });
 
   worksheetsBtn.addEventListener('click', () => {
