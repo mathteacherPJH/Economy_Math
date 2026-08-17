@@ -377,11 +377,11 @@ const CURRICULUM = [
 
                 <table class="tax-calc-table" id="taxCalcTable" style="display:none;">
                   <colgroup>
-                    <col style="width:8%;">
-                    <col style="width:13%;">
-                    <col style="width:26%;">
-                    <col style="width:35%;">
-                    <col style="width:18%;">
+                    <col style="width:6%;">
+                    <col style="width:10%;">
+                    <col style="width:14%;">
+                    <col style="width:54%;">
+                    <col style="width:16%;">
                   </colgroup>
                   <thead>
                     <tr><th>단계</th><th>계산 과정</th><th>계산 방법</th><th>계산</th><th>금액</th></tr>
