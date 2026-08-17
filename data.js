@@ -512,7 +512,7 @@ const CURRICULUM = [
                   </div>
 
                   <div class="tax-ref-col">
-                    <p class="tax-ref-title">[표3] 과세표준에 따른 산출세액 계산표</p>
+                    <p class="tax-ref-title">[표2] 과세표준에 따른 산출세액 계산표</p>
                     <table class="tax-ref-table tax-ref-table--rate">
                       <colgroup>
                         <col style="width:64%;">
@@ -546,7 +546,7 @@ const CURRICULUM = [
                 return { amount: 14750000 + (total - 100000000) * 0.02, note: '1,475만원 + (총급여액-1억원)×2%' };
               }
 
-              // [표3] 과세표준에 따른 산출세액 계산표 (학습지 3p 기준)
+              // [표2] 과세표준에 따른 산출세액 계산표 (학습지 3p 기준)
               function taxBracket(base) {
                 const brackets = [
                   { upTo: 14000000, rate: 0.06, deduction: 0 },
