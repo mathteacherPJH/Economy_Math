@@ -821,7 +821,7 @@ ol.concept-list li{ padding-left:0; }
 .tax-calc-table th,
 .tax-calc-table td{
   border:1px solid var(--paper-line);
-  padding:.65rem .6rem;
+  padding:.65rem .45rem;
   text-align:center;
   vertical-align:middle;
   word-break:keep-all;
@@ -836,8 +836,9 @@ ol.concept-list li{ padding-left:0; }
 }
 .tax-calc-table td:nth-child(4){
   font-family:var(--font-mono);
-  font-size:.82rem;
-  color:var(--text-muted);
+  font-size:.8rem;
+  color:var(--text-dark);
+  white-space:nowrap;
 }
 .tax-calc-table td:last-child{
   font-family:var(--font-mono);
