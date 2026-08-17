@@ -4,6 +4,22 @@
    그림자·둥근 카드 대신, 얇은 선(divider)과 여백, 흑백 위주의 절제된
    타이포그래피로 구성. 색은 정답 표시처럼 기능이 필요한 곳에만 남김.
    ========================================================= */
+/* 나눔바른고딕 — 표지 제목·사이드바 전용 (Google Fonts엔 없어서 jsdelivr CDN 사용) */
+@font-face{
+  font-family:'NanumBarunGothic';
+  src:url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.woff') format('woff');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'NanumBarunGothic';
+  src:url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWebBold.woff') format('woff');
+  font-weight:700;
+  font-style:normal;
+  font-display:swap;
+}
+
 :root{
   /* 사이드바 표면 — 어두운 남색 대신 아이보리에 가까운 화이트 */
   --ink-900:#FAFAF8;
@@ -107,6 +123,12 @@ body.is-scroll-mode .slide-inner{ overflow:visible; }
   display:flex;
   flex-direction:column;
   overflow:hidden;
+}
+/* 사이드바 안의 모든 글자는 나눔바른고딕 Bold로 통일 (개별 요소마다
+   지정된 font-family보다 우선하도록 !important로 덮어씀) */
+.sidebar *{
+  font-family:'NanumBarunGothic', var(--font-gothic) !important;
+  font-weight:700 !important;
 }
 .sidebar-header{
   display:flex;
@@ -927,13 +949,11 @@ body.is-landing .stage{ padding:0; }
   letter-spacing:.38em;
   color:var(--text-muted);
   margin:0 0 1.3rem;
-  padding-bottom:1.1rem;
-  border-bottom:2px solid var(--text-dark);
   text-transform:uppercase;
 }
 .landing-title{
   text-align:center;
-  font-family:var(--font-gothic);
+  font-family:'NanumBarunGothic', var(--font-gothic);
   font-weight:700;
   font-size:clamp(1.8rem, 4.2vw, 3.2rem);
   line-height:1.2;
