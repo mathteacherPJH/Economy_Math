@@ -444,6 +444,43 @@ const CURRICULUM = [
                     </tr>
                   </tfoot>
                 </table>
+
+                <div class="tax-ref-grid">
+                  <div class="tax-ref-col">
+                    <p class="tax-ref-title">[표1] 근로소득공제 계산표</p>
+                    <table class="tax-ref-table">
+                      <thead>
+                        <tr><th>총급여액 구간</th><th>근로소득공제금액</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>500만원 이하</td><td>총급여액의 70%</td></tr>
+                        <tr><td>500만원 초과 ~ 1,500만원 이하</td><td>350만원 + (총급여액-500만원)×40%</td></tr>
+                        <tr><td>1,500만원 초과 ~ 4,500만원 이하</td><td>750만원 + (총급여액-1,500만원)×15%</td></tr>
+                        <tr><td>4,500만원 초과 ~ 1억원 이하</td><td>1,200만원 + (총급여액-4,500만원)×5%</td></tr>
+                        <tr><td>1억원 초과</td><td>1,475만원 + (총급여액-1억원)×2%</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="tax-ref-col">
+                    <p class="tax-ref-title">[표3] 과세표준에 따른 산출세액 계산표</p>
+                    <table class="tax-ref-table">
+                      <thead>
+                        <tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>14,000,000원 이하</td><td>6%</td><td>-</td></tr>
+                        <tr><td>14,000,000원 초과 ~ 50,000,000원 이하</td><td>15%</td><td>1,260,000원</td></tr>
+                        <tr><td>50,000,000원 초과 ~ 88,000,000원 이하</td><td>24%</td><td>5,760,000원</td></tr>
+                        <tr><td>88,000,000원 초과 ~ 150,000,000원 이하</td><td>35%</td><td>15,440,000원</td></tr>
+                        <tr><td>150,000,000원 초과 ~ 300,000,000원 이하</td><td>38%</td><td>19,940,000원</td></tr>
+                        <tr><td>300,000,000원 초과 ~ 500,000,000원 이하</td><td>40%</td><td>25,940,000원</td></tr>
+                        <tr><td>500,000,000원 초과 ~ 1,000,000,000원 이하</td><td>42%</td><td>35,940,000원</td></tr>
+                        <tr><td>1,000,000,000원 초과</td><td>45%</td><td>65,940,000원</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               `;
 
               // [표1] 근로소득공제 계산표 (학습지 3p 기준)
