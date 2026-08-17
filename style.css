@@ -31,10 +31,10 @@
   --text-on-dark:#111111;
   --text-on-dark-muted:#8A8A84;
 
-  --font-body:'IBM Plex Sans KR', 'Pretendard', sans-serif;
-  --font-mono:'IBM Plex Mono', monospace;
-  --font-gothic:'IBM Plex Sans KR', 'Pretendard', sans-serif;
-  --font-title:'IBM Plex Sans KR', 'Pretendard', sans-serif;
+  --font-body:'Cambria Math', '맑은 고딕', 'Malgun Gothic', 'IBM Plex Sans KR', 'Pretendard', sans-serif;
+  --font-mono:'Cambria Math', '맑은 고딕', 'Malgun Gothic', 'IBM Plex Mono', monospace;
+  --font-gothic:'Cambria Math', '맑은 고딕', 'Malgun Gothic', 'IBM Plex Sans KR', 'Pretendard', sans-serif;
+  --font-title:'Cambria Math', '맑은 고딕', 'Malgun Gothic', 'IBM Plex Sans KR', 'Pretendard', sans-serif;
 
   --sidebar-w: 296px;
   --sidebar-w-collapsed: 64px;
