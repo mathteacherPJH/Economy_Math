@@ -853,6 +853,47 @@ ol.concept-list li{ padding-left:0; }
   font-size:1.05rem;
 }
 
+/* 학습지 3p의 [표1]/[표3] 참조표를 좌우로 나란히 보여준다 */
+.tax-ref-grid{
+  display:flex;
+  gap:2rem;
+  margin-top:2.2rem;
+  align-items:flex-start;
+}
+.tax-ref-col{
+  flex:1;
+  min-width:0;
+}
+.tax-ref-title{
+  font-family:var(--font-gothic);
+  font-weight:700;
+  font-size:.92rem;
+  margin:0 0 .6rem;
+  color:var(--text-dark);
+}
+.tax-ref-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  font-size:.78rem;
+}
+.tax-ref-table th,
+.tax-ref-table td{
+  border:1px solid var(--paper-line);
+  padding:.5rem .4rem;
+  text-align:center;
+  vertical-align:middle;
+  word-break:keep-all;
+}
+.tax-ref-table th{
+  background:#F4F3EF;
+  font-weight:700;
+  font-family:var(--font-gothic);
+}
+.tax-ref-table td:first-child{
+  text-align:left;
+}
+
 /* ---------- 처음 화면(랜딩) — 사이드바 '경제수학' 로고를 누르거나
    페이지를 처음 열었을 때 보여주는 표지 화면. 배경 이미지가 사이드바를
    뺀 화면 전체를 꽉 채운다(상단 툴바도 이 화면에서는 숨긴다). 참고
