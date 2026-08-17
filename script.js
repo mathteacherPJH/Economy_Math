@@ -10,6 +10,7 @@
   const worksheetsBtn = document.getElementById('worksheetsBtn');
   const videoRail = document.getElementById('videoRail');
   const videoRailToggle = document.getElementById('videoRailToggle');
+  const videoRailTitle = document.getElementById('videoRailTitle');
   const videoRailList = document.getElementById('videoRailList');
   const videoModal = document.getElementById('videoModal');
   const videoModalFrame = document.getElementById('videoModalFrame');
@@ -113,10 +114,16 @@
     tocEl.querySelectorAll('.unit').forEach((el) => el.classList.remove('is-open'));
     unitEl?.classList.add('is-open');
 
-    // 사이드바 맨 아래 버튼(경제수학 수행평가/학습지)의 활성 표시도
+    // 사이드바 맨 아래 버튼(경제수학 프로그램/학습지)의 활성 표시도
     // 여기서 같이 관리한다 — 일반 단원으로 이동하면 둘 다 꺼진다.
     assessmentBtn.classList.toggle('is-active', CURRICULUM[uIdx]?.sidebarHidden === true);
     worksheetsBtn.classList.remove('is-active');
+
+    // 다른 소단원으로 이동할 때만 우측 레일을 접은 상태로 되돌린다.
+    // (프로그램 목록 안에서 프로그램만 바꿀 때는 건드리지 않는다 —
+    // renderProgramRail 참고)
+    videoRail.classList.remove('is-open');
+    videoRailToggle.setAttribute('aria-expanded', 'false');
 
     markActiveInTOC();
     renderStage();
@@ -264,11 +271,21 @@
   // 소단원이 바뀔 때마다 항상 접힌 상태로 되돌아간다. 아직 영상을
   // 하나도 안 올린 소단원이어도 레일 자체(< 버튼)는 항상 보여준다 —
   // 나중에 영상이 생기면 그 소단원도 똑같이 바로 쓸 수 있어야 해서다.
+  // 우측 "< " 레일을 채운다. 보통 단원(Ⅰ~Ⅳ)에서는 그 소단원의
+  // 관련 영상 목록을, '경제수학 프로그램'(sidebarHidden 단원)에서는
+  // 그 단원 안의 프로그램 목록을 대신 보여준다 — 열림/닫힘 상태는
+  // selectTopic()에서만 접은 상태로 초기화하고, 여기서는 건드리지
+  // 않는다(프로그램 사이를 이동할 때 레일이 계속 열려있도록).
   function renderVideoRail(topic) {
-    const videos = getTopicVideos(topic);
+    const unit = CURRICULUM[currentUnitIndex];
+    if (unit && unit.sidebarHidden) {
+      renderProgramRail(topic);
+      return;
+    }
 
-    videoRail.classList.remove('is-open', 'is-hidden');
-    videoRailToggle.setAttribute('aria-expanded', 'false');
+    const videos = getTopicVideos(topic);
+    videoRailTitle.textContent = '관련 영상';
+    videoRail.classList.remove('is-hidden');
 
     videoRailList.innerHTML = '';
     if (videos.length === 0) {
@@ -285,6 +302,37 @@
       btn.className = 'video-rail-item';
       btn.textContent = v.label || `관련 영상 ${i + 1}`;
       btn.addEventListener('click', () => openVideoModal(v.url));
+      videoRailList.appendChild(btn);
+    });
+  }
+
+  // '경제수학 프로그램' 전용 — 우측 레일에 영상 대신 이 단원 안의
+  // 프로그램 목록을 보여주고, 클릭하면 영상 모달이 아니라 그 자리에서
+  // 바로 그 프로그램 화면으로 넘어간다(같은 소단원 안의 페이지 이동).
+  function renderProgramRail(topic) {
+    const programs = getPages(topic);
+    videoRailTitle.textContent = '프로그램 목록';
+    videoRail.classList.remove('is-hidden');
+
+    videoRailList.innerHTML = '';
+    if (programs.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'video-rail-empty';
+      empty.textContent = '아직 등록된 프로그램이 없습니다.';
+      videoRailList.appendChild(empty);
+      return;
+    }
+
+    programs.forEach((page, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'video-rail-item';
+      btn.classList.toggle('is-active', i === currentPageIndex);
+      btn.textContent = page.title || `프로그램 ${i + 1}`;
+      btn.addEventListener('click', () => {
+        currentPageIndex = i;
+        renderStage();
+      });
       videoRailList.appendChild(btn);
     });
   }
