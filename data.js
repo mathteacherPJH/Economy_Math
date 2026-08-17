@@ -464,7 +464,12 @@ const CURRICULUM = [
 
                   <div class="tax-ref-col">
                     <p class="tax-ref-title">[표3] 과세표준에 따른 산출세액 계산표</p>
-                    <table class="tax-ref-table">
+                    <table class="tax-ref-table tax-ref-table--rate">
+                      <colgroup>
+                        <col style="width:64%;">
+                        <col style="width:15%;">
+                        <col style="width:21%;">
+                      </colgroup>
                       <thead>
                         <tr><th>과세표준</th><th>세율</th><th>누진공제</th></tr>
                       </thead>
