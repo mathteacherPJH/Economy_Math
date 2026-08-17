@@ -352,10 +352,10 @@ const CURRICULUM = [
         slides: [
           {
             type: 'game',
-            title: '환율 실시간 확인',
+            title: '원/달러 환율',
             render(container) {
               container.innerHTML = `
-                <h2 class="game-title">환율 실시간 확인</h2>
+                <h2 class="game-title">원/달러 환율</h2>
                 <div class="tv-widget-wrap">
                   <div id="tvUsdKrwChart"></div>
                 </div>
