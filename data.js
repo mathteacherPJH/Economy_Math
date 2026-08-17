@@ -161,6 +161,12 @@ const CURRICULUM = [
 
           {
             type: 'video',
+            label: '100년 만기 채권',
+            url: 'https://www.youtube.com/embed/wSwQbfzZS1s'
+          },
+
+          {
+            type: 'video',
             label: '물적분할',
             url: 'https://www.youtube.com/embed/L2fm0kdgp1U'
           },
