@@ -728,6 +728,19 @@ ol.concept-list li{ padding-left:0; }
 
 /* 게임/활동 슬라이드 */
 .game-desc{ margin-bottom:1.2rem; color:var(--text-muted); font-size:1.3rem; }
+.game-title{
+  margin:0 0 .4rem;
+  font-family:var(--font-gothic);
+  font-weight:700;
+  font-size:1.7rem;
+  color:var(--text-dark);
+}
+.game-title-sub{
+  margin:0 0 1.4rem;
+  font-family:var(--font-gothic);
+  font-size:.85rem;
+  color:var(--text-muted);
+}
 .game-area input[type="range"]{
   width:100%;
   accent-color:var(--accent-1);
@@ -800,16 +813,18 @@ ol.concept-list li{ padding-left:0; }
 /* 간이 소득세 계산기 — 단계별 계산 결과 표 */
 .tax-calc-table{
   width:100%;
+  table-layout:fixed;
   border-collapse:collapse;
   margin-top:1.4rem;
-  font-size:.92rem;
+  font-size:.9rem;
 }
 .tax-calc-table th,
 .tax-calc-table td{
   border:1px solid var(--paper-line);
-  padding:.7rem .85rem;
-  text-align:left;
-  vertical-align:top;
+  padding:.65rem .6rem;
+  text-align:center;
+  vertical-align:middle;
+  word-break:keep-all;
 }
 .tax-calc-table th{
   background:#F4F3EF;
@@ -817,23 +832,17 @@ ol.concept-list li{ padding-left:0; }
   font-family:var(--font-gothic);
 }
 .tax-calc-table td:first-child{
-  white-space:nowrap;
   font-weight:600;
+}
+.tax-calc-table td:nth-child(4){
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  color:var(--text-muted);
 }
 .tax-calc-table td:last-child{
-  text-align:right;
   font-family:var(--font-mono);
   font-weight:600;
   white-space:nowrap;
-}
-.tax-calc-sub{
-  display:block;
-  margin-top:.35rem;
-  font-size:.76rem;
-  color:var(--text-muted);
-  font-family:var(--font-mono);
-  font-weight:400;
-  white-space:normal;
 }
 .tax-calc-total td{
   background:#F4F3EF;
