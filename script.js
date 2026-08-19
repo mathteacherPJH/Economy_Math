@@ -444,6 +444,35 @@
   // '경제수학 학습지' 버튼을 누르면 보여주는, 단원 목차와는 별개인
   // 학습지(pdf/ 폴더) 목록 화면. WORKSHEETS 배열(data.js)에 항목을
   // 추가하면 여기 목록도 그만큼 늘어난다.
+  // 학습지/답안지 다운로드 — 그냥 다운로드 폴더로 바로 저장되는 대신,
+  // 지원하는 브라우저(크롬/엣지 등)에서는 "저장 위치 선택" 창을 띄운다.
+  // 지원 안 하는 브라우저(사파리 등)에서는 기존처럼 바로 다운로드된다.
+  async function downloadWithSavePicker(url, suggestedName) {
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName,
+          types: [{ description: 'PDF 파일', accept: { 'application/pdf': ['.pdf'] } }]
+        });
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return; // 사용자가 저장을 취소함
+        // 그 외 오류면 아래 기존 방식으로 폴백
+      }
+    }
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = suggestedName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
   function renderWorksheetsPage() {
     currentUnitIndex = null;
     currentTopicIndex = null;
@@ -501,15 +530,21 @@
           const worksheetLink = document.createElement('a');
           worksheetLink.className = 'worksheet-btn';
           worksheetLink.href = `pdf/${w.file}.pdf`;
-          worksheetLink.download = '';
           worksheetLink.textContent = '학습지';
+          worksheetLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            downloadWithSavePicker(`pdf/${w.file}.pdf`, `${w.file}.pdf`);
+          });
           actions.appendChild(worksheetLink);
 
           const answerLink = document.createElement('a');
           answerLink.className = 'worksheet-btn';
           answerLink.href = `pdfans/${ansFile}.pdf`;
-          answerLink.download = '';
           answerLink.textContent = '답안지';
+          answerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            downloadWithSavePicker(`pdfans/${ansFile}.pdf`, `${ansFile}.pdf`);
+          });
           actions.appendChild(answerLink);
 
           row.appendChild(actions);
