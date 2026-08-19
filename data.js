@@ -290,8 +290,8 @@ const CURRICULUM = [
       },
 
       ...textTopics([
-        '단리와 복리의 원리합계',
-        '예금과 적금',
+        '예금의 원리합계',
+        '적금의 원리합계',
         '현재가치와 연금',
         '1단원 마무리 문제'
       ])
@@ -724,8 +724,8 @@ const WORKSHEETS = [
       { label: '[06차시] 환율의 변동', file: 'chapter06exe' },
       { label: '[07차시] 세금의 종류', file: 'chapter07exe' },
       { label: '[08차시] 소득세의 계산', file: 'chapter08exe' },
-      { label: '[09차시] 단리와 복리의 원리합계', file: 'chapter09exe' },
-      { label: '[10차시] 예금과 적금', file: 'chapter10exe' },
+      { label: '[09차시] 예금의 원리합계', file: 'chapter09exe' },
+      { label: '[10차시] 적금의 원리합계', file: 'chapter10exe' },
       { label: '[11차시] 현재가치와 연금', file: 'chapter11exe' },
       { label: '[12차시] 1단원 마무리 문제', file: 'chapter12exe' }
     ]
