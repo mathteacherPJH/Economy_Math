@@ -764,9 +764,12 @@ ol.concept-list li{ padding-left:0; }
   font-size:.85rem;
   color:var(--text-muted);
 }
-.tv-widget-wrap{
+.fx-chart-wrap{
   width:100%;
+  height:420px;
   border:1px solid var(--paper-line);
+  padding:1.2rem;
+  box-sizing:border-box;
 }
 .game-area input[type="range"]{
   width:100%;
