@@ -362,40 +362,18 @@ const CURRICULUM = [
             render(container) {
               container.innerHTML = `
                 <h2 class="game-title">원/달러 환율</h2>
-                <div class="tv-widget-wrap">
-                  <div id="tvUsdKrwChart"></div>
-                </div>
+                <p class="game-title-sub">실시간 환율 변환기 (UniRate 제공)</p>
+                <link rel="stylesheet" href="https://unirateapi.com/lander/static/css/unirate-widgets.css">
+                <div id="unirate-converter" data-from="USD" data-to="KRW" data-amount="1"></div>
               `;
 
-              // TradingView 고급 차트 위젯 (원/달러 환율, 실시간)
-              // — 공식 무료 임베드 위젯. 여러 번 이 화면에 들어와도
-              // tv.js 스크립트를 중복으로 불러오지 않도록 한 번만 로드한다.
-              function createWidget() {
-                if (!window.TradingView) return;
-                new window.TradingView.widget({
-                  width: '100%',
-                  height: 620,
-                  symbol: 'FX:USDKRW',
-                  interval: 'D',
-                  timezone: 'Asia/Seoul',
-                  theme: 'light',
-                  style: '1',
-                  locale: 'kr',
-                  toolbar_bg: '#ffffff',
-                  enable_publishing: false,
-                  allow_symbol_change: true,
-                  container_id: 'tvUsdKrwChart'
-                });
-              }
-
-              if (window.TradingView) {
-                createWidget();
-              } else {
-                const script = document.createElement('script');
-                script.src = 'https://s3.tradingview.com/tv.js';
-                script.onload = createWidget;
-                container.appendChild(script);
-              }
+              // UniRate 환율 변환기 위젯 — 등록/키 없이 쓰는 무료 공식
+              // 임베드. "거래소" 브랜드가 아니라 단순 환율 변환기라
+              // 학교망 등에서 차단될 가능성이 낮다. script 태그는
+              // innerHTML로 넣으면 실행이 안 되므로 직접 만들어 붙인다.
+              const script = document.createElement('script');
+              script.src = 'https://unirateapi.com/lander/static/js/unirate-widgets.js';
+              container.appendChild(script);
             }
           },
 
