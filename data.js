@@ -362,18 +362,84 @@ const CURRICULUM = [
             render(container) {
               container.innerHTML = `
                 <h2 class="game-title">원/달러 환율</h2>
-                <p class="game-title-sub">실시간 환율 변환기 (UniRate 제공)</p>
-                <link rel="stylesheet" href="https://unirateapi.com/lander/static/css/unirate-widgets.css">
-                <div id="unirate-converter" data-from="USD" data-to="KRW" data-amount="1"></div>
+                <p class="game-title-sub" id="fxChartSub">최근 90일 추이 — 불러오는 중...</p>
+                <div class="fx-chart-wrap">
+                  <canvas id="fxChartCanvas"></canvas>
+                </div>
               `;
 
-              // UniRate 환율 변환기 위젯 — 등록/키 없이 쓰는 무료 공식
-              // 임베드. "거래소" 브랜드가 아니라 단순 환율 변환기라
-              // 학교망 등에서 차단될 가능성이 낮다. script 태그는
-              // innerHTML로 넣으면 실행이 안 되므로 직접 만들어 붙인다.
-              const script = document.createElement('script');
-              script.src = 'https://unirateapi.com/lander/static/js/unirate-widgets.js';
-              container.appendChild(script);
+              const subEl = container.querySelector('#fxChartSub');
+              const canvas = container.querySelector('#fxChartCanvas');
+
+              // Chart.js는 일반 JS 라이브러리 CDN이라 학교망 등에서
+              // 차단될 일이 거의 없다. 이미 불러온 적 있으면 다시 안 부른다.
+              function loadChartJs(onReady) {
+                if (window.Chart) { onReady(); return; }
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js';
+                script.onload = onReady;
+                script.onerror = () => { subEl.textContent = '차트 라이브러리를 불러오지 못했습니다.'; };
+                document.body.appendChild(script);
+              }
+
+              function formatDate(d) {
+                return d.toISOString().slice(0, 10);
+              }
+
+              const end = new Date();
+              const start = new Date();
+              start.setDate(end.getDate() - 90);
+
+              // Frankfurter — 유럽중앙은행(ECB)이 공식 발표하는 환율을
+              // 그대로 제공하는 무료·오픈소스·키 불필요 API. "거래소"가
+              // 아니라 중앙은행 공식 데이터라 학교망에서 차단될 가능성이
+              // 거의 없다. 평일 기준 하루 한 번(약 16:00 CET) 갱신된다.
+              fetch(`https://api.frankfurter.app/${formatDate(start)}..${formatDate(end)}?from=USD&to=KRW`)
+                .then((res) => res.json())
+                .then((data) => {
+                  const rates = data.rates || {};
+                  const dates = Object.keys(rates).sort();
+                  const values = dates.map((d) => rates[d].KRW);
+
+                  if (dates.length === 0) {
+                    subEl.textContent = '환율 데이터를 가져오지 못했습니다.';
+                    return;
+                  }
+
+                  const latest = values[values.length - 1];
+                  subEl.textContent = `최근 90일 추이 (자료: 유럽중앙은행 ECB) — 현재 1달러 = ${Math.round(latest).toLocaleString('ko-KR')}원`;
+
+                  loadChartJs(() => {
+                    new window.Chart(canvas.getContext('2d'), {
+                      type: 'line',
+                      data: {
+                        labels: dates,
+                        datasets: [{
+                          label: 'USD → KRW',
+                          data: values,
+                          borderColor: '#111111',
+                          backgroundColor: 'rgba(17,17,17,.06)',
+                          borderWidth: 1.5,
+                          pointRadius: 0,
+                          fill: true,
+                          tension: .15
+                        }]
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { ticks: { maxTicksLimit: 8 } },
+                          y: { ticks: { callback: (v) => Math.round(v).toLocaleString('ko-KR') } }
+                        }
+                      }
+                    });
+                  });
+                })
+                .catch(() => {
+                  subEl.textContent = '환율 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.';
+                });
             }
           },
 
