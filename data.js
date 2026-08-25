@@ -289,12 +289,45 @@ const CURRICULUM = [
         ]
       },
 
-      ...textTopics([
-        '예금의 원리합계',
-        '적금의 원리합계',
-        '현재가치와 연금',
-        '1단원 마무리 문제'
-      ])
+      {
+        title: '예금의 원리합계',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXclP1EE/qmK5iezug_P5y3bgkhWTFw/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '적금의 원리합계',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXVchhZk/eEFnTCS9_mhtBN6ZE_WYnw/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '현재가치와 연금',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXTLACcQ/CxEYrAkQOGrXTIeHrrcHUA/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '1단원 마무리 문제',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHSXX6b8v0/sS6Dx4aSLowzWEgxLxndGA/view?embed'
+          }
+        ]
+      }
     ]
   },
 
