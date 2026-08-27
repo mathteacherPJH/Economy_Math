@@ -484,6 +484,135 @@ const CURRICULUM = [
 
           {
             type: 'game',
+            title: '자동차 세금 계산기',
+            render(container) {
+              container.innerHTML = `
+                <h2 class="game-title">자동차 세금 계산기</h2>
+                <p class="game-title-sub">학습용으로 제작한 프로그램이므로, 실제 계산과 차이가 있을 수 있음.</p>
+
+                <div class="calc-grid">
+                  <label>출고가 (원)
+                    <input type="number" id="carPriceInput" value="30000000" min="0" step="100000" />
+                  </label>
+                  <label>배기량 (cc)
+                    <input type="number" id="carCcInput" value="1600" min="0" step="50" />
+                  </label>
+                  <label class="calc-checkbox-label">
+                    <input type="checkbox" id="carLightInput" />
+                    경차 여부 (취득세 4% 적용)
+                  </label>
+                </div>
+
+                <button type="button" id="carCalcBtn" class="calc-btn">계산하기</button>
+
+                <table class="tax-calc-table" id="carCalcTable" style="display:none;">
+                  <colgroup>
+                    <col style="width:15%;">
+                    <col style="width:25%;">
+                    <col style="width:42%;">
+                    <col style="width:18%;">
+                  </colgroup>
+                  <thead>
+                    <tr><th>세금</th><th>계산식</th><th>계산</th><th>세금 액수</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>개별소비세</td>
+                      <td>출고가 × 5%</td>
+                      <td id="carCalc1"></td>
+                      <td id="carRow1"></td>
+                    </tr>
+                    <tr>
+                      <td>교육세</td>
+                      <td>개별소비세 × 30%</td>
+                      <td id="carCalc2"></td>
+                      <td id="carRow2"></td>
+                    </tr>
+                    <tr>
+                      <td>부가가치세</td>
+                      <td>(출고가+개별소비세+교육세) × 10%</td>
+                      <td id="carCalc3"></td>
+                      <td id="carRow3"></td>
+                    </tr>
+                    <tr>
+                      <td>취득세</td>
+                      <td>(출고가+개별소비세+교육세) × 7%(경차 4%)</td>
+                      <td id="carCalc4"></td>
+                      <td id="carRow4"></td>
+                    </tr>
+                    <tr>
+                      <td>자동차세</td>
+                      <td>배기량(cc) × cc당 세액</td>
+                      <td id="carCalc5"></td>
+                      <td id="carRow5"></td>
+                    </tr>
+                    <tr>
+                      <td>지방교육세</td>
+                      <td>자동차세 × 30%</td>
+                      <td id="carCalc6"></td>
+                      <td id="carRow6"></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="tax-calc-total">
+                      <td colspan="3">세금 합계</td>
+                      <td id="carRowTotal"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              `;
+
+              // 자동차세는 배기량 구간별로 cc당 세액이 다르다
+              // (1,000cc 이하 80원 / 1,600cc 이하 140원 / 초과 200원)
+              function ccRate(cc) {
+                if (cc <= 1000) return 80;
+                if (cc <= 1600) return 140;
+                return 200;
+              }
+
+              function formatWon(v) {
+                return Math.round(v).toLocaleString('ko-KR') + '원';
+              }
+
+              const calcBtn = container.querySelector('#carCalcBtn');
+              calcBtn.addEventListener('click', () => {
+                const price = parseFloat(container.querySelector('#carPriceInput').value) || 0;
+                const cc = parseFloat(container.querySelector('#carCcInput').value) || 0;
+                const isLight = container.querySelector('#carLightInput').checked;
+
+                const individualTax = price * 0.05; // 개별소비세
+                const educationTax = individualTax * 0.3; // 교육세
+                const vatBase = price + individualTax + educationTax;
+                const vat = vatBase * 0.1; // 부가가치세
+                const acquisitionRate = isLight ? 0.04 : 0.07;
+                const acquisitionTax = vatBase * acquisitionRate; // 취득세
+                const perCc = ccRate(cc);
+                const carTax = cc * perCc; // 자동차세
+                const localEducationTax = carTax * 0.3; // 지방교육세
+                const total = individualTax + educationTax + vat + acquisitionTax + carTax + localEducationTax;
+
+                container.querySelector('#carRow1').textContent = formatWon(individualTax);
+                container.querySelector('#carRow2').textContent = formatWon(educationTax);
+                container.querySelector('#carRow3').textContent = formatWon(vat);
+                container.querySelector('#carRow4').textContent = formatWon(acquisitionTax);
+                container.querySelector('#carRow5').textContent = formatWon(carTax);
+                container.querySelector('#carRow6').textContent = formatWon(localEducationTax);
+                container.querySelector('#carRowTotal').textContent = formatWon(total);
+
+                container.querySelector('#carCalc1').textContent = `${formatWon(price)} × 5%`;
+                container.querySelector('#carCalc2').textContent = `${formatWon(individualTax)} × 30%`;
+                container.querySelector('#carCalc3').textContent = `${formatWon(vatBase)} × 10%`;
+                container.querySelector('#carCalc4').textContent = `${formatWon(vatBase)} × ${Math.round(acquisitionRate * 100)}%${isLight ? ' (경차)' : ''}`;
+                container.querySelector('#carCalc5').textContent = `${cc.toLocaleString('ko-KR')}cc × ${perCc}원`;
+                container.querySelector('#carCalc6').textContent = `${formatWon(carTax)} × 30%`;
+
+                container.querySelector('#carCalcTable').style.display = '';
+              });
+            }
+          },
+
+          {
+            type: 'game',
             title: '간이 소득세 계산기',
             render(container) {
               container.innerHTML = `
