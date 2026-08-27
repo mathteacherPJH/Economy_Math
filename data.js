@@ -497,11 +497,12 @@ const CURRICULUM = [
                   <label>배기량 (cc)
                     <input type="number" id="carCcInput" value="1600" min="0" step="50" />
                   </label>
-                  <label class="calc-checkbox-label">
-                    <input type="checkbox" id="carLightInput" />
-                    경차 여부 (취득세 4% 적용)
-                  </label>
                 </div>
+
+                <label class="calc-checkbox-label">
+                  <input type="checkbox" id="carLightInput" />
+                  경차 여부 (취득세 4% 적용)
+                </label>
 
                 <button type="button" id="carCalcBtn" class="calc-btn">계산하기</button>
 
