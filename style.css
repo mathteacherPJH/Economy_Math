@@ -824,6 +824,18 @@ ol.concept-list li{ padding-left:0; }
   border-color:var(--accent-1);
   box-shadow:0 0 0 3px var(--accent-soft);
 }
+.calc-checkbox-label{
+  flex-direction:row !important;
+  align-items:center;
+  gap:.5rem !important;
+  cursor:pointer;
+}
+.calc-checkbox-label input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  accent-color:var(--text-dark);
+  cursor:pointer;
+}
 .calc-btn{
   font-family:var(--font-gothic);
   font-weight:600;
