@@ -275,6 +275,12 @@ const CURRICULUM = [
             type: 'video',
             label: '세금의 종류',
             url: 'https://www.youtube.com/embed/QI3bCaB9QZE'
+          },
+
+          {
+            type: 'video',
+            label: '38사기동대',
+            url: 'https://www.youtube.com/embed/pnrJnfpUvRI'
           }
         ]
       },
