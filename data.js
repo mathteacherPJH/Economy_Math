@@ -253,6 +253,12 @@ const CURRICULUM = [
             type: 'video',
             label: '원유 수입',
             url: 'https://www.youtube.com/embed/eUt75iGilk0'
+          },
+
+          {
+            type: 'video',
+            label: '환율의 영향',
+            url: 'https://www.youtube.com/embed/2Tb_odEaJ0Q'
           }
         ]
       },
