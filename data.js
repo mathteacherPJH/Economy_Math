@@ -279,8 +279,8 @@ const CURRICULUM = [
 
           {
             type: 'video',
-            label: '38사기동대',
-            url: 'https://www.youtube.com/embed/pnrJnfpUvRI'
+            label: '세금의 종류2',
+            url: 'https://www.youtube.com/embed/LvSDTX84kl4'
           }
         ]
       },
@@ -297,6 +297,12 @@ const CURRICULUM = [
             type: 'video',
             label: '소득세의 종류',
             url: 'https://www.youtube.com/embed/ooNt7avfMnc?start=135'
+          },
+
+          {
+            type: 'video',
+            label: '38사기동대',
+            url: 'https://www.youtube.com/embed/pnrJnfpUvRI?start=155'
           }
         ]
       },
