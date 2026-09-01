@@ -303,6 +303,12 @@ const CURRICULUM = [
             type: 'video',
             label: '38사기동대',
             url: 'https://www.youtube.com/embed/pnrJnfpUvRI?start=155'
+          },
+
+          {
+            type: 'video',
+            label: '종합소득세 신고',
+            url: 'https://www.youtube.com/embed/5X-7Env4phc?start=1440'
           }
         ]
       },
