@@ -328,7 +328,7 @@ const CURRICULUM = [
         slides: [
           {
             type: 'canva',
-            url: 'https://www.canva.com/design/DAHSXVchhZk/eEFnTCS9_mhtBN6ZE_WYnw/view?embed'
+            url: 'https://www.canva.com/design/DAHUCfrQjb0/xC3RSxcWE3UtkjkweMkujQ/view?embed'
           }
         ]
       },
