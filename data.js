@@ -359,16 +359,87 @@ const CURRICULUM = [
     id: 'unit-2',
     number: 'Ⅱ',
     title: '함수와 경제',
-    topics: textTopics([
-      '생산함수와 비용함수',
-      '수요함수와 공급함수',
-      '효용함수',
-      '균형가격의 결정',
-      '균형가격의 변화',
-      '부등식의 영역',
-      '부등식의 영역과 최대 최소의 문제',
-      '2단원 마무리 문제'
-    ])
+    topics: [
+      {
+        title: '생산함수와 비용함수',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUfMUWI3o/BSUp-yp3m58_MyfCYhm4QA/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '수요함수와 공급함수',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUppKmlTA/R_A_8fyP0yRcvNpuO_9Zaw/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '효용함수',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUpsGg8g4/NY62x0Yj7YwsfM1EvIpt9w/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '균형가격의 결정',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUpnVA6D4/udeZ6n92-EQcMP-g8uTr7A/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '균형가격의 변화',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUppRGoFI/xq9BOQVn-gge-m-LaBFxiA/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '부등식의 영역',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUpnJ5BZM/sPy7QuZK4e76EmKrUDPkzw/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '부등식의 영역과 최대 최소의 문제',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUpqDIufk/U1PdAXkezDcKmdEYBauW8Q/view?embed'
+          }
+        ]
+      },
+
+      {
+        title: '2단원 마무리 문제',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHUpqFWO68/pUXMklyAW4aiwBM18FiZyg/view?embed'
+          }
+        ]
+      }
+    ]
   },
 
   {
