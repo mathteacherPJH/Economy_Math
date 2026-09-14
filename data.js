@@ -366,6 +366,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHUfMUWI3o/BSUp-yp3m58_MyfCYhm4QA/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '은퇴후 치킨집',
+            url: 'https://www.youtube.com/embed/jJgXq5gHOhc'
           }
         ]
       },
