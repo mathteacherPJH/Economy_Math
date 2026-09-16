@@ -382,6 +382,12 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHUppKmlTA/R_A_8fyP0yRcvNpuO_9Zaw/view?embed'
+          },
+
+          {
+            type: 'video',
+            label: '공급량 조절',
+            url: 'https://www.youtube.com/embed/cwjgGi-dSeg'
           }
         ]
       },
