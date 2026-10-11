@@ -921,96 +921,106 @@ const CURRICULUM = [
           {
             type: 'game',
             title: '연금 계산 프로그램',
-            render(container) {
-              container.innerHTML = `
-                <p class="game-desc">연봉과 저축 조건을 입력하면 간이 세후 연봉과,
-                매년 일정액을 저축했을 때의 은퇴 시점 연금 자산을 계산해줍니다.
-                (실제 세율표를 단순화한 학습용 계산이며, 정확한 세액과는 차이가
-                있을 수 있습니다.)</p>
-
-                <div class="calc-grid">
-                  <label>연봉 (만원)
-                    <input type="number" id="salaryInput" value="4000" min="0" step="100" />
-                  </label>
-                  <label>연 저축률 (%)
-                    <input type="number" id="saveRateInput" value="15" min="0" max="100" step="1" />
-                  </label>
-                  <label>연 평균 수익률 (%)
-                    <input type="number" id="returnRateInput" value="4" min="0" max="20" step="0.5" />
-                  </label>
-                  <label>저축 기간 (년)
-                    <input type="number" id="yearsInput" value="30" min="1" max="60" step="1" />
-                  </label>
-                </div>
-
-                <button type="button" id="calcBtn" class="calc-btn">계산하기</button>
-
-                <div class="game-readout" id="calcResult" style="display:none;">
-                  <div><span>세후 연봉(추정)</span><strong id="netSalaryVal">-</strong></div>
-                  <div><span>연간 저축액</span><strong id="yearlySaveVal">-</strong></div>
-                  <div><span>은퇴 시점 연금 자산</span><strong id="futureValueVal">-</strong></div>
-                </div>
-                <p id="calcNote" class="game-result" style="display:none;"></p>
-              `;
-
-              // 아주 단순화한 누진세 구간 (교육용 예시일 뿐, 실제 소득세법과 다릅니다)
-              function estimateTax(grossManwon) {
-                const gross = grossManwon * 10000; // 만원 -> 원
-                const brackets = [
-                  { upTo: 12000000, rate: 0.06 },
-                  { upTo: 46000000, rate: 0.15 },
-                  { upTo: 88000000, rate: 0.24 },
-                  { upTo: 150000000, rate: 0.35 },
-                  { upTo: Infinity, rate: 0.38 }
-                ];
-                let tax = 0;
-                let prevCap = 0;
-                for (const b of brackets) {
-                  if (gross > prevCap) {
-                    const taxableInBracket = Math.min(gross, b.upTo) - prevCap;
-                    tax += taxableInBracket * b.rate;
-                    prevCap = b.upTo;
-                  } else {
-                    break;
-                  }
-                }
-                return { gross, tax, net: gross - tax };
-              }
-
-              function formatWon(v) {
-                return Math.round(v).toLocaleString('ko-KR') + '원';
-              }
-
-              const calcBtn = container.querySelector('#calcBtn');
-              calcBtn.addEventListener('click', () => {
-                const salary = parseFloat(container.querySelector('#salaryInput').value) || 0;
-                const saveRate = parseFloat(container.querySelector('#saveRateInput').value) || 0;
-                const returnRate = parseFloat(container.querySelector('#returnRateInput').value) || 0;
-                const years = parseInt(container.querySelector('#yearsInput').value, 10) || 0;
-
-                const { net } = estimateTax(salary);
-                const yearlySave = net * (saveRate / 100);
-
-                // 매년 초 yearlySave씩 납입, 연 복리 returnRate로 굴렸을 때의 미래가치
-                const r = returnRate / 100;
-                let futureValue;
-                if (r === 0) {
-                  futureValue = yearlySave * years;
-                } else {
-                  futureValue = yearlySave * (((Math.pow(1 + r, years) - 1) / r) * (1 + r));
-                }
-
-                container.querySelector('#netSalaryVal').textContent = formatWon(net);
-                container.querySelector('#yearlySaveVal').textContent = formatWon(yearlySave);
-                container.querySelector('#futureValueVal').textContent = formatWon(futureValue);
-                container.querySelector('#calcResult').style.display = 'flex';
-
-                const note = container.querySelector('#calcNote');
-                note.style.display = 'block';
-                note.classList.add('is-correct');
-                note.textContent = `${years}년간 매년 ${formatWon(yearlySave)}씩 연 ${returnRate}% 수익률로 저축하면, 은퇴 시점에 약 ${formatWon(futureValue)}을 모을 수 있습니다.`;
-              });
-            }
+            render: function renderPension(container) {
+  container.classList.add('pension-program');
+  container.innerHTML = `
+    <h2 class="game-title">연금 계산 프로그램</h2>
+    <p class="game-desc">만 65세에 받을 국민연금 월액을 입력하고, 1년 단위로 앞당기거나 미뤘을 때의 월 수령액을 비교하세요.</p>
+    <form class="pension-inputs">
+      <label for="pensionBase">만 65세 기준 월 연금액 (원)<input id="pensionBase" type="number" min="0" max="1000000000" step="1" value="1000000" required inputmode="numeric"></label>
+      <label for="pensionShift">수령 시기<select id="pensionShift"></select></label>
+      <button type="submit" class="calc-btn">계산하기</button>
+    </form>
+    <p class="pension-error" role="alert" hidden></p>
+    <div class="pension-results" aria-live="polite">
+      <div class="pension-summary">
+        <div><span>수령 시작 나이</span><strong data-out="age"></strong></div>
+        <div><span>매달 받는 연금</span><strong data-out="monthly"></strong></div>
+        <div><span>만 65세 기준과 차이</span><strong data-out="difference"></strong></div>
+      </div>
+      <p class="pension-formula"></p>
+      <div class="pension-table-wrap"><table class="pension-table"><caption>만 60~70세 수령 시기별 비교</caption><thead><tr><th scope="col">수령 시작</th><th scope="col">시기 조정</th><th scope="col">지급률</th><th scope="col">월 수령액</th><th scope="col">월 증감액</th><th scope="col">기준 대비</th></tr></thead><tbody></tbody></table></div>
+      <div class="pension-key"><span>조기: 기준액에서 1년당 6% 감소</span><span>연기: 기준액에서 1년당 7.2% 증가</span></div>
+    </div>
+    <div class="pension-notes">
+      <p>국민연금 노령연금 기준이며, 만 65세가 정상 수령 나이인 1969년 이후 출생자를 가정합니다. 조기·연기는 각각 최대 5년이며, 증감률은 복리로 계산하지 않고 정상 수령액에 적용합니다. 조기 감액은 이후에도 계속 적용됩니다.</p>
+      <p>부양가족연금액을 제외한 세전 월액을 입력하세요. 연기는 연금 전액을 미루는 것으로 가정합니다. 세금, 물가에 따른 연금액 조정, 추가 가입, 소득에 따른 감액 및 부분 연기는 반영하지 않습니다.</p>
+      <p>조기 수령은 가입기간 10년 이상 및 소득 요건 등을 충족해야 합니다. 이 계산기는 수령 자격을 판정하지 않습니다.</p>
+      <a href="https://www.nps.or.kr/pnsinfo/ntpsklg/getOHAF0056M0.do" target="_blank" rel="noopener">국민연금공단 · 노령연금 안내</a>
+    </div>`;
+  const baseInput = container.querySelector('#pensionBase');
+  const select = container.querySelector('#pensionShift');
+  const error = container.querySelector('.pension-error');
+  const results = container.querySelector('.pension-results');
+  const body = container.querySelector('tbody');
+  const money = v => Math.round(v).toLocaleString('ko-KR') + '원';
+  const signedMoney = v => (v > 0 ? '+' : v < 0 ? '−' : '') + money(Math.abs(v));
+  const percent = v => Number(v.toFixed(1)).toLocaleString('ko-KR') + '%';
+  const timing = offset => offset < 0 ? Math.abs(offset) + '년 조기' : offset > 0 ? offset + '년 연기' : '정상 수령';
+  for (let offset = -5; offset <= 5; offset++) {
+    const option = document.createElement('option');
+    option.value = offset;
+    option.textContent = '만 ' + (65 + offset) + '세 · ' + timing(offset);
+    select.appendChild(option);
+  }
+  select.value = '0';
+  function calculate() {
+    const raw = baseInput.value.trim();
+    const base = Number(raw);
+    const selected = Number(select.value);
+    if (!raw || !Number.isFinite(base) || !Number.isInteger(base) || base < 0 || base > 1000000000 || !Number.isInteger(selected) || selected < -5 || selected > 5) {
+      error.hidden = false;
+      error.textContent = '월 연금액은 0~1,000,000,000원의 정수로 입력하세요.';
+      results.hidden = true;
+      return;
+    }
+    error.hidden = true;
+    results.hidden = false;
+    const rows = [];
+    for (let offset = -5; offset <= 5; offset++) {
+      // Integer percentage tenths: 700 at five years early, 1360 at five years late.
+      const rateTenths = 1000 + offset * (offset < 0 ? 60 : 72);
+      const amount = Math.round(base * rateTenths / 1000);
+      rows.push({ offset, rateTenths, amount, difference: amount - base });
+    }
+    const chosen = rows.find(row => row.offset === selected);
+    container.querySelector('[data-out="age"]').textContent = '만 ' + (65 + selected) + '세';
+    container.querySelector('[data-out="monthly"]').textContent = money(chosen.amount);
+    container.querySelector('[data-out="difference"]').textContent = signedMoney(chosen.difference);
+    const formula = selected < 0
+      ? '기준 월액 × (1 − 0.06 × ' + Math.abs(selected) + ')'
+      : selected > 0 ? '기준 월액 × (1 + 0.072 × ' + selected + ')' : '기준 월액 × 1';
+    container.querySelector('.pension-formula').textContent = formula + ' = ' + money(chosen.amount) + ' · 원 단위 반올림';
+    body.replaceChildren();
+    for (const row of rows) {
+      const tr = document.createElement('tr');
+      if (row.offset === 0) tr.classList.add('pension-normal');
+      if (row.offset === selected) tr.classList.add('pension-selected');
+      const age = document.createElement('th');
+      age.scope = 'row';
+      age.textContent = '만 ' + (65 + row.offset) + '세' + (row.offset === selected ? ' · 선택' : '');
+      tr.appendChild(age);
+      const cells = [timing(row.offset), percent(row.rateTenths / 10), money(row.amount), signedMoney(row.difference)];
+      for (const value of cells) {
+        const td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
+      }
+      const td = document.createElement('td');
+      const bar = document.createElement('span');
+      bar.className = 'pension-bar ' + (row.offset < 0 ? 'pension-early' : row.offset > 0 ? 'pension-late' : '');
+      bar.style.width = (row.rateTenths / 1360 * 100) + '%';
+      bar.setAttribute('aria-hidden', 'true');
+      td.appendChild(bar);
+      tr.appendChild(td);
+      body.appendChild(tr);
+    }
+  }
+  container.querySelector('form').addEventListener('submit', event => { event.preventDefault(); calculate(); });
+  baseInput.addEventListener('input', calculate);
+  select.addEventListener('change', calculate);
+  calculate();
+}
           }
         ]
       }
