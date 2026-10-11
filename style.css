@@ -1162,3 +1162,40 @@ body.is-landing .stage{ padding:0; }
   border:0;
   display:block;
 }
+
+/* 부등식의 영역 프로그램: 카드 안에서 전체 높이를 사용하고 내부 스크롤 제공 */
+.slide-card--inequality .slide-inner {
+  padding: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.slide-card--inequality .game-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+.inequality-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .8rem 1.2rem;
+  border-bottom: 1px solid var(--paper-line);
+}
+.inequality-toolbar h2 { margin: 0; font-size: 1rem; }
+.inequality-toolbar button { color: var(--text-dark); font-size: .85rem; }
+.inequality-frame {
+  display: block;
+  width: 100%;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  background: white;
+}
+
+.inequality-toolbar button { border:1px solid var(--paper-line); background:white; padding:.4rem .7rem; cursor:pointer; font-family:inherit; }
+.inequality-toolbar button:hover { background:var(--ink-800); }
+.inequality-fullscreen-notice { font-size:.8rem; color:var(--text-muted); }
