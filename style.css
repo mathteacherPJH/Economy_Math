@@ -1199,3 +1199,33 @@ body.is-landing .stage{ padding:0; }
 .inequality-toolbar button { border:1px solid var(--paper-line); background:white; padding:.4rem .7rem; cursor:pointer; font-family:inherit; }
 .inequality-toolbar button:hover { background:var(--ink-800); }
 .inequality-fullscreen-notice { font-size:.8rem; color:var(--text-muted); }
+
+
+/* 국민연금 수령 시기 비교 계산기 */
+.pension-program { max-width:1100px; width:100%; margin:0 auto; }
+.pension-program .game-title { margin-top:0; }
+.pension-inputs { display:flex; flex-wrap:wrap; align-items:flex-end; gap:1rem; margin:1.5rem 0; }
+.pension-inputs label { display:flex; flex-direction:column; gap:.55rem; flex:1; min-width:230px; font-size:.95rem; font-weight:600; }
+.pension-inputs input,.pension-inputs select { width:100%; padding:.7rem; border:1px solid var(--paper-line); background:white; color:var(--text-dark); font:inherit; }
+.pension-inputs .calc-btn { margin:0; }
+.pension-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid var(--paper-line); border-bottom:1px solid var(--paper-line); padding:1.3rem 0; gap:1rem; }
+.pension-summary span { display:block; font-size:.9rem; color:#666; margin-bottom:.6rem; }
+.pension-summary strong { font-size:clamp(1.1rem,2vw,1.7rem); }
+.pension-formula { font-family:var(--font-mono); font-size:.95rem; margin:1.2rem 0; }
+.pension-table-wrap { overflow-x:auto; }
+.pension-table { border-collapse:collapse; width:100%; min-width:670px; font-size:.95rem; }
+.pension-table caption { text-align:left; font-weight:700; padding:.5rem 0 1rem; }
+.pension-table th,.pension-table td { padding:.7rem .8rem; border-bottom:1px solid var(--paper-line); text-align:right; white-space:nowrap; }
+.pension-table th:first-child,.pension-table td:nth-child(2) { text-align:left; }
+.pension-table thead { background:#f5f4f0; }
+.pension-table td:last-child { width:17%; min-width:100px; }
+.pension-normal { font-weight:700; }
+.pension-selected { background:#f0f4f1; outline:2px solid #1b7a4a; outline-offset:-2px; }
+.pension-bar { display:block; height:8px; background:#555; }
+.pension-early { background:#b23b34; }
+.pension-late { background:#1b7a4a; }
+.pension-key { display:flex; flex-wrap:wrap; gap:1rem; font-size:.9rem; margin:1rem 0; }
+.pension-notes { border-top:1px solid var(--paper-line); padding-top:.5rem; font-size:.85rem; line-height:1.8; color:#666; }
+.pension-notes a { color:var(--text-dark); }
+.pension-error { color:#b23b34; }
+.pension-program [hidden] { display:none!important; }
