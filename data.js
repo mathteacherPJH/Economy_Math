@@ -920,7 +920,7 @@ const CURRICULUM = [
 
           {
             type: 'game',
-            title: '수령 시기에 따른 연금 계산 프로그램',
+            title: '연금 계산 프로그램',
             render: function renderPension(container) {
   container.classList.add('pension-program');
   const card = container.closest('.slide-card');
