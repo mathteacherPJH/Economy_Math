@@ -920,12 +920,13 @@ const CURRICULUM = [
 
           {
             type: 'game',
-            title: '연금 계산 프로그램',
+            title: '수령 시기에 따른 연금 계산 프로그램',
             render: function renderPension(container) {
   container.classList.add('pension-program');
+  const card = container.closest('.slide-card');
+  if (card) card.classList.add('slide-card--pension');
   container.innerHTML = `
-    <h2 class="game-title">연금 계산 프로그램</h2>
-    <p class="game-desc">만 65세에 받을 국민연금 월액을 입력하고, 1년 단위로 앞당기거나 미뤘을 때의 월 수령액을 비교하세요.</p>
+    <h2 class="game-title">수령 시기에 따른 연금 계산 프로그램</h2>
     <form class="pension-inputs">
       <label for="pensionBase">만 65세 기준 월 연금액 (원)<input id="pensionBase" type="number" min="0" max="1000000000" step="1" value="1000000" required inputmode="numeric"></label>
       <label for="pensionShift">수령 시기<select id="pensionShift"></select></label>
