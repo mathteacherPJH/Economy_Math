@@ -1202,7 +1202,8 @@ body.is-landing .stage{ padding:0; }
 
 
 /* 국민연금 수령 시기 비교 계산기 */
-.pension-program { max-width:1100px; width:100%; margin:0 auto; }
+.pension-program { max-width:none; width:100%; min-width:0; margin:0; }
+.slide-card--pension .slide-inner { padding:clamp(16px,1.5vw,24px); min-width:0; align-items:stretch; }
 .pension-program .game-title { margin-top:0; }
 .pension-inputs { display:flex; flex-wrap:wrap; align-items:flex-end; gap:1rem; margin:1.5rem 0; }
 .pension-inputs label { display:flex; flex-direction:column; gap:.55rem; flex:1; min-width:230px; font-size:.95rem; font-weight:600; }
@@ -1229,3 +1230,4 @@ body.is-landing .stage{ padding:0; }
 .pension-notes a { color:var(--text-dark); }
 .pension-error { color:#b23b34; }
 .pension-program [hidden] { display:none!important; }
+.video-rail-item { white-space:normal; overflow-wrap:anywhere; }
