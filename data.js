@@ -458,24 +458,71 @@ const CURRICULUM = [
     id: 'unit-3',
     number: 'Ⅲ',
     title: '행렬과 경제',
-    topics: textTopics([
-      '행렬과 경제 현상',
-      '행렬의 연산과 경제 현상',
-      '역행렬과 역행렬의 계산 1',
-      '역행렬과 역행렬의 계산 2',
-      '역행렬과 연립일차방정식 1',
-      '역행렬과 연립일차방정식 2',
-      '3단원 마무리 문제'
-    ])
     topics: [
-      ['행렬의 연산 1', 'https://www.canva.com/design/DAHXwDAHYxo/5juHOw3sHEXvU_BaHNBg4A/view?embed'],
-      ['행렬의 연산 2', 'https://www.canva.com/design/DAHXxIseRUc/lHb81LdzJ-mlLDuwQIXHqw/view?embed'],
-      ['역행렬과 역행렬의 계산 1', 'https://www.canva.com/design/DAHXxKBD2SA/5cpqOchToaazkfZb0WkTOw/view?embed'],
-      ['역행렬과 역행렬의 계산 2', 'https://www.canva.com/design/DAHXxNxEBPE/XYx6exxSxvjex9fpOqOk6Q/view?embed'],
-      ['역행렬과 연립일차방정식 1', 'https://www.canva.com/design/DAHXxK_NpEw/EgXvkMddrvrkTPLKsCbtZA/view?embed'],
-      ['역행렬과 연립일차방정식 2', 'https://www.canva.com/design/DAHXxLH3Qoc/nGsM89qOh6OYPUV5LT3MoQ/view?embed'],
-      ['3단원 마무리 문제', 'https://www.canva.com/design/DAHXxMKibJw/rmUOazuewAXop3rCIV5Lxw/view?embed']
-    ].map(([title, url]) => ({ title, slides: [{ type: 'canva', url }] }))
+      {
+        title: '행렬의 연산 1',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXwDAHYxo/5juHOw3sHEXvU_BaHNBg4A/view?embed'
+          }
+        ]
+      },
+      {
+        title: '행렬의 연산 2',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXxIseRUc/lHb81LdzJ-mlLDuwQIXHqw/view?embed'
+          }
+        ]
+      },
+      {
+        title: '역행렬과 역행렬의 계산 1',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXxKBD2SA/5cpqOchToaazkfZb0WkTOw/view?embed'
+          }
+        ]
+      },
+      {
+        title: '역행렬과 역행렬의 계산 2',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXxNxEBPE/XYx6exxSxvjex9fpOqOk6Q/view?embed'
+          }
+        ]
+      },
+      {
+        title: '역행렬과 연립일차방정식 1',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXxK_NpEw/EgXvkMddrvrkTPLKsCbtZA/view?embed'
+          }
+        ]
+      },
+      {
+        title: '역행렬과 연립일차방정식 2',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXxLH3Qoc/nGsM89qOh6OYPUV5LT3MoQ/view?embed'
+          }
+        ]
+      },
+      {
+        title: '3단원 마무리 문제',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHXxMKibJw/rmUOazuewAXop3rCIV5Lxw/view?embed'
+          }
+        ]
+      }
+    ]
   },
 
   {
@@ -1080,8 +1127,8 @@ const WORKSHEETS = [
   {
     unitTitle: '3단원 · 행렬과 경제',
     items: [
-      { label: '[21차시] 행렬과 경제 현상', file: 'chapter21exe' },
-      { label: '[22차시] 행렬의 연산과 경제 현상', file: 'chapter22exe' },
+      { label: '[21차시] 행렬의 연산 1', file: 'chapter21exe' },
+      { label: '[22차시] 행렬의 연산 2', file: 'chapter22exe' },
       { label: '[21차시] 행렬의 연산 1', file: 'chapter21exe' },
       { label: '[22차시] 행렬의 연산 2', file: 'chapter22exe' },
       { label: '[23차시] 역행렬과 역행렬의 계산 1', file: 'chapter23exe' },
