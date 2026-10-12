@@ -1129,8 +1129,6 @@ const WORKSHEETS = [
     items: [
       { label: '[21차시] 행렬의 연산 1', file: 'chapter21exe' },
       { label: '[22차시] 행렬의 연산 2', file: 'chapter22exe' },
-      { label: '[21차시] 행렬의 연산 1', file: 'chapter21exe' },
-      { label: '[22차시] 행렬의 연산 2', file: 'chapter22exe' },
       { label: '[23차시] 역행렬과 역행렬의 계산 1', file: 'chapter23exe' },
       { label: '[24차시] 역행렬과 역행렬의 계산 2', file: 'chapter24exe' },
       { label: '[25차시] 역행렬과 연립일차방정식 1', file: 'chapter25exe' },
