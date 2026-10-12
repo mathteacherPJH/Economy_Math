@@ -408,6 +408,18 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHUpnVA6D4/udeZ6n92-EQcMP-g8uTr7A/view?embed'
+          },
+          {
+            type: 'video',
+            title: '경매 현장',
+            label: '경매 현장',
+            url: 'https://www.youtube.com/embed/jhKhSjUWZYw?start=95'
+          },
+          {
+            type: 'video',
+            title: '다이아몬드',
+            label: '다이아몬드',
+            url: 'https://www.youtube.com/embed/9VLVXNnNMZM?start=35'
           }
         ]
       },
