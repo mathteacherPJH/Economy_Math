@@ -541,13 +541,53 @@ const CURRICULUM = [
     id: 'unit-4',
     number: 'Ⅳ',
     title: '함수와 경제',
-    topics: textTopics([
-      '한계',
-      '탄력성',
-      '최적의 의사결정',
-      '최적생산량',
-      '4단원 마무리 문제'
-    ])
+    topics: [
+      {
+        title: '한계',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHX9M3e7eA/Di-0ltGDjAgdqevlkRD9wA/view?embed'
+          }
+        ]
+      },
+      {
+        title: '탄력성',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHX9acFpfE/WtIG7RR8duyoSjjtiQt9Tg/view?embed'
+          }
+        ]
+      },
+      {
+        title: '최적의 의사결정',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHX9Vs-GAo/UuxjEY_yu-87QawrwiBWww/view?embed'
+          }
+        ]
+      },
+      {
+        title: '최적생산량',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHX9QrAjQ0/dxZW_omnh25fHtrEb6iz4g/view?embed'
+          }
+        ]
+      },
+      {
+        title: '4단원 마무리 문제',
+        slides: [
+          {
+            type: 'canva',
+            url: 'https://www.canva.com/design/DAHX9eblIwg/q_Ec2BbrNSZVOYbXa1J6kQ/view?embed'
+          }
+        ]
+      }
+    ]
   },
 
   {
