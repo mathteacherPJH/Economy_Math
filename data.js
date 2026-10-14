@@ -561,7 +561,7 @@ const CURRICULUM = [
         ]
       },
       {
-        title: '최적의 의사결정',
+        title: '최적화 1 - 소비자 관점',
         slides: [
           {
             type: 'canva',
@@ -570,7 +570,7 @@ const CURRICULUM = [
         ]
       },
       {
-        title: '최적생산량',
+        title: '최적화 2 - 생산자 관점',
         slides: [
           {
             type: 'canva',
@@ -1193,8 +1193,8 @@ const WORKSHEETS = [
     items: [
       { label: '[28차시] 한계', file: 'chapter28exe' },
       { label: '[29차시] 탄력성', file: 'chapter29exe' },
-      { label: '[30차시] 최적의 의사결정', file: 'chapter30exe' },
-      { label: '[31차시] 최적생산량', file: 'chapter31exe' },
+      { label: '[30차시] 최적화 1 - 소비자 관점', file: 'chapter30exe' },
+      { label: '[31차시] 최적화 2 - 생산자 관점', file: 'chapter31exe' },
       { label: '[32차시] 4단원 마무리 문제', file: 'chapter32exe' }
     ]
   }
