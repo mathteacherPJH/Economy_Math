@@ -435,7 +435,7 @@ const CURRICULUM = [
       },
 
       {
-        title: '부등식의 영역',
+        title: '부등식의 영역과 최대 최소 문제 1',
         slides: [
           {
             type: 'canva',
@@ -445,7 +445,7 @@ const CURRICULUM = [
       },
 
       {
-        title: '부등식의 영역과 최대 최소의 문제',
+        title: '부등식의 영역과 최대 최소 문제 2',
         slides: [
           {
             type: 'canva',
@@ -1171,8 +1171,8 @@ const WORKSHEETS = [
       { label: '[15차시] 효용함수', file: 'chapter15exe' },
       { label: '[16차시] 균형가격의 결정', file: 'chapter16exe' },
       { label: '[17차시] 균형가격의 변화', file: 'chapter17exe' },
-      { label: '[18차시] 부등식의 영역', file: 'chapter18exe' },
-      { label: '[19차시] 부등식의 영역과 최대 최소', file: 'chapter19exe' },
+      { label: '[18차시] 부등식의 영역과 최대 최소 문제 1', file: 'chapter18exe' },
+      { label: '[19차시] 부등식의 영역과 최대 최소 문제 2', file: 'chapter19exe' },
       { label: '[20차시] 2단원 마무리 문제', file: 'chapter20exe' }
     ]
   },
