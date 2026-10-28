@@ -477,6 +477,11 @@ const CURRICULUM = [
           {
             type: 'canva',
             url: 'https://www.canva.com/design/DAHXwDAHYxo/5juHOw3sHEXvU_BaHNBg4A/view?embed'
+          },
+          {
+            type: 'video',
+            label: '행렬의 도입',
+            url: 'https://www.youtube.com/embed/sYTJKyOQhe8?start=332'
           }
         ]
       },
